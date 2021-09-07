@@ -35,24 +35,6 @@
         "tsConfigPath": "apps/transfer/tsconfig.app.json"
       }
     },
-    "database": {
-      "type": "library",
-      "root": "libs/database",
-      "entryFile": "index",
-      "sourceRoot": "libs/database/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/database/tsconfig.lib.json"
-      }
-    },
-    "elastic": {
-      "type": "library",
-      "root": "libs/elastic",
-      "entryFile": "index",
-      "sourceRoot": "libs/elastic/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/elastic/tsconfig.lib.json"
-      }
-    },
     "shared": {
       "type": "library",
       "root": "libs/shared",
