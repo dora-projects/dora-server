@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { TransferModule } from './../src/Transfer.module';
+import { TransferModule } from '../src/transfer.module';
 
 describe('TransferController (e2e)', () => {
   let app: INestApplication;

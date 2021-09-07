@@ -16,7 +16,7 @@ describe('AlertController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
-      expect(alertController.getHello()).toBe('Hello World!');
+      expect(alertController.getHello()).toBe('Hello alert!');
     });
   });
 });
