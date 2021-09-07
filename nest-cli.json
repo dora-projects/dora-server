@@ -1,0 +1,75 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/manager/src",
+  "monorepo": true,
+  "root": "apps/manager",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/manager/tsconfig.app.json"
+  },
+  "projects": {
+    "manager": {
+      "type": "application",
+      "root": "apps/manager",
+      "entryFile": "main",
+      "sourceRoot": "apps/manager/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/manager/tsconfig.app.json"
+      }
+    },
+    "alert": {
+      "type": "application",
+      "root": "apps/alert",
+      "entryFile": "main",
+      "sourceRoot": "apps/alert/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/alert/tsconfig.app.json"
+      }
+    },
+    "transfer": {
+      "type": "application",
+      "root": "apps/transfer",
+      "entryFile": "main",
+      "sourceRoot": "apps/transfer/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/transfer/tsconfig.app.json"
+      }
+    },
+    "database": {
+      "type": "library",
+      "root": "libs/database",
+      "entryFile": "index",
+      "sourceRoot": "libs/database/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/database/tsconfig.lib.json"
+      }
+    },
+    "elastic": {
+      "type": "library",
+      "root": "libs/elastic",
+      "entryFile": "index",
+      "sourceRoot": "libs/elastic/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/elastic/tsconfig.lib.json"
+      }
+    },
+    "shared": {
+      "type": "library",
+      "root": "libs/shared",
+      "entryFile": "index",
+      "sourceRoot": "libs/shared/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/shared/tsconfig.lib.json"
+      }
+    },
+    "datasource": {
+      "type": "library",
+      "root": "libs/datasource",
+      "entryFile": "index",
+      "sourceRoot": "libs/datasource/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/datasource/tsconfig.lib.json"
+      }
+    }
+  }
+}
