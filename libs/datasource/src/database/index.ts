@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { User } from './user.entity';
 
-export const database = TypeOrmModule.forRootAsync({
+export const MyDatabase = TypeOrmModule.forRootAsync({
   imports: [MyConfigModule],
   useFactory: (configService: ConfigService) => ({
     type: configService.get<'postgres' | 'mysql'>('TYPEORM_CONNECTION'),

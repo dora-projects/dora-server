@@ -29,17 +29,22 @@
     "@nestjs/elasticsearch": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.2",
+    "@types/ua-parser-js": "^0.7.36",
+    "bcrypt": "^5.0.1",
     "bull": "^3.29.1",
     "cache-manager": "^3.4.4",
     "cache-manager-redis-store": "^2.0.0",
     "dayjs": "^1.10.6",
+    "fs-extra": "^10.0.0",
     "lodash": "^4.17.21",
     "mysql2": "^2.3.0",
+    "nodemailer": "^6.6.3",
     "redis": "^3.1.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.2.37"
+    "typeorm": "^0.2.37",
+    "ua-parser-js": "^0.7.28"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
