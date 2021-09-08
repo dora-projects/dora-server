@@ -2,7 +2,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MyConfigModule } from 'libs/shared/config';
 import { ConfigService } from '@nestjs/config';
 
-import { User } from './user.entity';
+import {
+  AlertContact,
+  AlertRule,
+  Issue,
+  IssueStatus,
+  Project,
+  Team,
+  UserDashboard,
+  User,
+} from './entity';
 
 export const MyDatabase = TypeOrmModule.forRootAsync({
   imports: [MyConfigModule],
@@ -17,7 +26,16 @@ export const MyDatabase = TypeOrmModule.forRootAsync({
     database: configService.get<string>('TYPEORM_DATABASE'),
 
     autoLoadEntities: true,
-    entities: [User],
+    entities: [
+      AlertContact,
+      AlertRule,
+      Issue,
+      IssueStatus,
+      Project,
+      Team,
+      UserDashboard,
+      User,
+    ],
     synchronize: true,
   }),
   inject: [ConfigService],

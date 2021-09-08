@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { MyConfigModule } from 'libs/shared/config';
-import { MyBullModule, MyElasticModule } from 'libs/datasource';
+import { MyBullModule, MyDatabase, MyElasticModule } from 'libs/datasource';
 
 import { AnalysisModule } from './analysis/analysis.module';
 import { IssuesModule } from './issues/issues.module';
@@ -11,6 +11,7 @@ import { IssuesModule } from './issues/issues.module';
     MyBullModule,
     MyElasticModule,
     MyConfigModule,
+    MyDatabase,
     AnalysisModule,
     IssuesModule,
   ],
