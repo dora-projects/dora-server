@@ -28,7 +28,7 @@ export class ReportService {
    */
   async getJobs(): Promise<Bull.Job<any>[]> {
     return await this.eventQueue.getJobs([
-      'completed',
+      // 'completed',
       'waiting',
       'active',
       'delayed',

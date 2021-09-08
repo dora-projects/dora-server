@@ -18,10 +18,13 @@ export class ReportProcessor {
         body: job.data,
         pretty: true,
       });
-      this.logger.log(res.statusCode);
-      this.logger.debug('Elasticsearch completed');
+      this.logger.debug(job.data);
+      this.logger.debug(
+        `Elasticsearch completed, statusCode:${res.statusCode}`,
+      );
     } catch (e) {
       this.logger.error(e);
+      await job.moveToFailed({ message: e?.message }, true);
     }
   }
 }
