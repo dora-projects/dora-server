@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TransferController } from './transfer.controller';
-import { TransferService } from './transfer.service';
+import { ReportController } from './report.controller';
+import { ReportService } from './report.service';
 
 describe('TransferController', () => {
-  let transferController: TransferController;
+  let transferController: ReportController;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      controllers: [TransferController],
-      providers: [TransferService],
+      controllers: [ReportController],
+      providers: [ReportService],
     }).compile();
 
-    transferController = app.get<TransferController>(TransferController);
+    transferController = app.get<ReportController>(ReportController);
   });
 
   describe('root', () => {

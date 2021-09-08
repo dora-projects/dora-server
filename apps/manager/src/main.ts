@@ -1,8 +1,13 @@
 import { NestFactory } from '@nestjs/core';
-import { ManagerModule } from './manager.module';
+import { ManagerHttpPort } from 'libs/shared/constant';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ManagerModule);
-  await app.listen(3002);
+  const app = await NestFactory.create(AppModule);
+  await app.listen(ManagerHttpPort);
 }
-bootstrap();
+
+bootstrap().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
