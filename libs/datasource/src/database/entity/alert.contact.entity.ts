@@ -2,8 +2,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  JoinColumn,
-  OneToOne,
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
@@ -18,22 +16,17 @@ export class AlertContact {
   id: number;
 
   // 多对一
-  @ManyToOne(() => Project, (project) => project.alertContacts, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
+  @ManyToOne(() => Project, (project) => project.alertContacts)
   project: Project;
 
   // 多对一
-  @OneToOne(() => User, (user) => user.alertContacts, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => User, (user) => user.alertContacts)
   user: User;
 
   @Column({ type: 'text' })
   emails: string;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()

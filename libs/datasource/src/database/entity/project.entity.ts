@@ -3,10 +3,10 @@ import {
   Column,
   Index,
   OneToMany,
-  OneToOne,
   CreateDateColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 
 import { Team } from './team.entity';
@@ -29,7 +29,7 @@ export class Project {
   type: string;
 
   // 一对多
-  @OneToMany(() => Team, (team) => team.projects)
+  @ManyToOne(() => Team, (team) => team.projects)
   team: Team;
 
   // 一对多
@@ -37,10 +37,10 @@ export class Project {
   alertRules: AlertRule[];
 
   // 一对多
-  @OneToOne(() => AlertContact, (alert) => alert.project)
+  @OneToMany(() => AlertContact, (alert) => alert.project)
   alertContacts: AlertContact[];
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()

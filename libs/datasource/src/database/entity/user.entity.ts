@@ -6,6 +6,9 @@ import {
   JoinColumn,
   OneToMany,
   OneToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinTable,
 } from 'typeorm';
 
 import { AlertContact } from './alert.contact.entity';
@@ -34,7 +37,7 @@ export class User {
 
   // 多对多
   @ManyToMany(() => Team, (team) => team.users)
-  @JoinColumn()
+  @JoinTable()
   teams: Team[];
 
   // 一对多
@@ -42,6 +45,13 @@ export class User {
   alertContacts: AlertContact[];
 
   // 一对一
-  @OneToOne(() => UserDashboard, (userDashboard) => userDashboard.user)
+  @OneToOne(() => UserDashboard)
+  @JoinColumn()
   dashboard: UserDashboard;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

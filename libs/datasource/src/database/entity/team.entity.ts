@@ -4,11 +4,11 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinColumn,
-  OneToOne,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { UserDashboard } from './user.dashboard.entity';
 import { Project } from 'libs/datasource/database/entity/project.entity';
 
 @Entity()
@@ -22,17 +22,17 @@ export class Team {
   @Column({ type: 'text' })
   slug: string;
 
+  // 多对多
   @ManyToMany(() => User, (user) => user.teams)
-  @JoinColumn()
   users: User[];
 
   // 一对多
   @OneToMany(() => Project, (project) => project.team)
-  @JoinColumn()
   projects: Project[];
 
-  // 一对一
-  @OneToOne(() => UserDashboard, (userBoard) => userBoard.user)
-  @JoinColumn()
-  dashboard: UserDashboard;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

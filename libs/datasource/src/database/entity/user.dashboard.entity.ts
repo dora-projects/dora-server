@@ -1,18 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { Team } from './team.entity';
-import { User } from './user.entity';
 
 @Entity()
 export class UserDashboard {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, (user) => user.dashboard)
+  @OneToOne(() => Team)
   @JoinColumn()
-  user: User;
+  activeTeam: Team;
 
-  @OneToOne(() => Team, (team) => team.dashboard)
-  @JoinColumn()
-  currentTeam: Team;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

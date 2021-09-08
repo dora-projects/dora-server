@@ -2,7 +2,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  JoinColumn,
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
@@ -36,10 +35,9 @@ export class AlertRule {
 
   // 多对一
   @ManyToOne(() => Project, (project) => project.alertRules)
-  @JoinColumn()
   project: Project;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
