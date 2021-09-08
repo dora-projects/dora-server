@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
-import { BullModule } from '@nestjs/bull';
 
 import { ReportController } from './core/report.controller';
 import { ReportService } from './core/report.service';
+import { ReportProcessor } from './core/report.processor';
+import { EventBullQueueModule } from 'libs/datasource/bull';
+import { MyElasticModule } from 'libs/datasource/elasticsearch';
 
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'event',
-    }),
-  ],
+  imports: [EventBullQueueModule, MyElasticModule],
   controllers: [ReportController],
-  providers: [ReportService],
+  providers: [ReportProcessor, ReportService],
 })
 export class ReportModule {}

@@ -1,9 +1,18 @@
 import { Module } from '@nestjs/common';
 
+import { MyConfigModule } from 'libs/shared/config';
+import { MyBullModule, MyElasticModule } from 'libs/datasource';
+
 import { AnalysisModule } from './analysis/analysis.module';
-import { ConsumeModule } from './consume/consume.module';
+import { IssuesModule } from './issues/issues.module';
 
 @Module({
-  imports: [AnalysisModule, ConsumeModule],
+  imports: [
+    MyBullModule,
+    MyElasticModule,
+    MyConfigModule,
+    AnalysisModule,
+    IssuesModule,
+  ],
 })
 export class AppModule {}

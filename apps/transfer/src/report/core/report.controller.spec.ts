@@ -16,7 +16,7 @@ describe('TransferController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
-      expect(transferController.getHello()).toBe('Hello World!');
+      // expect(transferController.getCounts()).toBe('Hello World!');
     });
   });
 });
