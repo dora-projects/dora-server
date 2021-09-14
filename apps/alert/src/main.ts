@@ -1,9 +1,13 @@
 import { NestFactory } from '@nestjs/core';
-import { AlertModule } from './alert.module';
+import { AppModule } from './app.module';
+import { AlertHttpPort } from 'libs/shared/constant';
+import * as chalk from 'chalk';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AlertModule);
-  await app.listen(3003);
+  const app = await NestFactory.create(AppModule);
+  await app.listen(AlertHttpPort);
+
+  console.log(chalk.green(`alert started at ${await app.getUrl()}`));
 }
 
 bootstrap().catch((err) => {
