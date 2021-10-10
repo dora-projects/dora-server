@@ -1,5 +1,6 @@
 import { Controller, Get, Ip, Logger, Post, Req } from '@nestjs/common';
 import { ReportService } from './report.service';
+import { dumpJson } from 'libs/shared/utils';
 
 @Controller()
 export class ReportController {
@@ -29,7 +30,7 @@ export class ReportController {
     console.log('--------------store------------------');
     console.log(req.query);
     console.log(JSON.parse(req.body));
-
+    await dumpJson('store', JSON.parse(req.body));
     // const { sentry_key, sentry_version } = req.query;
     // console.log({ sentry_key, sentry_version });
 
@@ -46,14 +47,13 @@ export class ReportController {
     const result = {};
     if (textBody) {
       const allJson = textBody.split('\n');
-      allJson.forEach((jsonStr) => {
+      for (const jsonStr of allJson) {
         const json = JSON.parse(jsonStr);
-        console.log(json);
-
         Object.assign(result, json);
-      });
+      }
     }
 
+    await dumpJson('envelope', result);
     await this.reportService.convertSentryData(result);
 
     return 'ok';
