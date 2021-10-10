@@ -1,0 +1,565 @@
+{
+  "mappings": {
+    "properties": {
+      "attrs": {
+        "properties": {
+          "environment": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "release": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "user_agent": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "breadcrumbs": {
+        "properties": {
+          "category": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "message": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "timestamp": {
+            "type": "float"
+          }
+        }
+      },
+      "contexts": {
+        "properties": {
+          "trace": {
+            "properties": {
+              "op": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "span_id": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "tags": {
+                "properties": {
+                  "deviceMemory": {
+                    "type": "text",
+                    "fields": {
+                      "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                      }
+                    }
+                  },
+                  "effectiveConnectionType": {
+                    "type": "text",
+                    "fields": {
+                      "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                      }
+                    }
+                  },
+                  "hardwareConcurrency": {
+                    "type": "text",
+                    "fields": {
+                      "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                      }
+                    }
+                  },
+                  "lcp": {
+                    "properties": {
+                      "element": {
+                        "type": "text",
+                        "fields": {
+                          "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                          }
+                        }
+                      },
+                      "size": {
+                        "type": "long"
+                      }
+                    }
+                  }
+                }
+              },
+              "trace_id": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "discarded_events": {
+        "properties": {
+          "category": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "quantity": {
+            "type": "long"
+          },
+          "reason": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "environment": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "errors": {
+        "type": "long"
+      },
+      "event_id": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "init": {
+        "type": "boolean"
+      },
+      "measurements": {
+        "properties": {
+          "connection": {
+            "properties": {
+              "downlink": {
+                "properties": {
+                  "value": {
+                    "type": "long"
+                  }
+                }
+              },
+              "rtt": {
+                "properties": {
+                  "value": {
+                    "type": "long"
+                  }
+                }
+              }
+            }
+          },
+          "fcp": {
+            "properties": {
+              "value": {
+                "type": "float"
+              }
+            }
+          },
+          "fid": {
+            "properties": {
+              "value": {
+                "type": "float"
+              }
+            }
+          },
+          "fp": {
+            "properties": {
+              "value": {
+                "type": "float"
+              }
+            }
+          },
+          "lcp": {
+            "properties": {
+              "value": {
+                "type": "float"
+              }
+            }
+          },
+          "mark": {
+            "properties": {
+              "fcp": {
+                "properties": {
+                  "value": {
+                    "type": "float"
+                  }
+                }
+              },
+              "fid": {
+                "properties": {
+                  "value": {
+                    "type": "float"
+                  }
+                }
+              },
+              "fp": {
+                "properties": {
+                  "value": {
+                    "type": "float"
+                  }
+                }
+              },
+              "lcp": {
+                "properties": {
+                  "value": {
+                    "type": "float"
+                  }
+                }
+              }
+            }
+          },
+          "ttfb": {
+            "properties": {
+              "requestTime": {
+                "properties": {
+                  "value": {
+                    "type": "float"
+                  }
+                }
+              },
+              "value": {
+                "type": "float"
+              }
+            }
+          }
+        }
+      },
+      "platform": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "release": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "request": {
+        "properties": {
+          "headers": {
+            "properties": {
+              "User-Agent": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          },
+          "url": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "sample_rates": {
+        "properties": {
+          "id": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "rate": {
+            "type": "long"
+          }
+        }
+      },
+      "sdk": {
+        "properties": {
+          "integrations": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "packages": {
+            "properties": {
+              "name": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "version": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          },
+          "version": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "sent_at": {
+        "type": "date"
+      },
+      "sid": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "spans": {
+        "properties": {
+          "data": {
+            "properties": {
+              "Decoded Body Size": {
+                "type": "long"
+              },
+              "Encoded Body Size": {
+                "type": "long"
+              },
+              "Transfer Size": {
+                "type": "long"
+              }
+            }
+          },
+          "description": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "op": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "parent_span_id": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "span_id": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "start_timestamp": {
+            "type": "float"
+          },
+          "timestamp": {
+            "type": "float"
+          },
+          "trace_id": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "start_timestamp": {
+        "type": "float"
+      },
+      "started": {
+        "type": "date"
+      },
+      "status": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "tags": {
+        "properties": {
+          "deviceMemory": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "effectiveConnectionType": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "hardwareConcurrency": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "lcp": {
+            "properties": {
+              "element": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "size": {
+                "type": "long"
+              }
+            }
+          }
+        }
+      },
+      "timestamp": {
+        "type": "date"
+      },
+      "transaction": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "type": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      }
+    }
+  }
+}

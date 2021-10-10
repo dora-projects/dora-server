@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import Bull, { Queue } from 'bull';
+import { SearchService } from 'libs/datasource/elasticsearch/elasticsearch.service';
 
 @Injectable()
 export class ReportService {
-  constructor(@InjectQueue('event') private readonly eventQueue: Queue) {}
+  constructor(
+    @InjectQueue('event') private readonly eventQueue: Queue,
+    private readonly searchService: SearchService,
+  ) {}
 
   /**
    * 处理 event
@@ -42,5 +46,12 @@ export class ReportService {
    */
   async getJobCounts(): Promise<Bull.JobCounts> {
     return await this.eventQueue.getJobCounts();
+  }
+
+  /**
+   * 转换 sentry 数据
+   */
+  async convertSentryData(data: any): Promise<any> {
+    return this.searchService.saveData(data);
   }
 }
