@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AlertModule } from '../src/alert.module';
+import { AlertModule } from '../src/alert/alert.module';
 
 describe('AlertController (e2e)', () => {
   let app: INestApplication;

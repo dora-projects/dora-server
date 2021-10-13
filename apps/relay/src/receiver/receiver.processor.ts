@@ -4,10 +4,10 @@ import { Job } from 'bull';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 @Processor('event')
-export class ReportProcessor {
+export class ReceiverProcessor {
   constructor(private readonly elasticsearchService: ElasticsearchService) {}
 
-  private readonly logger = new Logger(ReportProcessor.name);
+  private readonly logger = new Logger(ReceiverProcessor.name);
 
   @Process('event-report')
   async handleTranscode(job: Job) {

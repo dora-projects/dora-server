@@ -17,22 +17,22 @@
         "tsConfigPath": "apps/manager/tsconfig.app.json"
       }
     },
-    "alert": {
+    "process": {
       "type": "application",
-      "root": "apps/alert",
+      "root": "apps/process",
       "entryFile": "main",
-      "sourceRoot": "apps/alert/src",
+      "sourceRoot": "apps/process/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/alert/tsconfig.app.json"
+        "tsConfigPath": "apps/process/tsconfig.app.json"
       }
     },
-    "transfer": {
+    "relay": {
       "type": "application",
-      "root": "apps/transfer",
+      "root": "apps/relay",
       "entryFile": "main",
-      "sourceRoot": "apps/transfer/src",
+      "sourceRoot": "apps/relay/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/transfer/tsconfig.app.json"
+        "tsConfigPath": "apps/relay/tsconfig.app.json"
       }
     },
     "shared": {

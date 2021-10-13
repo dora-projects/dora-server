@@ -1,12 +1,12 @@
 import { Controller, Get, Ip, Logger, Post, Req } from '@nestjs/common';
-import { ReportService } from './report.service';
+import { ReceiverService } from './receiver.service';
 import { dumpJson } from 'libs/shared/utils';
 
 @Controller()
-export class ReportController {
-  private readonly logger = new Logger(ReportController.name);
+export class ReceiverController {
+  private readonly logger = new Logger(ReceiverController.name);
 
-  constructor(private readonly reportService: ReportService) {}
+  constructor(private readonly reportService: ReceiverService) {}
 
   @Get()
   async getCounts(): Promise<any> {

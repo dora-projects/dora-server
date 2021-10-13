@@ -1,13 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { AlertHttpPort } from 'libs/shared/constant';
+import { ProcessHttpPort } from 'libs/shared/constant';
 import * as chalk from 'chalk';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(AlertHttpPort);
+  await app.listen(ProcessHttpPort);
 
-  console.log(chalk.green(`alert started at ${await app.getUrl()}`));
+  console.log(chalk.green(`process started at ${await app.getUrl()}`));
 }
 
 bootstrap().catch((err) => {

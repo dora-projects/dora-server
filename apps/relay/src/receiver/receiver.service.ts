@@ -4,7 +4,7 @@ import Bull, { Queue } from 'bull';
 import { SearchService } from 'libs/datasource/elasticsearch/elasticsearch.service';
 
 @Injectable()
-export class ReportService {
+export class ReceiverService {
   constructor(
     @InjectQueue('event') private readonly eventQueue: Queue,
     private readonly searchService: SearchService,
