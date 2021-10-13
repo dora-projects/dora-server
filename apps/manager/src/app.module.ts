@@ -9,6 +9,7 @@ import { ProjectModule } from './project/project.module';
 import { SourcemapModule } from './sourcemap/sourcemap.module';
 import { TeamModule } from './team/team.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UserModule } from './user/user.module';
     SourcemapModule,
     TeamModule,
     UserModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
