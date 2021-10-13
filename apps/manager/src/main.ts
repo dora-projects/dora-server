@@ -1,5 +1,6 @@
 import * as chalk from 'chalk';
 import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ManagerHttpPort } from 'libs/shared/constant';
 import { AppModule } from './app.module';
 
@@ -9,7 +10,14 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.setGlobalPrefix('/api/manager');
+  const config = new DocumentBuilder()
+    .setTitle('Dora Api Docs')
+    .setDescription('The Dora Server Api description')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('swagger', app, document);
 
   await app.listen(ManagerHttpPort);
 
@@ -23,13 +31,11 @@ async function bootstrap() {
                   
 `;
 
-  console.log();
   console.log(
     chalk.green(`
 ${banner}
 manager started at ${await app.getUrl()}`),
   );
-  console.log();
 }
 
 bootstrap().catch((err) => {
