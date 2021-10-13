@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateCatDto } from './user.dto';
+import { User } from 'libs/datasource';
 
 @ApiTags('user')
 @Controller()
@@ -9,12 +9,12 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('api/users')
-  getHello(): string {
-    return this.userService.getHello();
+  getUsers(): Promise<User[]> {
+    return this.userService.findAll();
   }
 
-  @Get('api/userinfo')
-  getUserInfo(): string {
-    return this.userService.getHello();
+  @Get('api/user/:id')
+  getUser(@Param('id') id: string): Promise<User | undefined> {
+    return this.userService.findOne(id);
   }
 }
