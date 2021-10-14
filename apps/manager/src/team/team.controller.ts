@@ -54,7 +54,7 @@ export class TeamController {
     return await this.teamService.create(createTeamDto);
   }
 
-  @Put('api/team/update')
+  @Post('api/team/update')
   async updateTeam(@Body() dto: UpdateTeamDto): Promise<UpdateResult> {
     return await this.teamService.update(dto);
   }

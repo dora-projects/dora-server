@@ -11,13 +11,11 @@ export class IssuesProcessor {
   private readonly logger = new Logger(IssuesProcessor.name);
 
   private async checkAlertRules(job: Job<any>) {
-    console.log('job', job?.data);
-    console.log('checkAlertRules', dayjs().format());
+    this.logger.log('job', job?.data);
+    this.logger.log('checkAlertRules', dayjs().format());
   }
 
-  /**
-   *  耗时操作 需节流
-   */
+  // 节流耗时操作
   public throttleCheckAlertRules = throttle(this.checkAlertRules, 5000);
 
   @OnGlobalQueueCompleted()

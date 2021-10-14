@@ -21,7 +21,7 @@ export class ProjectController {
   @Put('api/project')
   async createProject(
     @Body() createProjectDto: CreateProjectDto,
-  ): Promise<Project> {
+  ): Promise<Project | void> {
     return await this.projectService.create(createProjectDto);
   }
 

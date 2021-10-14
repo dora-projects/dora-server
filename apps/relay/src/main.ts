@@ -6,6 +6,7 @@ import * as chalk from 'chalk';
 
 /**
  * relay 接收处理上报数据
+ * todo 限流
  */
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

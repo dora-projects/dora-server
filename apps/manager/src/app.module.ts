@@ -10,6 +10,7 @@ import { SourcemapModule } from './sourcemap/sourcemap.module';
 import { TeamModule } from './team/team.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { SystemModule } from './system/system.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AuthModule } from './auth/auth.module';
     AnalysisModule,
     IssuesModule,
     SourcemapModule,
+    SystemModule,
   ],
 })
 export class AppModule {}

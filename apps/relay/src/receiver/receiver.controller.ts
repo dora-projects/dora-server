@@ -1,61 +1,84 @@
 import { Controller, Get, Ip, Logger, Post, Req } from '@nestjs/common';
 import { ReceiverService } from './receiver.service';
+import { SentryService } from './sentry.service';
 import { dumpJson } from 'libs/shared/utils';
 
 @Controller()
 export class ReceiverController {
   private readonly logger = new Logger(ReceiverController.name);
 
-  constructor(private readonly reportService: ReceiverService) {}
+  constructor(
+    private readonly reportService: ReceiverService,
+    private readonly sentryService: SentryService,
+  ) {}
 
-  @Get()
-  async getCounts(): Promise<any> {
-    return await this.reportService.getJobCounts();
+  @Post('/report')
+  async report(): Promise<string> {
+    // await this.eventService.handleEvent(req.body, ip);
+    return 'ok';
   }
-
-  @Get('/jobs')
-  async getJobs(): Promise<any> {
-    return await this.reportService.getJobs();
-  }
-
-  // @Post('/report')
-  // async report(@Ip() ip: string, @Req() req: any): Promise<string> {
-  //   await this.eventService.handleEvent(req.body, ip);
-  //   return 'ok';
-  // }
 
   @Post('/api/:id/store')
   async sentryStore(@Ip() ip: string, @Req() req: any): Promise<string> {
-    // await this.eventService.handleEvent(req.body, ip);
-    console.log('--------------store------------------');
-    console.log(req.query);
-    console.log(JSON.parse(req.body));
-    await dumpJson('store', JSON.parse(req.body));
-    // const { sentry_key, sentry_version } = req.query;
-    // console.log({ sentry_key, sentry_version });
+    try {
+      // query
+      const { sentry_key, sentry_version } = req.query;
 
-    return 'ok';
+      // body
+      const body = JSON.parse(req.body);
+
+      const storeData = {
+        sentry_key,
+        sentry_version,
+        ip,
+        ...body,
+      };
+
+      //debug
+      await dumpJson('sentryStore', storeData);
+
+      this.logger.debug('relay sentryStore....');
+
+      await this.sentryService.storeDataAdapter(storeData);
+      return 'ok';
+    } catch (e) {
+      return e;
+    }
   }
 
   @Post('/api/:id/envelope')
   async sentryEnvelope(@Ip() ip: string, @Req() req: any): Promise<string> {
-    console.log('------------envelope--------------------');
-    const { sentry_key, sentry_version } = req.query;
-    console.log({ sentry_key, sentry_version });
+    try {
+      // query
+      const { sentry_key, sentry_version } = req.query;
 
-    const textBody = req.body;
-    const result = {};
-    if (textBody) {
-      const allJson = textBody.split('\n');
-      for (const jsonStr of allJson) {
-        const json = JSON.parse(jsonStr);
-        Object.assign(result, json);
+      // body
+      const textBody = req.body;
+      const result = {};
+      if (textBody) {
+        const allJson = textBody.split('\n');
+        for (const jsonStr of allJson) {
+          const json = JSON.parse(jsonStr);
+          Object.assign(result, json);
+        }
       }
+
+      const envelopeData = {
+        sentry_key,
+        sentry_version,
+        ip,
+        ...result,
+      };
+
+      //debug
+      await dumpJson('sentryEnvelope', envelopeData);
+
+      this.logger.debug('relay sentryEnvelope....');
+
+      await this.sentryService.envelopeDataAdapter(envelopeData);
+      return 'ok';
+    } catch (e) {
+      return e;
     }
-
-    await dumpJson('envelope', result);
-    await this.reportService.convertSentryData(result);
-
-    return 'ok';
   }
 }
