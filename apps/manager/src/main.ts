@@ -1,23 +1,40 @@
 import * as chalk from 'chalk';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 import { ManagerHttpPort } from 'libs/shared/constant';
 import { AppModule } from './app.module';
+import { AllExceptionFilter } from './common/filter';
+
+const setupSwagger = (app) => {
+  const config = new DocumentBuilder()
+    .addBearerAuth()
+    .setTitle('Dora Api Docs')
+    .setDescription('The Dora Server Api description')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
+};
 
 /**
  * manager 管理平台
  */
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: ['http://localhost', 'http://localhost:3000'],
+      credentials: true,
+    },
+  });
+  app.useGlobalFilters(new AllExceptionFilter());
+  app.useGlobalPipes(new ValidationPipe());
 
-  const config = new DocumentBuilder()
-    .setTitle('Dora Api Docs')
-    .setDescription('The Dora Server Api description')
-    .setVersion('1.0')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  setupSwagger(app);
 
   await app.listen(ManagerHttpPort);
 

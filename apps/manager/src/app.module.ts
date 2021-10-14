@@ -17,13 +17,13 @@ import { AuthModule } from './auth/auth.module';
     MyElasticModule,
     MyConfigModule,
     MyDatabase,
+    AuthModule,
+    UserModule,
     AnalysisModule,
     IssuesModule,
     ProjectModule,
     SourcemapModule,
     TeamModule,
-    UserModule,
-    AuthModule,
   ],
 })
 export class AppModule {}

@@ -9,7 +9,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinTable,
+  Index,
 } from 'typeorm';
+import { classToPlain, Exclude } from 'class-transformer';
 
 import { AlertContact } from './alert.contact.entity';
 import { Team } from './team.entity';
@@ -17,15 +19,17 @@ import { UserDashboard } from './user.dashboard.entity';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: 'text' })
   username: string;
 
+  @Index({ unique: true })
   @Column({ type: 'text' })
   email: string;
 
+  @Exclude({ toPlainOnly: true })
   @Column({ type: 'text' })
   password: string;
 
@@ -54,4 +58,8 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  toJSON() {
+    return classToPlain(this);
+  }
 }
