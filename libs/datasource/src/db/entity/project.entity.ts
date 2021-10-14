@@ -19,6 +19,7 @@ export class Project {
   id: number;
 
   @Column({ type: 'text' })
+  @Index({ unique: true })
   apiKey: string;
 
   @Column({ type: 'text' })
@@ -28,7 +29,7 @@ export class Project {
   @Column({ type: 'text' })
   type: string;
 
-  // 一对多
+  // 多对一
   @ManyToOne(() => Team, (team) => team.projects)
   team: Team;
 

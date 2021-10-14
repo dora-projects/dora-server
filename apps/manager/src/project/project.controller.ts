@@ -1,14 +1,51 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { ProjectService } from './project.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { CreateProjectDto } from './project.dto';
+import { Project } from 'libs/datasource';
 
 @ApiTags('project')
 @Controller()
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @Get('api/projects')
-  getHello(): string {
-    return this.projectService.getHello();
+  @Put('api/project')
+  async createProject(
+    @Body() createProjectDto: CreateProjectDto,
+  ): Promise<Project> {
+    return await this.projectService.create(createProjectDto);
+  }
+
+  @Post('api/project')
+  updateProject(): string {
+    return null;
+  }
+
+  @Get('api/project')
+  @ApiQuery({ name: 'id', type: 'number', required: false })
+  @ApiQuery({ name: 'appKey', type: 'string', required: false })
+  async projectInfo(@Query() query): Promise<Project | undefined> {
+    const { id, appKey } = query;
+    if (id) {
+      return this.projectService.findById(id);
+    }
+    if (appKey) {
+      return this.projectService.findByAppKey(appKey);
+    }
+  }
+
+  @Delete('api/project/:id')
+  @ApiParam({ name: 'id' })
+  async deleteProject(@Param('id') id: number): Promise<void> {
+    return await this.projectService.delete(id);
   }
 }
