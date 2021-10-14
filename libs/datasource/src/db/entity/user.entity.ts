@@ -19,8 +19,8 @@ import { UserDashboard } from './user.dashboard.entity';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ type: 'text' })
   username: string;

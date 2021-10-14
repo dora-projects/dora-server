@@ -18,7 +18,7 @@ export class Team {
   @Column({ type: 'text' })
   name: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   slug: string;
 
   // 多对多
