@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LoginDto } from './auth.dto';
@@ -25,6 +25,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('auth/me')
+  @ApiBearerAuth()
   getProfile(@Request() req) {
     return req.user;
   }

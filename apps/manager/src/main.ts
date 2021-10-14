@@ -8,7 +8,10 @@ import { AllExceptionFilter } from './common/filter';
 
 const setupSwagger = (app) => {
   const config = new DocumentBuilder()
-    .addBearerAuth()
+    .addBearerAuth({
+      type: 'http',
+      bearerFormat: 'JWT',
+    })
     .setTitle('Dora Api Docs')
     .setDescription('The Dora Server Api description')
     .setVersion('1.0')
