@@ -19,11 +19,11 @@ import { AuthModule } from './auth/auth.module';
     MyDatabase,
     AuthModule,
     UserModule,
+    TeamModule,
+    ProjectModule,
     AnalysisModule,
     IssuesModule,
-    ProjectModule,
     SourcemapModule,
-    TeamModule,
   ],
 })
 export class AppModule {}

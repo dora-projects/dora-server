@@ -1,7 +1,17 @@
-import { Body, Controller, Post, Get, Param, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  ParseIntPipe,
+  Post,
+  Get,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiQuery, ApiBody, ApiTags } from '@nestjs/swagger';
 import { User } from 'libs/datasource';
+import { Pagination } from 'nestjs-typeorm-paginate';
 import { CreateUserDto } from './user.dto';
 
 @ApiTags('user')
@@ -22,8 +32,12 @@ export class UserController {
   }
 
   @Get('api/users')
-  getUsers(): Promise<User[]> {
-    return this.userService.findAll();
+  getUsers(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit,
+  ): Promise<Pagination<User>> {
+    limit = limit > 100 ? 100 : limit;
+    return this.userService.paginate({ page, limit });
   }
 
   @Get('api/user')
@@ -43,5 +57,11 @@ export class UserController {
     if (username) {
       return { result: await this.userService.searchByUsername(username) };
     }
+  }
+
+  @Delete('api/user')
+  @ApiQuery({ name: 'id', required: false })
+  async delUser(@Query('id') id: string): Promise<void> {
+    return await this.userService.remove(id);
   }
 }
