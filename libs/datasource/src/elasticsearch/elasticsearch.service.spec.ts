@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MyConfigModule } from 'libs/shared/config';
+import { MyConfigModule } from 'libs/datasource/config';
 import { SearchService } from './elasticsearch.service';
 import { MyElasticModule } from './index';
 

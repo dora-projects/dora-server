@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { MyConfigModule } from 'libs/shared/config';
+import { MyConfigModule } from 'libs/datasource/config';
 import { MyBullModule, MyDatabase, MyElasticModule } from 'libs/datasource';
 
 import { AnalysisModule } from './analysis/analysis.module';

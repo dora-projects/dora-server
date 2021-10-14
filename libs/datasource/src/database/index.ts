@@ -1,5 +1,5 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MyConfigModule } from 'libs/shared/config';
+import { MyConfigModule } from 'libs/datasource/config';
 import { ConfigService } from '@nestjs/config';
 
 import {

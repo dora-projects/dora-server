@@ -1,5 +1,5 @@
 import { BullModule } from '@nestjs/bull';
-import { MyConfigModule } from 'libs/shared/config';
+import { MyConfigModule } from 'libs/datasource/config';
 import { ConfigService } from '@nestjs/config';
 
 export const MyBullModule = BullModule.forRootAsync({

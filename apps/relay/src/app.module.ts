@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ReceiverModule } from './receiver/receiver.module';
-import { MyConfigModule } from 'libs/shared/config';
+import { MyConfigModule } from 'libs/datasource/config';
 import { MyBullModule } from 'libs/datasource';
 
 @Module({

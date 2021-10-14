@@ -1,5 +1,5 @@
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
-import { MyConfigModule } from 'libs/shared/config';
+import { MyConfigModule } from 'libs/datasource/config';
 import { ConfigService } from '@nestjs/config';
 
 export const MyElasticModule = ElasticsearchModule.registerAsync({
