@@ -37,11 +37,12 @@ export class ReceiverController {
       //debug
       await dumpJson('sentryStore', storeData);
 
-      this.logger.debug('relay sentryStore....');
+      this.logger.log('relay sentryStore....');
 
       await this.sentryService.storeDataAdapter(storeData);
       return 'ok';
     } catch (e) {
+      this.logger.error(e);
       return e;
     }
   }
@@ -73,11 +74,12 @@ export class ReceiverController {
       //debug
       await dumpJson('sentryEnvelope', envelopeData);
 
-      this.logger.debug('relay sentryEnvelope....');
+      this.logger.log('relay sentryEnvelope....');
 
       await this.sentryService.envelopeDataAdapter(envelopeData);
       return 'ok';
     } catch (e) {
+      this.logger.error(e);
       return e;
     }
   }
