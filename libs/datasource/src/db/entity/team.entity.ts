@@ -3,13 +3,12 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToMany,
-  JoinColumn,
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { Project } from 'libs/datasource/database/entity/project.entity';
+import { Project } from './project.entity';
 
 @Entity()
 export class Team {

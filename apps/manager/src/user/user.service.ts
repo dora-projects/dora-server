@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
-import { User } from 'libs/datasource/database/entity';
+import { User } from 'libs/datasource/db/entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import {
   paginate,
