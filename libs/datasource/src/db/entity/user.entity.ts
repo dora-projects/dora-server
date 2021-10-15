@@ -33,10 +33,10 @@ export class User {
   @Column({ type: 'text' })
   password: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', default: 'admin' })
   role: string;
 
-  @Column({ default: false })
+  @Column({ default: true })
   isActive: boolean;
 
   // 多对多

@@ -29,7 +29,7 @@ export class ReceiverController {
     return 'ok';
   }
 
-  @Post('/api/:id/store')
+  @Post('api/:id/store')
   async sentryStore(@Ip() ip: string, @Req() req: any): Promise<string> {
     try {
       // query
@@ -58,7 +58,7 @@ export class ReceiverController {
     }
   }
 
-  @Post('/api/:id/envelope')
+  @Post('api/:id/envelope')
   async sentryEnvelope(@Ip() ip: string, @Req() req: any): Promise<string> {
     try {
       // query
