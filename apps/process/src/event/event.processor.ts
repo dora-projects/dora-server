@@ -32,14 +32,14 @@ export class EventProcessor {
       // step2: uaParser
       const resultStep2 = await this.eventService.aggregationError(resultStep1);
 
-      // step3: 发送给告警
-      await this.eventService.sendAlertQueue(resultStep2);
-
-      // step4: 保存
+      // step3: 保存
       const res = await this.elasticsearchService.index({
         index: ElasticIndexOfPref,
         body: resultStep2,
       });
+
+      // step4: 发送给告警
+      await this.eventService.sendAlertQueue(resultStep2);
 
       this.logger.debug(
         `Elasticsearch save ${ElasticIndexOfPref} status:${res.statusCode}`,
@@ -53,12 +53,16 @@ export class EventProcessor {
   // 性能消息
   @Process(PerfEventQueueName)
   async handlePrefMessage(job: Job) {
+    this.logger.debug('EventProcessor got perf data');
+    const data = job.data;
     try {
-      this.logger.debug('EventProcessor got perf data');
+      // step1: uaParser
+      const resultStep1 = await this.eventService.aggregationError(data);
 
+      // step2: 保存
       const res = await this.elasticsearchService.index({
         index: ElasticIndexOfError,
-        body: job.data,
+        body: resultStep1,
       });
 
       this.logger.debug(

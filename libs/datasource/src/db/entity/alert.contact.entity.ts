@@ -1,14 +1,17 @@
 import {
   Entity,
   PrimaryGeneratedColumn,
-  Column,
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 
-import { Project } from './project.entity';
+import { AlertRule } from './alert.rule.entity';
 import { User } from './user.entity';
+
+// todo 扩展字段 webhook 支持 钉钉 飞书 等
 
 @Entity()
 export class AlertContact {
@@ -16,15 +19,13 @@ export class AlertContact {
   id: number;
 
   // 多对一
-  @ManyToOne(() => Project, (project) => project.alertContacts)
-  project: Project;
+  @ManyToOne(() => AlertRule, (rule) => rule.contacts)
+  rule: AlertRule;
 
-  // 多对一
-  @ManyToOne(() => User, (user) => user.alertContacts)
+  // 一对一
+  @OneToOne(() => User)
+  @JoinColumn()
   user: User;
-
-  @Column({ type: 'text' })
-  emails: string;
 
   @CreateDateColumn()
   createdAt: Date;

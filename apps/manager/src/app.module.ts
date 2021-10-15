@@ -11,6 +11,7 @@ import { TeamModule } from './team/team.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { SystemModule } from './system/system.module';
+import { AlertModule } from './alert/alert.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SystemModule } from './system/system.module';
     UserModule,
     TeamModule,
     ProjectModule,
+    AlertModule,
     AnalysisModule,
     IssuesModule,
     SourcemapModule,

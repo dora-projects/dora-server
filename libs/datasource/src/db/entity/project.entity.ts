@@ -11,7 +11,6 @@ import {
 
 import { Team } from './team.entity';
 import { AlertRule } from './alert.rule.entity';
-import { AlertContact } from './alert.contact.entity';
 
 @Entity()
 export class Project {
@@ -34,12 +33,8 @@ export class Project {
   team: Team;
 
   // 一对多
-  @OneToMany(() => AlertRule, (alert) => alert.project)
+  @OneToMany(() => AlertRule, (alertRule) => alertRule.project)
   alertRules: AlertRule[];
-
-  // 一对多
-  @OneToMany(() => AlertContact, (alert) => alert.project)
-  alertContacts: AlertContact[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -25,6 +25,8 @@ export const MyDatabase = TypeOrmModule.forRootAsync({
     password: configService.get<string>('TYPEORM_PASSWORD'),
     database: configService.get<string>('TYPEORM_DATABASE'),
 
+    logging: ['error'],
+
     autoLoadEntities: true,
     entities: [
       AlertContact,

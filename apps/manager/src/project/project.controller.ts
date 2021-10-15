@@ -11,7 +11,7 @@ import {
 import { ProjectService } from './project.service';
 import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateProjectDto } from './project.dto';
-import { Project } from 'libs/datasource';
+import { AlertRule, Project } from 'libs/datasource';
 
 @ApiTags('project')
 @Controller()
@@ -23,11 +23,6 @@ export class ProjectController {
     @Body() createProjectDto: CreateProjectDto,
   ): Promise<Project | void> {
     return await this.projectService.create(createProjectDto);
-  }
-
-  @Post('api/project')
-  updateProject(): string {
-    return null;
   }
 
   @Get('api/project')

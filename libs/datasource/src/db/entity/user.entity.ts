@@ -44,10 +44,6 @@ export class User {
   @JoinTable()
   teams: Team[];
 
-  // 一对多
-  @OneToMany(() => AlertContact, (alert) => alert.user)
-  alertContacts: AlertContact[];
-
   // 一对一
   @OneToOne(() => UserDashboard)
   @JoinColumn()

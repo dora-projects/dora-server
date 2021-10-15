@@ -29,10 +29,7 @@ const setupSwagger = (app) => {
  */
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    cors: {
-      origin: ['http://localhost', 'http://localhost:3000'],
-      credentials: true,
-    },
+    cors: true,
   });
   app.useGlobalFilters(new AllExceptionFilter());
   app.useGlobalPipes(new ValidationPipe());

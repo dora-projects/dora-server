@@ -1,5 +1,5 @@
 // 服务端 端口
-export const ManagerHttpPort = 6000;
+export const ManagerHttpPort = 8000;
 export const RelayHttpPort = 9000;
 
 // index 索引

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Project } from 'libs/datasource';
+import { AlertRule, Project, Team } from 'libs/datasource';
 import { Connection, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
