@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 
-describe('RelayController (e2e)', () => {
+describe('relay app (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -15,10 +15,13 @@ describe('RelayController (e2e)', () => {
     await app.init();
   });
 
+  function hasKeys(res) {
+    if (!('app' in res.body)) throw new Error('missing app key');
+    if (!('uptime' in res.body)) throw new Error('missing uptime key');
+    if (!('formNow' in res.body)) throw new Error('missing formNow key');
+  }
+
   it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+    return request(app.getHttpServer()).get('/').expect(200).expect(hasKeys);
   });
 });

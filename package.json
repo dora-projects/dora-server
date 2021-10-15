@@ -22,8 +22,8 @@
     "...": "",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "npx majestic",
-    "test:run": "jest",
+    "test": "jest --detectOpenHandles",
+    "test:ui": "npx majestic",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"

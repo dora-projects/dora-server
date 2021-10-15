@@ -1,7 +1,9 @@
 import { Controller, Get, Ip, Logger, Post, Req } from '@nestjs/common';
 import { ReceiverService } from './receiver.service';
 import { SentryService } from './sentry.service';
-import { dumpJson } from 'libs/shared/utils';
+import { dumpJson, timeFormNow } from 'libs/shared';
+
+const uptime = new Date().toISOString();
 
 @Controller()
 export class ReceiverController {
@@ -11,6 +13,15 @@ export class ReceiverController {
     private readonly reportService: ReceiverService,
     private readonly sentryService: SentryService,
   ) {}
+
+  @Get()
+  async test(): Promise<any> {
+    return {
+      app: 'relay',
+      uptime,
+      formNow: timeFormNow(uptime),
+    };
+  }
 
   @Post('/report')
   async report(): Promise<string> {
