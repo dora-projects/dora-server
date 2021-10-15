@@ -35,9 +35,9 @@ export class ReceiverController {
       };
 
       //debug
-      await dumpJson('sentryStore', storeData);
+      // await dumpJson('sentryStore', storeData);
 
-      this.logger.log('relay sentryStore....');
+      this.logger.debug('relay sentryStore....');
 
       await this.sentryService.storeDataAdapter(storeData);
       return 'ok';
@@ -72,9 +72,9 @@ export class ReceiverController {
       };
 
       //debug
-      await dumpJson('sentryEnvelope', envelopeData);
+      // await dumpJson('sentryEnvelope', envelopeData);
 
-      this.logger.log('relay sentryEnvelope....');
+      this.logger.debug('relay sentryEnvelope....');
 
       await this.sentryService.envelopeDataAdapter(envelopeData);
       return 'ok';

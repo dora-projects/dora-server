@@ -1,30 +1,23 @@
-import { InjectQueue, OnGlobalQueueCompleted, Processor } from '@nestjs/bull';
+import { Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
-import { throttle } from 'lodash';
-import * as dayjs from 'dayjs';
-import { Queue, Job } from 'bull';
+import { Job } from 'bull';
+import { AlertErrorQueueName, AlertQueueName } from 'libs/shared/constant';
+import { AlertService } from './alert.service';
 
-@Processor('event')
-export class IssuesProcessor {
-  constructor(@InjectQueue('event') private readonly eventQueue: Queue) {}
+@Processor(AlertQueueName)
+export class AlertProcessor {
+  constructor(private readonly alertService: AlertService) {}
 
-  private readonly logger = new Logger(IssuesProcessor.name);
+  private readonly logger = new Logger(AlertProcessor.name);
 
-  private async checkAlertRules(job: Job<any>) {
-    this.logger.log('job', job?.data);
-    this.logger.log('checkAlertRules', dayjs().format());
-  }
-
-  // 节流耗时操作
-  public throttleCheckAlertRules = throttle(this.checkAlertRules, 5000);
-
-  @OnGlobalQueueCompleted()
-  async onGlobalCompleted(jobId: number) {
+  @Process(AlertErrorQueueName)
+  async handleAlertErrorMessage(job: Job) {
     try {
-      const job = await this.eventQueue.getJob(jobId);
-      await this.throttleCheckAlertRules(job);
+      this.logger.debug('AlertProcessor got error data!');
+      await this.alertService.throttleCheck(job.data);
     } catch (e) {
       this.logger.error(e);
+      await job.moveToFailed({ message: e?.message }, true);
     }
   }
 }

@@ -28,7 +28,7 @@ export class SentryService {
         breadcrumbs: data?.breadcrumbs,
         exception: data?.exception,
       };
-      await this.receiverService.pushToErrorEventQueue(fmtData);
+      await this.receiverService.pushErrorEventToQueue(fmtData);
     }
   }
 
@@ -58,7 +58,7 @@ export class SentryService {
           ua: data?.request?.headers?.['User-Agent'],
         },
       };
-      await this.receiverService.pushToPerfEventQueue(fmtData);
+      await this.receiverService.pushPerfEventToQueue(fmtData);
     }
   }
 }

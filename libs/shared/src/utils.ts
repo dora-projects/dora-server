@@ -1,5 +1,7 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs/promises';
+import * as util from 'util';
+const setTimeoutPromise = util.promisify(setTimeout);
 
 export function sha256(data) {
   return crypto.createHash('sha256').update(data, 'utf8').digest('hex');
@@ -19,4 +21,8 @@ export async function dumpJson(filePrefix: string, data: Record<string, any>) {
     1000,
   )}.json`;
   await fs.writeFile(filepath, JSON.stringify(data, null, 2), {});
+}
+
+export async function sleep(ms: number) {
+  await setTimeoutPromise(ms);
 }
