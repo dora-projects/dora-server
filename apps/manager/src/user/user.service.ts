@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, UpdateResult } from 'typeorm';
-import { User, UserDashboard } from 'libs/datasource/db/entity';
+import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
+import { Repository, Like, UpdateResult, Connection } from 'typeorm';
+import { Project, User, UserDashboard } from 'libs/datasource/db/entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import {
   paginate,
@@ -12,8 +12,14 @@ import {
 @Injectable()
 export class UserService {
   constructor(
+    @InjectConnection()
+    private connection: Connection,
+
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Project)
+    private readonly projectRepository: Repository<Project>,
 
     @InjectRepository(UserDashboard)
     private readonly dashboardRepository: Repository<UserDashboard>,
@@ -73,26 +79,40 @@ export class UserService {
   }
 
   async getDashboardSetting(userId: number) {
-    return await this.userRepository
-      .createQueryBuilder()
-      .relation(User, 'dashboard')
-      .of(userId)
-      .loadOne<UserDashboard>();
+    return await this.dashboardRepository
+      .createQueryBuilder('dashboard')
+      .leftJoinAndSelect('dashboard.user', 'user')
+      .leftJoinAndSelect('dashboard.project', 'project')
+      .where('user.id = :id', { id: userId })
+      .getOne();
   }
 
   async updateDashboardSetting(userId: number, projectId: number) {
-    const dashboard = new UserDashboard();
+    const dashboard = await this.getDashboardSetting(userId);
+    const user = await this.userRepository.findOne(userId);
+    const project = await this.projectRepository.findOne(projectId);
 
-    await this.dashboardRepository
-      .createQueryBuilder()
-      .relation(UserDashboard, 'user')
-      .of(dashboard)
-      .set(userId);
+    if (dashboard && user && project) {
+      // update
+      return await this.dashboardRepository
+        .createQueryBuilder()
+        .update(dashboard)
+        .set({
+          user,
+          project,
+        })
+        .execute();
+    }
 
-    await this.dashboardRepository
+    // create
+    return await this.dashboardRepository
       .createQueryBuilder()
-      .relation(UserDashboard, 'project')
-      .of(dashboard)
-      .set(projectId);
+      .insert()
+      .into(UserDashboard)
+      .values({
+        user,
+        project,
+      })
+      .execute();
   }
 }

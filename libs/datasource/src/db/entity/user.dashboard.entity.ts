@@ -15,15 +15,12 @@ export class UserDashboard {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @OneToOne(() => Team)
-  // @JoinColumn()
-  // activeTeam: Team;
-
   @OneToOne(() => Project)
   @JoinColumn()
   project: Project;
 
-  @OneToOne(() => User, (user) => user.dashboard)
+  @OneToOne(() => User)
+  @JoinColumn()
   user: User;
 
   @CreateDateColumn()

@@ -47,11 +47,6 @@ export class User {
   @JoinTable()
   projects: Project[];
 
-  // 一对一
-  @OneToOne(() => UserDashboard)
-  @JoinColumn()
-  dashboard: UserDashboard;
-
   @CreateDateColumn()
   createdAt: Date;
 

@@ -11,11 +11,13 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { InsertResult, UpdateResult } from 'typeorm';
 import { ApiQuery, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { Project, User, UserDashboard } from 'libs/datasource';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { CreateUserDto } from './user.dto';
+
+import { UserService } from './user.service';
+import { User, UserDashboard } from 'libs/datasource';
+import { CreateUserDto, UpdateDashboardDto } from './user.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -70,9 +72,11 @@ export class UserController {
   @Post('api/dashboard')
   async UpdateDashboardProject(
     @Request() req,
-    @Query('projectId') projectId: number,
-  ): Promise<void> {
+    @Body() updateDashboardDto: UpdateDashboardDto,
+  ): Promise<UpdateResult | InsertResult> {
+    const { projectId } = updateDashboardDto;
     const userId = req.user?.result?.id;
+
     return await this.userService.updateDashboardSetting(userId, projectId);
   }
 }
