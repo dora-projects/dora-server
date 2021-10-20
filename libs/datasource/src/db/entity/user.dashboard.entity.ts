@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 import { Project } from './project.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class UserDashboard {
@@ -21,6 +22,9 @@ export class UserDashboard {
   @OneToOne(() => Project)
   @JoinColumn()
   project: Project;
+
+  @OneToOne(() => User, (user) => user.dashboard)
+  user: User;
 
   @CreateDateColumn()
   createdAt: Date;

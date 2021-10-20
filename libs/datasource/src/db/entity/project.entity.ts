@@ -7,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   ManyToMany,
-  JoinTable,
 } from 'typeorm';
 
 import { AlertRule } from './alert.rule.entity';
@@ -38,7 +37,6 @@ export class Project {
 
   // 多对多
   @ManyToMany(() => User, (pro) => pro.projects)
-  @JoinTable()
   users: User[];
 
   // 一对多

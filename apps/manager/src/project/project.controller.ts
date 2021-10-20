@@ -30,9 +30,9 @@ import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { UpdateResult } from 'typeorm';
 
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('project')
 @Controller()
-@ApiBearerAuth()
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 

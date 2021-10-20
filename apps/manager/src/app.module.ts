@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { MyConfigModule } from 'libs/datasource/config';
 import { MyBullModule, MyDatabase, MyElasticModule } from 'libs/datasource';
+import { AppService } from './app.service';
 
 import { AnalysisModule } from './analysis/analysis.module';
 import { IssuesModule } from './issues/issues.module';
@@ -29,5 +30,6 @@ import { AlertModule } from './alert/alert.module';
     SourcemapModule,
     SystemModule,
   ],
+  providers: [AppService],
 })
 export class AppModule {}

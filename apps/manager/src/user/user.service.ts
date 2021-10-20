@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, UpdateResult } from 'typeorm';
-import { User } from 'libs/datasource/db/entity';
+import { User, UserDashboard } from 'libs/datasource/db/entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import {
   paginate,
@@ -14,6 +14,9 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(UserDashboard)
+    private readonly dashboardRepository: Repository<UserDashboard>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -23,6 +26,10 @@ export class UserService {
     user.password = createUserDto.password;
 
     return await this.userRepository.save(user);
+  }
+
+  async countUser(): Promise<number> {
+    return await this.userRepository.createQueryBuilder().getCount();
   }
 
   async paginate(options: IPaginationOptions): Promise<Pagination<User>> {
@@ -63,5 +70,29 @@ export class UserService {
 
   async remove(id: string): Promise<void> {
     await this.userRepository.delete(id);
+  }
+
+  async getDashboardSetting(userId: number) {
+    return await this.userRepository
+      .createQueryBuilder()
+      .relation(User, 'dashboard')
+      .of(userId)
+      .loadOne<UserDashboard>();
+  }
+
+  async updateDashboardSetting(userId: number, projectId: number) {
+    const dashboard = new UserDashboard();
+
+    await this.dashboardRepository
+      .createQueryBuilder()
+      .relation(UserDashboard, 'user')
+      .of(dashboard)
+      .set(userId);
+
+    await this.dashboardRepository
+      .createQueryBuilder()
+      .relation(UserDashboard, 'project')
+      .of(dashboard)
+      .set(projectId);
   }
 }

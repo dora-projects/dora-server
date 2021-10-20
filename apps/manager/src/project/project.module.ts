@@ -10,7 +10,7 @@ import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [AuthModule, TypeOrmModule.forFeature([Project])],
+  imports: [TypeOrmModule.forFeature([Project])],
   controllers: [ProjectController],
   providers: [ProjectService],
 })

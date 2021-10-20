@@ -8,13 +8,18 @@ import {
   Delete,
   Query,
   Put,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiQuery, ApiBody, ApiTags } from '@nestjs/swagger';
-import { User } from 'libs/datasource';
+import { ApiQuery, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { Project, User, UserDashboard } from 'libs/datasource';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { CreateUserDto } from './user.dto';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('user')
 @Controller()
 export class UserController {
@@ -52,5 +57,22 @@ export class UserController {
   @ApiQuery({ name: 'id', required: false })
   async delUser(@Query('id') id: string): Promise<void> {
     return await this.userService.remove(id);
+  }
+
+  @Get('api/dashboard')
+  async getDashboardProject(
+    @Request() req,
+  ): Promise<UserDashboard | undefined> {
+    const userId = req.user?.result?.id;
+    return await this.userService.getDashboardSetting(userId);
+  }
+
+  @Post('api/dashboard')
+  async UpdateDashboardProject(
+    @Request() req,
+    @Query('projectId') projectId: number,
+  ): Promise<void> {
+    const userId = req.user?.result?.id;
+    return await this.userService.updateDashboardSetting(userId, projectId);
   }
 }
