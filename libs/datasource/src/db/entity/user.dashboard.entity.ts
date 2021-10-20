@@ -7,16 +7,20 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Team } from './team.entity';
+import { Project } from './project.entity';
 
 @Entity()
 export class UserDashboard {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Team)
+  // @OneToOne(() => Team)
+  // @JoinColumn()
+  // activeTeam: Team;
+
+  @OneToOne(() => Project)
   @JoinColumn()
-  activeTeam: Team;
+  project: Project;
 
   @CreateDateColumn()
   createdAt: Date;

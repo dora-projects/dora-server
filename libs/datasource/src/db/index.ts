@@ -34,7 +34,7 @@ export const MyDatabase = TypeOrmModule.forRootAsync({
       Issue,
       IssueStatus,
       Project,
-      Team,
+      // Team,
       UserDashboard,
       User,
     ],

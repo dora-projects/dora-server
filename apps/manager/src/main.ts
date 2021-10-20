@@ -29,6 +29,7 @@ const setupSwagger = (app) => {
  */
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
+    // todo 减少预检次数
     cors: true,
   });
   app.useGlobalFilters(new AllExceptionFilter());

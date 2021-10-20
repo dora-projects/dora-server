@@ -7,7 +7,7 @@ import { AnalysisModule } from './analysis/analysis.module';
 import { IssuesModule } from './issues/issues.module';
 import { ProjectModule } from './project/project.module';
 import { SourcemapModule } from './sourcemap/sourcemap.module';
-import { TeamModule } from './team/team.module';
+// import { TeamModule } from './team/team.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { SystemModule } from './system/system.module';
@@ -21,7 +21,7 @@ import { AlertModule } from './alert/alert.module';
     MyDatabase,
     AuthModule,
     UserModule,
-    TeamModule,
+    // TeamModule,
     ProjectModule,
     AlertModule,
     AnalysisModule,

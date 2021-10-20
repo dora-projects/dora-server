@@ -10,7 +10,7 @@ export class ReceiverController {
   private readonly logger = new Logger(ReceiverController.name);
 
   constructor(
-    private readonly reportService: ReceiverService,
+    private readonly receiverService: ReceiverService,
     private readonly sentryService: SentryService,
   ) {}
 
@@ -50,7 +50,10 @@ export class ReceiverController {
 
       this.logger.debug('relay sentryStore....');
 
-      await this.sentryService.storeDataAdapter(storeData);
+      const data = await this.sentryService.storeDataAdapter(storeData);
+      if (data) {
+        await this.receiverService.pushErrorEventToQueue(data);
+      }
       return 'ok';
     } catch (e) {
       this.logger.error(e);
@@ -87,7 +90,12 @@ export class ReceiverController {
 
       this.logger.debug('relay sentryEnvelope....');
 
-      await this.sentryService.envelopeDataAdapter(envelopeData);
+      const pickData = await this.sentryService.envelopeDataAdapter(
+        envelopeData,
+      );
+      if (pickData) {
+        await this.receiverService.pushPerfEventToQueue(pickData);
+      }
       return 'ok';
     } catch (e) {
       this.logger.error(e);

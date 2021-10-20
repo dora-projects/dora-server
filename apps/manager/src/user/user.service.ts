@@ -41,9 +41,12 @@ export class UserService {
     });
   }
 
-  async searchByUsername(username: string): Promise<User[]> {
+  async searchUser(searchStr: string): Promise<User[]> {
     return await this.userRepository.find({
-      username: Like(`%${username}%`),
+      where: [
+        { username: Like(`%${searchStr}%`) },
+        { email: Like(`%${searchStr}%`) },
+      ],
     });
   }
 

@@ -32,6 +32,13 @@ export class UserController {
     return await this.userService.create(user);
   }
 
+  @Get('api/search/users')
+  @ApiQuery({ name: 'searchStr', type: 'string', required: false })
+  searchUsers(@Query() query): Promise<User[]> {
+    const { searchStr } = query;
+    return this.userService.searchUser(searchStr);
+  }
+
   @Get('api/users')
   getUsers(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
@@ -39,25 +46,6 @@ export class UserController {
   ): Promise<Pagination<User>> {
     limit = limit > 100 ? 100 : limit;
     return this.userService.paginate({ page, limit });
-  }
-
-  @Get('api/user')
-  @ApiQuery({ name: 'id', required: false })
-  @ApiQuery({ name: 'email', required: false })
-  @ApiQuery({ name: 'username', required: false })
-  async queryUser(@Query() query): Promise<{
-    result: User[] | User;
-  }> {
-    const { id, email, username } = query;
-    if (id) {
-      return { result: await this.userService.findOne(id) };
-    }
-    if (email) {
-      return { result: await this.userService.findByEmail(id) };
-    }
-    if (username) {
-      return { result: await this.userService.searchByUsername(username) };
-    }
   }
 
   @Delete('api/user')

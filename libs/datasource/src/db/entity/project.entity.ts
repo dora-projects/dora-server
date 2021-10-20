@@ -6,11 +6,12 @@ import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
-import { Team } from './team.entity';
 import { AlertRule } from './alert.rule.entity';
+import { User } from 'libs/datasource/db/entity/user.entity';
 
 @Entity()
 export class Project {
@@ -22,15 +23,23 @@ export class Project {
   apiKey: string;
 
   @Column({ type: 'text' })
+  type: string;
+
+  @Column({ type: 'text' })
   @Index({ unique: true })
   name: string;
 
-  @Column({ type: 'text' })
-  type: string;
+  @Column({ type: 'text', nullable: true })
+  detail: string;
 
   // 多对一
-  @ManyToOne(() => Team, (team) => team.projects)
-  team: Team;
+  // @ManyToOne(() => Team, (team) => team.projects)
+  // team: Team;
+
+  // 多对多
+  @ManyToMany(() => User, (pro) => pro.projects)
+  @JoinTable()
+  users: User[];
 
   // 一对多
   @OneToMany(() => AlertRule, (alertRule) => alertRule.project)

@@ -28,7 +28,7 @@ export class AuthController {
   @Get('api/auth/me')
   @ApiBearerAuth()
   async getProfile(@Request() req) {
-    await sleep(300);
+    await sleep(600);
     return req.user;
   }
 }

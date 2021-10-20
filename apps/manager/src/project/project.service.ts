@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AlertRule, Project, Team } from 'libs/datasource';
+import * as assert from 'assert';
+import { Project, User } from 'libs/datasource';
 import { Connection, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
@@ -14,34 +15,26 @@ export class ProjectService {
     private readonly projectRepository: Repository<Project>,
   ) {}
 
-  async create(createProjectDto: CreateProjectDto): Promise<Project | void> {
-    const runner = this.connection.createQueryRunner();
-    await runner.connect();
-    await runner.startTransaction();
+  async create(
+    createProjectDto: CreateProjectDto,
+    userId: number,
+  ): Promise<Project | void> {
+    assert(!!userId);
 
-    let err;
-    try {
-      const project = new Project();
-      project.name = createProjectDto.name;
-      project.type = createProjectDto.type;
-      project.apiKey = uuid();
-      const result = await runner.manager.save(project);
+    const project = new Project();
+    project.name = createProjectDto.name;
+    project.type = createProjectDto.type;
+    project.detail = createProjectDto.detail;
+    project.apiKey = uuid();
 
-      await runner.manager
-        .createQueryBuilder()
-        .relation(Project, 'team')
-        .of(project)
-        .set(createProjectDto.teamId);
+    const result = await this.projectRepository.save(project);
+    await this.projectAddUser(result.id, [userId]);
+    return result;
+  }
 
-      await runner.commitTransaction();
-      return result;
-    } catch (e) {
-      err = e;
-      await runner.rollbackTransaction();
-    } finally {
-      await runner.release();
-    }
-    return err;
+  async update(updateProjectDto: UpdateProjectDto): Promise<UpdateResult> {
+    const { id, name, type, detail } = updateProjectDto;
+    return await this.projectRepository.update({ id }, { name, type, detail });
   }
 
   async findById(id: number): Promise<Project> {
@@ -58,15 +51,39 @@ export class ProjectService {
     });
   }
 
-  async update(updateProjectDto: UpdateProjectDto): Promise<UpdateResult> {
-    const { projectId, name, type } = updateProjectDto;
-    return await this.projectRepository.update(
-      { id: projectId },
-      { name, type },
-    );
-  }
-
   async delete(projectId: number): Promise<void> {
     await this.projectRepository.delete(projectId);
+  }
+
+  async findLoginUserProjects(userId: number): Promise<Project[]> {
+    return await this.projectRepository
+      .createQueryBuilder()
+      .relation(User, 'projects')
+      .of(userId)
+      .loadMany();
+  }
+
+  async findProjectUsers(projectId: number) {
+    return await this.projectRepository
+      .createQueryBuilder()
+      .relation(Project, 'users')
+      .of(projectId)
+      .loadMany();
+  }
+
+  async projectAddUser(projectId: number, userIds: number[]) {
+    return await this.projectRepository
+      .createQueryBuilder()
+      .relation(Project, 'users')
+      .of(projectId)
+      .add(userIds);
+  }
+
+  async projectRemoveUser(projectId: number, userIds: number[]) {
+    return await this.projectRepository
+      .createQueryBuilder()
+      .relation(Project, 'users')
+      .of(projectId)
+      .remove(userIds);
   }
 }

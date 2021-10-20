@@ -4,7 +4,6 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinColumn,
-  OneToMany,
   OneToOne,
   CreateDateColumn,
   UpdateDateColumn,
@@ -13,9 +12,8 @@ import {
 } from 'typeorm';
 import { classToPlain, Exclude } from 'class-transformer';
 
-import { AlertContact } from './alert.contact.entity';
-import { Team } from './team.entity';
 import { UserDashboard } from './user.dashboard.entity';
+import { Project } from 'libs/datasource/db/entity/project.entity';
 
 @Entity()
 export class User {
@@ -40,9 +38,14 @@ export class User {
   isActive: boolean;
 
   // 多对多
-  @ManyToMany(() => Team, (team) => team.users)
+  // @ManyToMany(() => Team, (team) => team.users)
+  // @JoinTable()
+  // teams: Team[];
+
+  // 多对多
+  @ManyToMany(() => Project, (pro) => pro.users)
   @JoinTable()
-  teams: Team[];
+  projects: Project[];
 
   // 一对一
   @OneToOne(() => UserDashboard)
