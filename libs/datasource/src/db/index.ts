@@ -8,8 +8,7 @@ import {
   Issue,
   IssueStatus,
   Project,
-  Team,
-  UserDashboard,
+  Setting,
   User,
 } from './entity';
 
@@ -34,8 +33,7 @@ export const MyDatabase = TypeOrmModule.forRootAsync({
       Issue,
       IssueStatus,
       Project,
-      // Team,
-      UserDashboard,
+      Setting,
       User,
     ],
     synchronize: true,

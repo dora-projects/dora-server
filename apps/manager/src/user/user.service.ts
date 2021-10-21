@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, UpdateResult, Connection } from 'typeorm';
-import { Project, User, UserDashboard } from 'libs/datasource/db/entity';
+import { Project, User, Setting } from 'libs/datasource/db/entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import {
   paginate,
@@ -18,8 +18,8 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
-    @InjectRepository(UserDashboard)
-    private readonly dashboardRepository: Repository<UserDashboard>,
+    @InjectRepository(Setting)
+    private readonly settingRepository: Repository<Setting>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -76,45 +76,52 @@ export class UserService {
     await this.userRepository.delete(id);
   }
 
-  async getDashboardSetting(userId: number) {
-    const dashboard = await this.dashboardRepository
-      .createQueryBuilder('dashboard')
-      .leftJoinAndSelect('dashboard.user', 'user')
-      .leftJoinAndSelect('dashboard.project', 'project')
-      .where('user.id = :id', { id: userId })
-      .getOne();
+  async getSettingOrDefault(userId: number) {
+    const setting = await this.getSetting(userId);
+    if (setting?.project) return setting;
 
-    if (dashboard?.project) {
-      return dashboard?.project;
-    }
-
-    // 默认返回第一个
-    return await this.projectRepository
+    // 默认提供一个项目展示
+    const project = await this.projectRepository
       .createQueryBuilder()
       .relation(User, 'projects')
       .of(userId)
       .loadOne();
+
+    return {
+      id: null,
+      user: null,
+      project: project,
+    } as Setting;
   }
 
-  async updateDashboardSetting(userId: number, projectId: number) {
-    const dashboard = await this.getDashboardSetting(userId);
+  async getSetting(userId: number) {
+    return await this.settingRepository
+      .createQueryBuilder('setting')
+      .leftJoinAndSelect('setting.user', 'user')
+      .leftJoinAndSelect('setting.project', 'project')
+      .where('user.id = :id', { id: userId })
+      .getOne();
+  }
+
+  async updateSetting(userId: number, projectId: number) {
+    const setting = await this.getSetting(userId);
     const user = await this.userRepository.findOne(userId);
     const project = await this.projectRepository.findOne(projectId);
 
-    if (dashboard && user && project) {
+    if (setting && user && project) {
       // update
-      return await this.dashboardRepository
+      return await this.settingRepository
         .createQueryBuilder()
-        .update(dashboard)
+        .update(setting)
         .set({ user, project })
         .execute();
     }
 
     // create
-    return await this.dashboardRepository
+    return await this.settingRepository
       .createQueryBuilder()
       .insert()
-      .into(UserDashboard)
+      .into(Setting)
       .values({
         user,
         project,

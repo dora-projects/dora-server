@@ -24,7 +24,7 @@ export class CreateUserDto {
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}
 
-export class UpdateDashboardDto {
+export class UpdateDefaultDashboardDto {
   @ApiProperty({ description: '项目 id' })
   @IsNumber()
   projectId: number;

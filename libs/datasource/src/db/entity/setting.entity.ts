@@ -11,7 +11,7 @@ import { Project } from './project.entity';
 import { User } from './user.entity';
 
 @Entity()
-export class UserDashboard {
+export class Setting {
   @PrimaryGeneratedColumn()
   id: number;
 

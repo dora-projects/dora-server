@@ -16,8 +16,8 @@ import { ApiQuery, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Pagination } from 'nestjs-typeorm-paginate';
 
 import { UserService } from './user.service';
-import { Project, User, UserDashboard } from 'libs/datasource';
-import { CreateUserDto, UpdateDashboardDto } from './user.dto';
+import { Setting, User } from 'libs/datasource';
+import { CreateUserDto, UpdateDefaultDashboardDto } from './user.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -61,20 +61,19 @@ export class UserController {
     return await this.userService.remove(id);
   }
 
-  @Get('api/dashboard')
-  async getDashboardProject(@Request() req): Promise<Project> {
+  @Get('api/user/setting')
+  async getSetting(@Request() req): Promise<Setting> {
     const userId = req.user?.result?.id;
-    return await this.userService.getDashboardSetting(userId);
+    return await this.userService.getSettingOrDefault(userId);
   }
 
-  @Post('api/dashboard')
-  async UpdateDashboardProject(
+  @Post('api/user/setting')
+  async UpdateSetting(
     @Request() req,
-    @Body() updateDashboardDto: UpdateDashboardDto,
+    @Body() updateDefaultDto: UpdateDefaultDashboardDto,
   ): Promise<UpdateResult | InsertResult> {
-    const { projectId } = updateDashboardDto;
+    const { projectId } = updateDefaultDto;
     const userId = req.user?.result?.id;
-
-    return await this.userService.updateDashboardSetting(userId, projectId);
+    return await this.userService.updateSetting(userId, projectId);
   }
 }
