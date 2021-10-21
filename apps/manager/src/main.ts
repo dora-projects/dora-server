@@ -4,7 +4,17 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { ManagerHttpPort } from 'libs/shared/constant';
 import { AppModule } from './app.module';
-import { AllExceptionFilter } from './common/filter';
+import { AllExceptionFilter } from './common/all-exception.filter';
+
+const banner = `
+███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗
+████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝
+██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗  
+██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  
+██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗
+╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+                  
+`;
 
 const setupSwagger = (app) => {
   const config = new DocumentBuilder()
@@ -28,26 +38,33 @@ const setupSwagger = (app) => {
  * manager 管理平台
  */
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    // todo 减少预检次数
-    cors: true,
+  const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
+
+  app.enableCors({
+    origin: (
+      requestOrigin: string,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
+      callback(null, true);
+    },
+    maxAge: 600,
+    credentials: true,
   });
-  app.useGlobalFilters(new AllExceptionFilter());
-  app.useGlobalPipes(new ValidationPipe());
 
   setupSwagger(app);
 
-  await app.listen(ManagerHttpPort);
+  app.useGlobalFilters(new AllExceptionFilter());
 
-  const banner = `
-███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗
-████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝
-██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗  
-██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  
-██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗
-╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
-                  
-`;
+  await app.listen(ManagerHttpPort);
 
   console.log(
     chalk.green(`

@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { MyConfigModule } from 'libs/datasource/config';
 import { MyBullModule, MyDatabase, MyElasticModule } from 'libs/datasource';
 import { AppService } from './app.service';
+import { LoggerMiddleware } from './common/logger.middleware';
 
 import { AnalysisModule } from './analysis/analysis.module';
 import { IssuesModule } from './issues/issues.module';
@@ -32,4 +33,8 @@ import { AlertModule } from './alert/alert.module';
   ],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
