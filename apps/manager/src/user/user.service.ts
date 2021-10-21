@@ -26,6 +26,7 @@ export class UserService {
     const user = new User();
     user.username = createUserDto.username;
     user.email = createUserDto.email;
+    // todo 密码加密
     user.password = createUserDto.password;
 
     return await this.userRepository.save(user);

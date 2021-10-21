@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
+import { RegisterUserDto } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -27,5 +28,10 @@ export class AuthService {
     return {
       token: this.jwtService.sign(payload),
     };
+  }
+
+  // 注册
+  async register(user: RegisterUserDto) {
+    return await this.usersService.create(user);
   }
 }

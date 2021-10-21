@@ -10,7 +10,7 @@ import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
-import { LoginDto } from './auth.dto';
+import { LoginDto, RegisterUserDto } from './auth.dto';
 import { sleep } from 'libs/shared';
 
 @ApiTags('auth')
@@ -22,6 +22,15 @@ export class AuthController {
   @Post('api/auth/login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @Post('api/auth/register')
+  async register(@Body() registerUserDto: RegisterUserDto) {
+    await this.authService.register(registerUserDto);
+    return await this.authService.login({
+      email: registerUserDto.email,
+      password: registerUserDto.password,
+    });
   }
 
   @UseGuards(JwtAuthGuard)
