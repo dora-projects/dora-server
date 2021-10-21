@@ -30,7 +30,7 @@ export class EventProcessor {
       const resultStep1 = await this.eventService.aggregationError(data);
 
       // step2: uaParser
-      const resultStep2 = await this.eventService.aggregationError(resultStep1);
+      const resultStep2 = await this.eventService.userAgentParser(resultStep1);
 
       // step3: 保存
       const res = await this.elasticsearchService.index({
@@ -57,7 +57,7 @@ export class EventProcessor {
     const data = job.data;
     try {
       // step1: uaParser
-      const resultStep1 = await this.eventService.aggregationError(data);
+      const resultStep1 = await this.eventService.userAgentParser(data);
 
       // step2: 保存
       const res = await this.elasticsearchService.index({
