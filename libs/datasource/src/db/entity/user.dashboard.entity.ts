@@ -15,11 +15,17 @@ export class UserDashboard {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Project)
+  @OneToOne(() => Project, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   project: Project;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   user: User;
 

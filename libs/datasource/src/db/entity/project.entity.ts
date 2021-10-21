@@ -36,11 +36,17 @@ export class Project {
   // team: Team;
 
   // 多对多
-  @ManyToMany(() => User, (pro) => pro.projects)
+  @ManyToMany(() => User, (pro) => pro.projects,{
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   users: User[];
 
   // 一对多
-  @OneToMany(() => AlertRule, (alertRule) => alertRule.project)
+  @OneToMany(() => AlertRule, (alertRule) => alertRule.project, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   alertRules: AlertRule[];
 
   @CreateDateColumn()

@@ -16,7 +16,7 @@ import { ApiQuery, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Pagination } from 'nestjs-typeorm-paginate';
 
 import { UserService } from './user.service';
-import { User, UserDashboard } from 'libs/datasource';
+import { Project, User, UserDashboard } from 'libs/datasource';
 import { CreateUserDto, UpdateDashboardDto } from './user.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
@@ -62,9 +62,7 @@ export class UserController {
   }
 
   @Get('api/dashboard')
-  async getDashboardProject(
-    @Request() req,
-  ): Promise<UserDashboard | undefined> {
+  async getDashboardProject(@Request() req): Promise<Project> {
     const userId = req.user?.result?.id;
     return await this.userService.getDashboardSetting(userId);
   }

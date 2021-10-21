@@ -14,13 +14,10 @@ export class UserService {
   constructor(
     @InjectConnection()
     private connection: Connection,
-
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
-
     @InjectRepository(UserDashboard)
     private readonly dashboardRepository: Repository<UserDashboard>,
   ) {}
@@ -79,12 +76,23 @@ export class UserService {
   }
 
   async getDashboardSetting(userId: number) {
-    return await this.dashboardRepository
+    const dashboard = await this.dashboardRepository
       .createQueryBuilder('dashboard')
       .leftJoinAndSelect('dashboard.user', 'user')
       .leftJoinAndSelect('dashboard.project', 'project')
       .where('user.id = :id', { id: userId })
       .getOne();
+
+    if (dashboard?.project) {
+      return dashboard?.project;
+    }
+
+    // 默认返回第一个
+    return await this.projectRepository
+      .createQueryBuilder()
+      .relation(User, 'projects')
+      .of(userId)
+      .loadOne();
   }
 
   async updateDashboardSetting(userId: number, projectId: number) {
@@ -97,10 +105,7 @@ export class UserService {
       return await this.dashboardRepository
         .createQueryBuilder()
         .update(dashboard)
-        .set({
-          user,
-          project,
-        })
+        .set({ user, project })
         .execute();
     }
 

@@ -12,7 +12,6 @@ import {
 } from 'typeorm';
 import { classToPlain, Exclude } from 'class-transformer';
 
-import { UserDashboard } from './user.dashboard.entity';
 import { Project } from 'libs/datasource/db/entity/project.entity';
 
 @Entity()

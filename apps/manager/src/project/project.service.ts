@@ -1,10 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import * as assert from 'assert';
 import { Project, User } from 'libs/datasource';
-import { Connection, Repository, UpdateResult } from 'typeorm';
+import {
+  Connection,
+  QueryFailedError,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { CreateProjectDto, UpdateProjectDto } from './project.dto';
+import { RecordExistException } from '../common/error';
 
 @Injectable()
 export class ProjectService {
@@ -21,15 +27,23 @@ export class ProjectService {
   ): Promise<Project | void> {
     assert(!!userId);
 
-    const project = new Project();
-    project.name = createProjectDto.name;
-    project.type = createProjectDto.type;
-    project.detail = createProjectDto.detail;
-    project.apiKey = uuid();
+    try {
+      const project = new Project();
+      project.name = createProjectDto.name;
+      project.type = createProjectDto.type;
+      project.detail = createProjectDto.detail;
+      project.apiKey = uuid();
 
-    const result = await this.projectRepository.save(project);
-    await this.projectAddUser(result.id, [userId]);
-    return result;
+      const result = await this.projectRepository.save(project);
+      await this.projectAddUser(result.id, [userId]);
+      return result;
+    } catch (e) {
+      if (e instanceof QueryFailedError) {
+        throw new RecordExistException('项目名已存在');
+      } else {
+        throw e;
+      }
+    }
   }
 
   async update(updateProjectDto: UpdateProjectDto): Promise<UpdateResult> {
@@ -52,7 +66,12 @@ export class ProjectService {
   }
 
   async delete(projectId: number): Promise<void> {
-    await this.projectRepository.delete(projectId);
+    await this.projectRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Project)
+      .where('id = :id', { id: projectId })
+      .execute();
   }
 
   async findLoginUserProjects(userId: number): Promise<Project[]> {

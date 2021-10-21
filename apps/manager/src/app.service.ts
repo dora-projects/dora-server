@@ -16,6 +16,7 @@ export class AppService implements OnModuleInit {
       username: 'dora',
       email: 'admin@admin.com',
       password: '123',
+      roles: 'admin',
     };
     await this.userService.create(adminUser);
     this.logger.log(`admin user has been created!`);
