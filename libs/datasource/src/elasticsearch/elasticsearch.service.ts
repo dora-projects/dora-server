@@ -24,7 +24,7 @@ export class SearchService {
   }
 
   async saveData(data: any): Promise<any> {
-    const result = this.elasticsearchService.index({
+    const result = await this.elasticsearchService.index({
       index: 'dora',
       body: data,
     });

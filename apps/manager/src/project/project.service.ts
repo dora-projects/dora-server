@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as assert from 'assert';
 import { Project, User } from 'libs/datasource';
 import {
@@ -74,7 +74,7 @@ export class ProjectService {
       .execute();
   }
 
-  async findLoginUserProjects(userId: number): Promise<Project[]> {
+  async findUserProjects(userId: number): Promise<Project[]> {
     return await this.projectRepository
       .createQueryBuilder()
       .relation(User, 'projects')
@@ -104,5 +104,17 @@ export class ProjectService {
       .relation(Project, 'users')
       .of(projectId)
       .remove(userIds);
+  }
+
+  async isUserCanAccessProject(
+    appKey: string,
+    userId: number,
+  ): Promise<boolean> {
+    const projects = await this.findUserProjects(userId);
+    if (!projects || projects.length === 0) return false;
+    const project = projects.some((project) => {
+      return project.apiKey === appKey;
+    });
+    return !!project;
   }
 }

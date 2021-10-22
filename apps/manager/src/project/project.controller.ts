@@ -74,7 +74,7 @@ export class ProjectController {
   @Get('api/my/projects')
   async projectList(@Request() req): Promise<Project[]> {
     const userId = req.user?.result?.id;
-    return await this.projectService.findLoginUserProjects(userId);
+    return await this.projectService.findUserProjects(userId);
   }
 
   @Get('api/project/users')

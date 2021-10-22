@@ -1,7 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AnalysisService } from './analysis.service';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { EqlQueryBody } from './analysis.dto';
 
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('analysis')
 @Controller()
 export class AnalysisController {
@@ -10,5 +21,16 @@ export class AnalysisController {
   @Get('api/analysis')
   getHello(): string {
     return this.analysisService.getHello();
+  }
+
+  @Post('api/analysis/eql')
+  async clientEql(
+    @Request() req,
+    @Body() eqlQueryBody: EqlQueryBody,
+  ): Promise<any> {
+    const userId = req.user?.result?.id;
+    const { eql } = eqlQueryBody;
+    const result = await this.analysisService.doQuery(eql, userId);
+    return result?.body;
   }
 }

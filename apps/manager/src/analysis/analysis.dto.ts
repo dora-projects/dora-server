@@ -10,3 +10,8 @@ export class CreateCatDto {
   @ApiProperty()
   breed: string;
 }
+
+export class EqlQueryBody {
+  @ApiProperty({ description: '查询体' })
+  eql: Record<string, any>;
+}
