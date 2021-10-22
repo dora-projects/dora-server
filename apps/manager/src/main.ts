@@ -1,8 +1,8 @@
-import * as chalk from 'chalk';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-import { ManagerHttpPort } from 'libs/shared/constant';
+import * as chalk from 'chalk';
 import { AppModule } from './app.module';
 import { AllExceptionFilter } from './common/all-exception.filter';
 
@@ -64,7 +64,10 @@ async function bootstrap() {
 
   app.useGlobalFilters(new AllExceptionFilter());
 
-  await app.listen(ManagerHttpPort);
+  const configService = app.get(ConfigService);
+  const port = configService.get('manager_port');
+
+  await app.listen(port);
 
   console.log(
     chalk.green(`

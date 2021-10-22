@@ -13,8 +13,9 @@ export const MyBullModule = BullModule.forRootAsync({
     return {
       prefix: BullPrefix,
       redis: {
-        host: configService.get('REDIS_HOST'),
-        port: configService.get('REDIS_PORT'),
+        host: configService.get('redis.host'),
+        port: configService.get('redis.port'),
+        password: configService.get('redis.password'),
       },
     };
   },

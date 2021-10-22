@@ -14,6 +14,6 @@ describe('ConfigService', () => {
   });
 
   it('should be equal', () => {
-    expect(service.get('TYPEORM_CONNECTION')).toEqual('postgres');
+    expect(service.get('typeorm.connection')).toEqual('postgres');
   });
 });

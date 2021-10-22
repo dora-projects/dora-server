@@ -1,24 +1,24 @@
 FROM node:14-alpine as dependencies
-WORKDIR /dora
+WORKDIR /app
 COPY package.json ./
 RUN yarn install
 
 # ------------------------------------
 FROM node:14-alpine as builder
-WORKDIR /dora
+WORKDIR /app
 COPY . .
 COPY --from=dependencies /dora/node_modules ./node_modules
 RUN yarn build
 
 # ------------------------------------
 FROM node:14-alpine as runner
-LABEL maintainer="chenyueban <jasonchan0527@gmail.com>"
+LABEL maintainer="nan <msg@nancode.cn>"
 WORKDIR /dora
 ENV NODE_ENV production
 
 COPY package.json ./
 RUN yarn install
-COPY --from=builder /dist/apps  /dora/apps
+COPY --from=builder /app/dist/apps  /dora
 
 # default
-ENTRYPOINT [ "node", "./apps/manager/main.js"]
+ENTRYPOINT [ "node", "./manager/main.js"]

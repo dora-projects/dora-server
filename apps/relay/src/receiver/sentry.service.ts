@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ReceiverService } from './receiver.service';
 import { PrefEvent, ErrorEvent } from './receiver.dto';
 
 @Injectable()

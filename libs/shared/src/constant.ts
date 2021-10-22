@@ -1,7 +1,3 @@
-// 服务端 端口
-export const ManagerHttpPort = 8000;
-export const RelayHttpPort = 9000;
-
 // index 索引
 export const ElasticIndexOfView = 'dora_view';
 export const ElasticIndexOfPref = 'dora_pref';

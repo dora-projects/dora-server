@@ -10,6 +10,7 @@ import {
   PerfEventQueueName,
 } from 'libs/shared/constant';
 import { EventService } from './event.service';
+import { __DEV__, dumpJson } from 'libs/shared';
 
 @Processor(EventQueueName)
 export class EventProcessor {
@@ -41,6 +42,10 @@ export class EventProcessor {
       // step4: 发送给告警
       await this.eventService.sendAlertQueue(resultStep2);
 
+      if (__DEV__) {
+        await dumpJson('error', resultStep2);
+      }
+
       this.logger.debug(
         `Elasticsearch save ${ElasticIndexOfPref} status:${res.statusCode}`,
       );
@@ -64,6 +69,10 @@ export class EventProcessor {
         index: ElasticIndexOfError,
         body: resultStep1,
       });
+
+      if (__DEV__) {
+        await dumpJson('perf', resultStep1);
+      }
 
       this.logger.debug(
         `Elasticsearch save ${ElasticIndexOfError} status:${res.statusCode}`,

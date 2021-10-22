@@ -15,14 +15,14 @@ import {
 export const MyDatabase = TypeOrmModule.forRootAsync({
   imports: [MyConfigModule],
   useFactory: (configService: ConfigService) => ({
-    type: configService.get<'postgres' | 'mysql'>('TYPEORM_CONNECTION'),
+    type: configService.get<'postgres' | 'mysql'>('typeorm.connection'),
 
-    host: configService.get<string>('TYPEORM_HOST'),
-    port: configService.get<number>('TYPEORM_PORT'),
+    host: configService.get<string>('typeorm.host'),
+    port: configService.get<number>('typeorm.port'),
 
-    username: configService.get<string>('TYPEORM_USERNAME'),
-    password: configService.get<string>('TYPEORM_PASSWORD'),
-    database: configService.get<string>('TYPEORM_DATABASE'),
+    username: configService.get<string>('typeorm.username'),
+    password: configService.get<string>('typeorm.password'),
+    database: configService.get<string>('typeorm.db'),
 
     // logging: ['error'],
 

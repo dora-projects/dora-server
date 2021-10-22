@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { RelayHttpPort } from 'libs/shared/constant';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import * as bodyParser from 'body-parser';
 import * as chalk from 'chalk';
@@ -12,7 +12,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   app.use(bodyParser.text());
-  await app.listen(RelayHttpPort);
+
+  const configService = app.get(ConfigService);
+  const port = configService.get('relay_port');
+
+  await app.listen(port);
 
   console.log(chalk.green(`relay started at ${await app.getUrl()}`));
 }

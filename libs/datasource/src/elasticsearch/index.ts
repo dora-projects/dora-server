@@ -5,10 +5,10 @@ import { ConfigService } from '@nestjs/config';
 export const MyElasticModule = ElasticsearchModule.registerAsync({
   imports: [MyConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    node: configService.get('ELASTICSEARCH_NODE'),
+    node: configService.get('elasticsearch.node'),
     auth: {
-      username: configService.get('ELASTIC_USERNAME'),
-      password: configService.get('ELASTIC_PASSWORD'),
+      username: configService.get('elasticsearch.username'),
+      password: configService.get('elasticsearch.password'),
     },
   }),
   inject: [ConfigService],
