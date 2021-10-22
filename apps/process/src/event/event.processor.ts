@@ -35,7 +35,7 @@ export class EventProcessor {
 
       // step3: 保存
       const res = await this.elasticsearchService.index({
-        index: ElasticIndexOfPref,
+        index: ElasticIndexOfError,
         body: resultStep2,
       });
 
@@ -47,7 +47,7 @@ export class EventProcessor {
       }
 
       this.logger.debug(
-        `Elasticsearch save ${ElasticIndexOfPref} status:${res.statusCode}`,
+        `Elasticsearch save ${ElasticIndexOfError} status:${res.statusCode}`,
       );
     } catch (e) {
       this.logger.error(e);
@@ -66,7 +66,7 @@ export class EventProcessor {
 
       // step2: 保存
       const res = await this.elasticsearchService.index({
-        index: ElasticIndexOfError,
+        index: ElasticIndexOfPref,
         body: resultStep1,
       });
 
@@ -75,7 +75,7 @@ export class EventProcessor {
       }
 
       this.logger.debug(
-        `Elasticsearch save ${ElasticIndexOfError} status:${res.statusCode}`,
+        `Elasticsearch save ${ElasticIndexOfPref} status:${res.statusCode}`,
       );
     } catch (e) {
       this.logger.error(e);
