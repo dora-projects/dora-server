@@ -32,7 +32,7 @@ export class ProjectService {
       project.name = createProjectDto.name;
       project.type = createProjectDto.type;
       project.detail = createProjectDto.detail;
-      project.apiKey = uuid();
+      project.appKey = uuid();
 
       const result = await this.projectRepository.save(project);
       await this.projectAddUser(result.id, [userId]);
@@ -60,7 +60,7 @@ export class ProjectService {
   async findByAppKey(appKey: string): Promise<Project> {
     return await this.projectRepository.findOne({
       where: {
-        apiKey: appKey,
+        appKey: appKey,
       },
     });
   }
@@ -113,7 +113,7 @@ export class ProjectService {
     const projects = await this.findUserProjects(userId);
     if (!projects || projects.length === 0) return false;
     const project = projects.some((project) => {
-      return project.apiKey === appKey;
+      return project.appKey === appKey;
     });
     return !!project;
   }

@@ -19,7 +19,7 @@ export class Project {
 
   @Column({ type: 'text' })
   @Index({ unique: true })
-  apiKey: string;
+  appKey: string;
 
   @Column({ type: 'text' })
   type: string;
@@ -36,7 +36,7 @@ export class Project {
   // team: Team;
 
   // 多对多
-  @ManyToMany(() => User, (pro) => pro.projects,{
+  @ManyToMany(() => User, (pro) => pro.projects, {
     cascade: true,
     onDelete: 'CASCADE',
   })
