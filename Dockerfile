@@ -1,24 +1,18 @@
-FROM node:14-alpine as dependencies
-WORKDIR /app
+FROM node:14 as builder
+WORKDIR /server
 COPY package.json ./
-RUN yarn install
-
-# ------------------------------------
-FROM node:14-alpine as builder
-WORKDIR /app
+# RUN yarn install
+RUN yarn install --registry https://registry.npm.taobao.org/
 COPY . .
-COPY --from=dependencies /dora/node_modules ./node_modules
 RUN yarn build
 
-# ------------------------------------
-FROM node:14-alpine as runner
+FROM node:14 as runner
 LABEL maintainer="nan <msg@nancode.cn>"
-WORKDIR /dora
-ENV NODE_ENV production
+WORKDIR /server
 
-COPY package.json ./
-RUN yarn install
-COPY --from=builder /app/dist/apps  /dora
+COPY --from=builder /server/dist/apps  /server
+COPY --from=builder /server/package.json  /server
+RUN yarn install --production --registry https://registry.npm.taobao.org/
 
 # default
 ENTRYPOINT [ "node", "./manager/main.js"]
