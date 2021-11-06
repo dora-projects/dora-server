@@ -15,7 +15,7 @@ export class AnalysisService {
   }
 
   matchAppKeyInString(input: string): string {
-    const result = input.match(/"appKey":"(\w+)"/);
+    const result = input.match(/"appKey":"(\w{8}(-\w{4}){3}-\w{12}?)"/);
     if (result && result.length >= 2) {
       return result[1];
     }
