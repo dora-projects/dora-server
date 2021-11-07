@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  manager:
+    image: nancode/dora
+    ports:
+      - '8000:8000'
+    env_file: .env.production
+    entrypoint: ['node', './manager/main.js']
+
+  process:
+    image: nancode/dora
+    env_file: .env.production
+    entrypoint: ['node', './process/main.js']
+
+  relay:
+    image: nancode/dora
+    ports:
+      - '9000:9000'
+    env_file: .env.production
+    entrypoint: ['node', './relay/main.js']
+
+  webapp:
+    image: nancode/dora-app
+    ports:
+      - '8080:8080'
+    depends_on:
+      - manager
