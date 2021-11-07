@@ -6,8 +6,8 @@ services:
     ports:
       - '5432:5432'
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_USER: dora
+      POSTGRES_PASSWORD: default_password
       POSTGRES_DB: dora
       PG_DATA: /var/lib/postgresql/data
     volumes:
@@ -15,6 +15,8 @@ services:
 
   redis:
     image: redis:6
+    command: >
+      --requirepass default_password
     ports:
       - '6379:6379'
 
@@ -25,7 +27,7 @@ services:
       - '9300:9300'
     environment:
       ES_JAVA_OPTS: '-Xmx1g -Xms1g'
-      ELASTIC_PASSWORD: changeme
+      ELASTIC_PASSWORD: default_password
       # Use single node discovery in order to disable production mode and avoid bootstrap checks.
       # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
       discovery.type: single-node
@@ -39,7 +41,7 @@ services:
         target: /usr/share/elasticsearch/data
 
   manager:
-    image: dora:1
+    image: nancode/dora
     ports:
       - '8000:8000'
     env_file: .env.production
@@ -50,7 +52,7 @@ services:
       - elasticsearch
 
   process:
-    image: dora:1
+    image: nancode/dora
     env_file: .env.production
     entrypoint: ['node', './process/main.js']
     depends_on:
@@ -59,7 +61,7 @@ services:
       - elasticsearch
 
   relay:
-    image: dora:1
+    image: nancode/dora
     ports:
       - '9000:9000'
     env_file: .env.production
