@@ -24,7 +24,7 @@ export default () => {
       db: process.env.TYPEORM_DATABASE,
     },
     redis: {
-      host: parseInt(process.env.REDIS_HOST, 10),
+      host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT,
       password: process.env.REDIS_PASSWORD,
     },
