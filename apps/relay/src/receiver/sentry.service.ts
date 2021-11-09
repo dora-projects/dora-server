@@ -10,7 +10,7 @@ export class SentryService {
       type: 'error',
       appKey: data?.sentry_key,
       event_id: data?.event_id,
-      timestamp: data?.timestamp,
+      timestamp: data?.timestamp * 1000,
       sdk: {
         name: data?.sdk?.name,
         version: data?.sdk?.version,
@@ -36,7 +36,7 @@ export class SentryService {
       type: 'pref',
       appKey: data?.sentry_key,
       event_id: data?.event_id,
-      timestamp: data?.timestamp,
+      timestamp: data?.timestamp * 1000,
       sdk: {
         name: data?.sdk?.name,
         version: data?.sdk?.version,
