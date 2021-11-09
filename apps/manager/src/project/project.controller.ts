@@ -36,7 +36,7 @@ import { UpdateResult } from 'typeorm';
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @Put('api/project')
+  @Put('manager/project')
   async createProject(
     @Body() createProjectDto: CreateProjectDto,
     @Request() req,
@@ -45,14 +45,14 @@ export class ProjectController {
     return await this.projectService.create(createProjectDto, userId);
   }
 
-  @Post('api/project')
+  @Post('manager/project')
   async updateProject(
     @Body() updateProjectDto: UpdateProjectDto,
   ): Promise<UpdateResult | void> {
     return await this.projectService.update(updateProjectDto);
   }
 
-  @Get('api/project')
+  @Get('manager/project')
   @ApiQuery({ name: 'id', type: 'number', required: false })
   @ApiQuery({ name: 'appKey', type: 'string', required: false })
   async projectInfo(@Query() query): Promise<Project | undefined> {
@@ -65,26 +65,26 @@ export class ProjectController {
     }
   }
 
-  @Delete('api/project/:id')
+  @Delete('manager/project/:id')
   @ApiParam({ name: 'id' })
   async deleteProject(@Param('id') id: number): Promise<void> {
     return await this.projectService.delete(id);
   }
 
-  @Get('api/my/projects')
+  @Get('manager/my/projects')
   async projectList(@Request() req): Promise<Project[]> {
     const userId = req.user?.result?.id;
     return await this.projectService.findUserProjects(userId);
   }
 
-  @Get('api/project/users')
+  @Get('manager/project/users')
   async projectUsers(@Query('projectId') projectId: number): Promise<User[]> {
     return await this.projectService.findProjectUsers(projectId);
   }
 
   @ApiOkResponse({ type: SuccessRes })
   @ApiInternalServerErrorResponse({ type: ErrorRes })
-  @Post('api/project/addUsers')
+  @Post('manager/project/addUsers')
   async joinProject(
     @Body() joinProjectDto: JoinProjectDto,
   ): Promise<SuccessOrErrorRes> {
@@ -94,7 +94,7 @@ export class ProjectController {
   }
 
   @ApiOkResponse({ type: SuccessRes })
-  @Post('api/project/removeUsers')
+  @Post('manager/project/removeUsers')
   async leaveProject(
     @Body() joinProjectDto: JoinProjectDto,
   ): Promise<SuccessRes> {

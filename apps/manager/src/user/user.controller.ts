@@ -28,25 +28,25 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiBody({ type: CreateUserDto })
-  @Put('api/user')
+  @Put('manager/user')
   async createUser(@Body() user: CreateUserDto): Promise<User> {
     return await this.userService.create(user);
   }
 
   @ApiBody({ type: CreateUserDto })
-  @Post('api/user/update')
+  @Post('manager/user/update')
   async updateUser(@Body() user: CreateUserDto): Promise<User> {
     return await this.userService.create(user);
   }
 
-  @Get('api/search/users')
+  @Get('manager/search/users')
   @ApiQuery({ name: 'searchStr', type: 'string', required: false })
   searchUsers(@Query() query): Promise<User[]> {
     const { searchStr } = query;
     return this.userService.searchUser(searchStr);
   }
 
-  @Get('api/users')
+  @Get('manager/users')
   getUsers(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit,
@@ -55,19 +55,19 @@ export class UserController {
     return this.userService.paginate({ page, limit });
   }
 
-  @Delete('api/user')
+  @Delete('manager/user')
   @ApiQuery({ name: 'id', required: false })
   async delUser(@Query('id') id: string): Promise<void> {
     return await this.userService.remove(id);
   }
 
-  @Get('api/user/setting')
+  @Get('manager/user/setting')
   async getSetting(@Request() req): Promise<Setting> {
     const userId = req.user?.result?.id;
     return await this.userService.getSettingOrDefault(userId);
   }
 
-  @Post('api/user/setting')
+  @Post('manager/user/setting')
   async UpdateSetting(
     @Request() req,
     @Body() updateDefaultDto: UpdateDefaultDashboardDto,

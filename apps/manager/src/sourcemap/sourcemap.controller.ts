@@ -7,7 +7,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class SourcemapController {
   constructor(private readonly sourcemapService: SourcemapService) {}
 
-  @Get('api/sourcemaps')
+  @Get('manager/sourcemaps')
   getHello(): string {
     return this.sourcemapService.getHello();
   }

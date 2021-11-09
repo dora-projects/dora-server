@@ -19,12 +19,12 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('api/auth/login')
+  @Post('manager/auth/login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 
-  @Post('api/auth/register')
+  @Post('manager/auth/register')
   async register(@Body() registerUserDto: RegisterUserDto) {
     await this.authService.register(registerUserDto);
     return await this.authService.login({
@@ -34,7 +34,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('api/auth/me')
+  @Get('manager/auth/me')
   @ApiBearerAuth()
   async getProfile(@Request() req) {
     await sleep(600);

@@ -18,12 +18,12 @@ import { EqlQueryBody } from './analysis.dto';
 export class AnalysisController {
   constructor(private readonly analysisService: AnalysisService) {}
 
-  @Get('api/analysis')
+  @Get('manager/analysis')
   getHello(): string {
     return this.analysisService.getHello();
   }
 
-  @Post('api/analysis/eql')
+  @Post('manager/analysis/eql')
   async clientEql(
     @Request() req,
     @Body() eqlQueryBody: EqlQueryBody,

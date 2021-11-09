@@ -23,26 +23,27 @@ import { UpdateResult } from 'typeorm';
 @Controller()
 export class AlertController {
   constructor(private readonly alertService: AlertService) {}
+
   private readonly logger = new Logger(AlertController.name);
 
-  @Get('api/alert')
+  @Get('manager/alert')
   async getAlertRules(
     @Query('projectId') projectId: number,
   ): Promise<AlertRule[]> {
     return await this.alertService.queryByProjectId(projectId);
   }
 
-  @Put('api/alert/rule')
+  @Put('manager/alert/rule')
   async ruleAdd(@Body() addRuleDto: AddRuleDto): Promise<AlertRule> {
     return await this.alertService.createRule(addRuleDto);
   }
 
-  @Delete('api/alert/rule')
+  @Delete('manager/alert/rule')
   async ruleRemove(@Query('id') id: number): Promise<void> {
     return await this.alertService.deleteRule(id);
   }
 
-  @Post('api/alert/rule/toggle')
+  @Post('manager/alert/rule/toggle')
   async ruleToggle(
     @Body() ruleToggleDto: RuleToggleDto,
   ): Promise<UpdateResult> {
@@ -50,7 +51,7 @@ export class AlertController {
     return await this.alertService.toggleRule(ruleId, open);
   }
 
-  @Get('api/alert/contact')
+  @Get('manager/alert/contact')
   async contactList(@Query('ruleId') ruleId: number): Promise<AlertContact[]> {
     try {
       return await this.alertService.getRuleContacts(ruleId);
@@ -60,7 +61,7 @@ export class AlertController {
     }
   }
 
-  @Put('api/alert/contact')
+  @Put('manager/alert/contact')
   async contactAdd(@Body() addContactDto: AddContactDto): Promise<void> {
     const { ruleId, userId } = addContactDto;
     console.log(addContactDto);
@@ -72,7 +73,7 @@ export class AlertController {
     return;
   }
 
-  @Delete('api/alert/contact')
+  @Delete('manager/alert/contact')
   async contactRemove(
     @Body() deleteContactDto: DeleteContactDto,
   ): Promise<void> {
