@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
+    "start": "concurrently \"npm run start:manager\" \"npm run start:process\" \"npm run start:relay\"",
     "start:manager": "cross-env NODE_ENV=development nest start manager --watch",
     "start:process": "cross-env NODE_ENV=development nest start process --watch",
     "start:relay": "cross-env NODE_ENV=development nest start relay --watch",
@@ -79,6 +80,7 @@
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
+    "concurrently": "^6.3.0",
     "cross-env": "^7.0.3",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
