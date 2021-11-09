@@ -18,9 +18,9 @@ describe('AnalysisService', () => {
 
   it('should get appKey', async () => {
     const t1 =
-      '{"size":0,"query":{"bool":{"filter":[{"match":{"appKey":"76d75c9c-859f-4df6-8ea8-58cd7c7b0e74"}},{"match":{"type":"error"}}]}},"aggregations":{"count":{"cardinality":{"field":"event_id.keyword"}}}}';
+      '{"size":0,"query":{"bool":{"filter":[{"match":{"appKey":"d6eca399952c4c0ca067f28987aeed48"}},{"match":{"type":"api"}},{"match":{"subType":"xhr"}},{"range":{"ts":{"gte":123123123,"lte":12312312312}}}]}}}';
 
     const appKey = service.matchAppKeyInString(t1);
-    expect(appKey).toEqual('76d75c9c-859f-4df6-8ea8-58cd7c7b0e74');
+    expect(appKey).toEqual('d6eca399952c4c0ca067f28987aeed48');
   });
 });
