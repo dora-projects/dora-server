@@ -7,7 +7,7 @@ import {
   Repository,
   UpdateResult,
 } from 'typeorm';
-import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
+import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { CreateProjectDto, UpdateProjectDto } from './project.dto';
 import { RecordExistException } from '../common/error';
@@ -32,7 +32,9 @@ export class ProjectService {
       project.name = createProjectDto.name;
       project.type = createProjectDto.type;
       project.detail = createProjectDto.detail;
-      project.appKey = uuid().replaceAll('-', '');
+
+      const u: string = uuid();
+      project.appKey = u.replace(/-/g, '');
 
       const result = await this.projectRepository.save(project);
       await this.projectAddUser(result.id, [userId]);
