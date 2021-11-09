@@ -32,7 +32,7 @@ export class ProjectService {
       project.name = createProjectDto.name;
       project.type = createProjectDto.type;
       project.detail = createProjectDto.detail;
-      project.appKey = uuid();
+      project.appKey = uuid().replaceAll('-', '');
 
       const result = await this.projectRepository.save(project);
       await this.projectAddUser(result.id, [userId]);
