@@ -1,6 +1,7 @@
 import { Controller, Get, Ip, Logger, Post, Req } from '@nestjs/common';
 import { SystemService } from './system.service';
 import { timeFormNow } from 'libs/shared';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 const uptime = new Date().toISOString();
 
@@ -8,7 +9,10 @@ const uptime = new Date().toISOString();
 export class SystemController {
   private readonly logger = new Logger(SystemController.name);
 
-  constructor(private readonly reportService: SystemService) {}
+  constructor(
+    private readonly reportService: SystemService,
+    private readonly elasticsearchService: ElasticsearchService,
+  ) {}
 
   @Get()
   async test(): Promise<any> {
@@ -21,20 +25,23 @@ export class SystemController {
 
   @Get('manager/system/elastic/stats')
   async getElasticStats(): Promise<any> {
-    return {
-      index: 0,
-      mem: 0,
-      usage: 0,
-    };
+    const res = await this.elasticsearchService.indices.stats({
+      index: 'dora*',
+    });
+    const indices = res.body?.indices || {};
+
+    const IndexNames = Object.keys(indices) || [];
+    return IndexNames.map((name) => {
+      return {
+        name: name,
+        count: indices[name].total.docs,
+        store: indices[name].total.store,
+      };
+    });
   }
 
-  @Get('manager/system/bull/jobs')
+  @Get('manager/system/bull/counts')
   async getCounts(): Promise<any> {
     return await this.reportService.getJobCounts();
-  }
-
-  @Get('manager/system/bull/jobs')
-  async getJobs(): Promise<any> {
-    return await this.reportService.getJobs();
   }
 }

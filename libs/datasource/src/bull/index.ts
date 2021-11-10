@@ -11,6 +11,7 @@ import {
 export const MyBullModule = BullModule.forRootAsync({
   imports: [MyConfigModule],
   useFactory: async (configService: ConfigService) => {
+    console.log(configService.get('redis.password'));
     return {
       prefix: BullPrefix,
       redis: {
