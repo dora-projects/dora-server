@@ -7,11 +7,13 @@ export const ElasticIndexOfError = 'dora_error';
 export const BullPrefix = 'dora';
 
 // 事件
-export const EventQueueName = 'event';
+export const EventQueue = 'event';
 export const ViewEventQueueName = 'event_view';
 export const PerfEventQueueName = 'event_pref';
 export const ErrorEventQueueName = 'event_error';
 
 // 告警
-export const AlertQueueName = 'alert';
-export const AlertErrorQueueName = 'alert_error';
+export const AlertQueue = 'alert';
+
+// issue
+export const IssueQueue = 'issue';

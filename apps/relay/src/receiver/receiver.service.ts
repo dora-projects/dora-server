@@ -3,7 +3,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import {
   ErrorEventQueueName,
-  EventQueueName,
+  EventQueue,
   PerfEventQueueName,
 } from 'libs/shared/constant';
 
@@ -11,9 +11,7 @@ import {
 export class ReceiverService {
   private readonly logger = new Logger(ReceiverService.name);
 
-  constructor(
-    @InjectQueue(EventQueueName) private readonly eventQueue: Queue,
-  ) {}
+  constructor(@InjectQueue(EventQueue) private readonly eventQueue: Queue) {}
 
   async verifyEvent(data: any): Promise<any> {
     // redis cache get project info

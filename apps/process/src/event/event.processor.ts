@@ -6,13 +6,13 @@ import {
   ElasticIndexOfError,
   ElasticIndexOfPref,
   ErrorEventQueueName,
-  EventQueueName,
+  EventQueue,
   PerfEventQueueName,
 } from 'libs/shared/constant';
 import { EventService } from './event.service';
 import { __DEV__, dumpJson } from 'libs/shared';
 
-@Processor(EventQueueName)
+@Processor(EventQueue)
 export class EventProcessor {
   constructor(
     private readonly elasticsearchService: ElasticsearchService,
@@ -39,8 +39,9 @@ export class EventProcessor {
         body: resultStep2,
       });
 
-      // step4: 发送给告警
+      // step4: 发送给告警 和 Issue
       await this.eventService.sendAlertQueue(resultStep2);
+      await this.eventService.sendIssueQueue(resultStep2);
 
       if (__DEV__) {
         await dumpJson('error', resultStep2);

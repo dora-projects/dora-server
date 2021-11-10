@@ -2,9 +2,10 @@ import { BullModule } from '@nestjs/bull';
 import { MyConfigModule } from 'libs/datasource/config';
 import { ConfigService } from '@nestjs/config';
 import {
-  AlertQueueName,
   BullPrefix,
-  EventQueueName,
+  EventQueue,
+  AlertQueue,
+  IssueQueue,
 } from 'libs/shared/constant';
 
 export const MyBullModule = BullModule.forRootAsync({
@@ -22,12 +23,17 @@ export const MyBullModule = BullModule.forRootAsync({
   inject: [ConfigService],
 });
 
-// 注册事件队列
+// 注册事件接收队列
 export const EventBullQueueModule = BullModule.registerQueue({
-  name: EventQueueName,
+  name: EventQueue,
 });
 
 // 注册告警队列
 export const AlertBullQueueModule = BullModule.registerQueue({
-  name: AlertQueueName,
+  name: AlertQueue,
+});
+
+// 注册issue队列
+export const IssueQueueModule = BullModule.registerQueue({
+  name: IssueQueue,
 });

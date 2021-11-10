@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AlertContact, AlertRule, Project } from 'libs/datasource';
-import { throttle } from 'lodash';
 import { sleep } from 'libs/shared';
 
 @Injectable()
@@ -18,12 +17,10 @@ export class AlertService {
 
   private readonly logger = new Logger(AlertService.name);
 
-  private async _checkProjectAlertRules(data: any) {
+  async checkProjectAlertRules(data: any) {
     await sleep(3000);
-    this.logger.debug('-----------throttle checkAlertRules----------');
+    this.logger.debug('-----------checkAlertRules----------');
   }
-
-  public throttleCheck = throttle(this._checkProjectAlertRules, 5000);
 
   // 缓存
   async getProjectRules(appKey: string): Promise<string> {
