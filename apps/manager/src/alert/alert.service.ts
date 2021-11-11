@@ -136,6 +136,21 @@ export class AlertService {
     return err;
   }
 
+  async updateRuleContact(ruleId: number, userIds: number[]): Promise<void> {
+    const contacts = await this.getRuleContacts(ruleId);
+    const contactIds = contacts.map((c) => c.id);
+    if (Array.isArray(contactIds)) {
+      contactIds.every(async (contactId) => {
+        await this.removeRuleContact(contactId);
+      });
+    }
+    if (Array.isArray(userIds)) {
+      userIds.every(async (userId) => {
+        await this.addRuleContact(ruleId, userId);
+      });
+    }
+  }
+
   async getRuleContacts(ruleId: number): Promise<AlertContact[]> {
     return await this.alertContactRepository
       .createQueryBuilder('contact')

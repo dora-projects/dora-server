@@ -24,7 +24,7 @@ export class AddRuleDto {
   silence: number;
 
   @ApiProperty({ description: '联系人 Id' })
-  userIds: number;
+  userIds: number[];
 }
 
 export class UpdateRuleDto extends AddRuleDto {

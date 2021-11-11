@@ -18,7 +18,7 @@ export class AlertService {
   private readonly logger = new Logger(AlertService.name);
 
   async checkProjectAlertRules(data: any) {
-    await sleep(3000);
+    // await sleep(3000);
     this.logger.debug('-----------checkAlertRules----------');
   }
 
