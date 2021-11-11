@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { MyConfigModule } from 'libs/datasource/config';
 import { MyBullModule, MyDatabase, MyElasticModule } from 'libs/datasource';
 
-import { AlertModule } from './alert/alert.module';
+import { NotifyModule } from './notify/notify.module';
 import { EventModule } from './event/event.module';
 import { IssueModule } from './issue/issue.module';
 
@@ -13,7 +13,7 @@ import { IssueModule } from './issue/issue.module';
     MyElasticModule,
     MyConfigModule,
     MyDatabase,
-    AlertModule,
+    NotifyModule,
     EventModule,
     IssueModule,
   ],

@@ -87,7 +87,7 @@ export class AlertService {
     await this.alertRuleRepository.delete(ruleId);
   }
 
-  async queryByProjectId(projectId: number): Promise<AlertRule[]> {
+  async queryRule(projectId: number): Promise<AlertRule[]> {
     return await this.alertRuleRepository
       .createQueryBuilder('rule')
       .where('rule.projectId = :id', { id: projectId })

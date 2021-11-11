@@ -2,13 +2,13 @@ import { Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { AlertQueue } from 'libs/shared/constant';
-import { AlertService } from './alert.service';
+import { NotifyService } from './notify.service';
 
 @Processor(AlertQueue)
-export class AlertProcessor {
-  constructor(private readonly alertService: AlertService) {}
+export class NotifyProcessor {
+  constructor(private readonly alertService: NotifyService) {}
 
-  private readonly logger = new Logger(AlertProcessor.name);
+  private readonly logger = new Logger(NotifyProcessor.name);
 
   @Process()
   async handleAlertErrorMessage(job: Job) {

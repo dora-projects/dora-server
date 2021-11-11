@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AlertService } from './alert.service';
-import { AlertProcessor } from './alert.processor';
+import { NotifyService } from './notify.service';
+import { NotifyProcessor } from './notify.processor';
 import { MailService } from './mail.service';
+import { AlertService } from 'apps/manager/src/alert/alert.service';
+import { ProjectService } from 'apps/manager/src/project/project.service';
 import {
   AlertBullQueueModule,
   AlertContact,
@@ -19,6 +21,12 @@ import {
     MyElasticModule,
     MyDatabase,
   ],
-  providers: [AlertService, AlertProcessor, MailService],
+  providers: [
+    NotifyService,
+    NotifyProcessor,
+    MailService,
+    AlertService,
+    ProjectService,
+  ],
 })
-export class AlertModule {}
+export class NotifyModule {}
