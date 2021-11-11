@@ -6,14 +6,16 @@ import * as chalk from 'chalk';
 import { AppModule } from './app.module';
 import { AllExceptionFilter } from './common/all-exception.filter';
 
-const banner = `
+const banner = (m) => `
 ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗
 ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝
 ██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗  
 ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  
 ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗
 ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
-                  
+powered by Dora@2021
+${m}
+
 `;
 
 const setupSwagger = (app) => {
@@ -34,12 +36,7 @@ const setupSwagger = (app) => {
   });
 };
 
-/**
- * manager 管理平台
- */
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
+const configure = async (app) => {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -68,12 +65,13 @@ async function bootstrap() {
   const port = configService.get('manager_port');
 
   await app.listen(port);
+};
 
-  console.log(
-    chalk.green(`
-${banner}
-manager started at ${await app.getUrl()}`),
-  );
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await configure(app);
+
+  console.log(chalk.green(banner(`manager started at ${await app.getUrl()}`)));
 }
 
 bootstrap().catch((err) => {

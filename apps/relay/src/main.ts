@@ -4,8 +4,20 @@ import { AppModule } from './app.module';
 import * as bodyParser from 'body-parser';
 import * as chalk from 'chalk';
 
+const banner = (m) => `
+██████╗ ███████╗██╗      █████╗ ██╗   ██╗
+██╔══██╗██╔════╝██║     ██╔══██╗╚██╗ ██╔╝
+██████╔╝█████╗  ██║     ███████║ ╚████╔╝ 
+██╔══██╗██╔══╝  ██║     ██╔══██║  ╚██╔╝  
+██║  ██║███████╗███████╗██║  ██║   ██║   
+╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝   ╚═╝   
+powered by Dora@2021 
+${m}
+
+`;
+
 /**
- * relay 接收处理上报数据
+ * relay
  * todo 限流
  */
 async function bootstrap() {
@@ -18,7 +30,7 @@ async function bootstrap() {
 
   await app.listen(port);
 
-  console.log(chalk.green(`relay started at ${await app.getUrl()}`));
+  console.log(chalk.green(banner(`relay started at ${await app.getUrl()}`)));
 }
 
 bootstrap().catch((err) => {
