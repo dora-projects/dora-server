@@ -1,4 +1,4 @@
-FROM node:14 as builder
+FROM node:14-alpine as builder
 WORKDIR /server
 COPY package.json ./
 RUN yarn install
@@ -6,7 +6,7 @@ RUN yarn install
 COPY . .
 RUN yarn build
 
-FROM node:14 as runner
+FROM node:14-alpine as runner
 LABEL maintainer="nan <msg@nancode.cn>"
 WORKDIR /server
 
