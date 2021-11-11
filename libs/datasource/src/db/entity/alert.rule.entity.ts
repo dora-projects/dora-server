@@ -19,21 +19,21 @@ export class AlertRule {
   name: string;
 
   @Column({ type: 'jsonb', comment: '事件筛选' })
-  filterEvent: {
-    name: string;
+  filter: {
+    key: string;
     value: string;
   }[];
 
-  @Column({ type: 'integer', comment: '间隔 (秒)' })
-  interval: number;
+  @Column({ type: 'integer', comment: '间隔（秒）' })
+  thresholdsTime: number;
 
   @Column({ type: 'text', default: '>', comment: '上限 或者 下限' })
-  thresholdsType: string;
+  thresholdsOperator: string;
 
   @Column({ type: 'integer', comment: '次数' })
-  thresholdsCount: number;
+  thresholdsQuota: number;
 
-  @Column({ type: 'integer', default: 30 * 60, comment: '静默 (秒)' })
+  @Column({ type: 'integer', default: 10, comment: '静默（分钟）' })
   silence: number;
 
   @Column({ type: 'bool', default: true, comment: '是否开启' })

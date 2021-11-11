@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { AlertContact, AlertRule } from 'libs/datasource';
 import { Connection, Repository, UpdateResult } from 'typeorm';
-import { AddRuleDto } from './alert.dto';
+import { AddRuleDto, UpdateRuleDto } from './alert.dto';
 
 @Injectable()
 export class AlertService {
@@ -24,10 +24,10 @@ export class AlertService {
     try {
       const rule = new AlertRule();
       rule.name = addRuleDto.name;
-      rule.filterEvent = addRuleDto.filterEvent;
-      rule.interval = addRuleDto.interval;
-      rule.thresholdsType = addRuleDto.thresholdsType;
-      rule.thresholdsCount = addRuleDto.thresholdsCount;
+      rule.filter = addRuleDto.filter;
+      rule.thresholdsTime = addRuleDto.thresholdsTime;
+      rule.thresholdsOperator = addRuleDto.thresholdsOperator;
+      rule.thresholdsQuota = addRuleDto.thresholdsQuota;
       rule.silence = addRuleDto.silence;
       const result = await runner.manager.save(rule);
 
@@ -39,6 +39,41 @@ export class AlertService {
 
       await runner.commitTransaction();
       return result;
+    } catch (e) {
+      err = e;
+      await runner.rollbackTransaction();
+    } finally {
+      await runner.release();
+    }
+    return err;
+  }
+
+  async updateRule(updateRuleDto: UpdateRuleDto): Promise<UpdateResult> {
+    const runner = this.connection.createQueryRunner();
+    await runner.connect();
+    await runner.startTransaction();
+
+    let err;
+    try {
+      const rule = await this.alertRuleRepository.update(
+        { id: updateRuleDto.id },
+        {
+          name: updateRuleDto.name,
+          filter: updateRuleDto.filter,
+          thresholdsTime: updateRuleDto.thresholdsTime,
+          thresholdsOperator: updateRuleDto.thresholdsOperator,
+          thresholdsQuota: updateRuleDto.thresholdsQuota,
+          silence: updateRuleDto.silence,
+        },
+      );
+      await runner.manager
+        .createQueryBuilder()
+        .relation(AlertRule, 'project')
+        .of(rule)
+        .set(updateRuleDto.projectId);
+
+      await runner.commitTransaction();
+      return rule;
     } catch (e) {
       err = e;
       await runner.rollbackTransaction();

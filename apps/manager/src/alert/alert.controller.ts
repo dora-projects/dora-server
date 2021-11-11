@@ -15,6 +15,7 @@ import {
   AddRuleDto,
   DeleteContactDto,
   RuleToggleDto,
+  UpdateRuleDto,
 } from './alert.dto';
 import { AlertContact, AlertRule } from 'libs/datasource';
 import { UpdateResult } from 'typeorm';
@@ -38,9 +39,16 @@ export class AlertController {
     return await this.alertService.createRule(addRuleDto);
   }
 
+  @Post('manager/alert/rule')
+  async ruleUpdate(
+    @Body() updateRuleDto: UpdateRuleDto,
+  ): Promise<UpdateResult> {
+    return await this.alertService.updateRule(updateRuleDto);
+  }
+
   @Delete('manager/alert/rule')
-  async ruleRemove(@Query('id') id: number): Promise<void> {
-    return await this.alertService.deleteRule(id);
+  async ruleRemove(@Query('ruleId') ruleId: number): Promise<void> {
+    return await this.alertService.deleteRule(ruleId);
   }
 
   @Post('manager/alert/rule/toggle')

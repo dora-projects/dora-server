@@ -1,35 +1,32 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber } from 'class-validator';
 
-class FilterEvent {
-  @ApiProperty({ description: '过滤 key' })
-  name: string;
-
-  @ApiProperty({ description: '过滤 value' })
-  value: string;
-}
-
 export class AddRuleDto {
   @ApiProperty({ description: '项目id' })
   projectId: number;
-  //
+
   @ApiProperty({ description: '规则名字' })
   name: string;
 
-  @ApiProperty({ description: '事件筛选', type: [FilterEvent] })
-  filterEvent: FilterEvent[];
+  @ApiProperty({ description: '事件筛选' })
+  filter: any;
 
-  @ApiProperty({ description: '间隔 (秒)' })
-  interval: number;
+  @ApiProperty({ description: '间隔（秒）' })
+  thresholdsTime: number;
 
   @ApiProperty({ description: '上限下限' })
-  thresholdsType: string;
+  thresholdsOperator: string;
 
   @ApiProperty({ description: '次数' })
-  thresholdsCount: number;
+  thresholdsQuota: number;
 
-  @ApiProperty({ description: '静默时间' })
+  @ApiProperty({ description: '静默时间（分钟）' })
   silence: number;
+}
+
+export class UpdateRuleDto extends AddRuleDto {
+  @ApiProperty({ description: '规则 id' })
+  id: number;
 }
 
 export class RuleToggleDto {
