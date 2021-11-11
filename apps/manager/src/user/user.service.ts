@@ -53,6 +53,9 @@ export class UserService {
   }
 
   async searchUser(searchStr: string): Promise<User[]> {
+    if (!searchStr) {
+      return await this.userRepository.find();
+    }
     return await this.userRepository.find({
       where: [
         { username: Like(`%${searchStr}%`) },

@@ -22,6 +22,9 @@ export class AddRuleDto {
 
   @ApiProperty({ description: '静默时间（分钟）' })
   silence: number;
+
+  @ApiProperty({ description: '联系人 Id' })
+  userIds: number;
 }
 
 export class UpdateRuleDto extends AddRuleDto {

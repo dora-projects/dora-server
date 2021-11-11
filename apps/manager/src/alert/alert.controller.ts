@@ -36,14 +36,32 @@ export class AlertController {
 
   @Put('manager/alert/rule')
   async ruleAdd(@Body() addRuleDto: AddRuleDto): Promise<AlertRule> {
-    return await this.alertService.createRule(addRuleDto);
+    const rule = await this.alertService.createRule(addRuleDto);
+
+    const userIds = addRuleDto.userIds;
+    if (Array.isArray(userIds)) {
+      userIds.every(async (userId) => {
+        await this.alertService.addRuleContact(rule.id, userId);
+      });
+    }
+
+    return rule;
   }
 
   @Post('manager/alert/rule')
   async ruleUpdate(
     @Body() updateRuleDto: UpdateRuleDto,
   ): Promise<UpdateResult> {
-    return await this.alertService.updateRule(updateRuleDto);
+    const rule = await this.alertService.updateRule(updateRuleDto);
+    console.log(updateRuleDto);
+    const userIds = updateRuleDto.userIds;
+    if (Array.isArray(userIds)) {
+      userIds.every(async (userId) => {
+        await this.alertService.addRuleContact(updateRuleDto.id, userId);
+      });
+    }
+
+    return rule;
   }
 
   @Delete('manager/alert/rule')
