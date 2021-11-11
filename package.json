@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prepare": "husky install",
     "prebuild": "rimraf dist",
     "start": "concurrently \"npm run start:manager\" \"npm run start:process\" \"npm run start:relay\"",
     "start:manager": "cross-env NODE_ENV=development nest start manager --watch",
