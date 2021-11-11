@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsNumber,
-  IsString,
+  IsOptional,
   Length,
   MaxLength,
 } from 'class-validator';
@@ -13,6 +13,7 @@ export class CreateProjectDto {
   name: string;
 
   @ApiProperty({ description: '详细说明' })
+  @IsOptional()
   @MaxLength(500, { message: '描述最大长度为 $constraint1' })
   detail: string;
 
@@ -21,25 +22,10 @@ export class CreateProjectDto {
   type: string;
 }
 
-export class UpdateProjectDto {
+export class UpdateProjectDto extends CreateProjectDto {
   @ApiProperty({ description: '项目 id' })
   @IsNumber()
   id: number;
-
-  @ApiProperty({ description: '团队名字' })
-  @IsString()
-  @Length(2, 30)
-  name: string;
-
-  @ApiProperty({ description: '描述' })
-  @IsString()
-  @Length(0, 500)
-  detail: string;
-
-  @ApiProperty({ description: '类型' })
-  @IsString()
-  @Length(0, 10)
-  type: string;
 }
 
 export class JoinProjectDto {
