@@ -43,6 +43,10 @@ export class NotifyService {
     appKey: string,
   ): Promise<{ project: Project; rules: AlertRule[] }> {
     const project = await this.projectService.findByAppKey(appKey);
+    if (!project) {
+      this.logger.debug(`未查询到项目 appKey：${appKey}`);
+      return;
+    }
     const rules = await this.alertService.queryRule(project.id);
     return { project, rules };
   }
