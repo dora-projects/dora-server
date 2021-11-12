@@ -27,14 +27,14 @@ export class AnalysisService {
     const eqlString = JSON.stringify(eql);
     const appKey = this.matchAppKeyInString(eqlString);
     if (!appKey) {
-      throw new BadRequestException('只支持查询项目相关数据');
+      throw new BadRequestException('查询语句未找到 appKey');
     }
 
     const canAccess = await this.projectService.isUserCanAccessProject(
       appKey,
       userId,
     );
-    if (!canAccess) throw new UnauthorizedOperation('无权限查询该 appKey');
+    if (!canAccess) throw new UnauthorizedOperation('无权限访问该项目');
 
     const result = await this.elasticsearchService.search({
       index: 'dora*',
