@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { RegisterUserDto } from './auth.dto';
+import { verifyPassword } from 'libs/shared/auth';
 
 @Injectable()
 export class AuthService {
@@ -12,8 +13,10 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
-    // todo 密码加密
-    if (user && user.password === pass) {
+    if (!user) return null;
+
+    const verify = await verifyPassword(pass, user?.password);
+    if (verify) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
       return result;

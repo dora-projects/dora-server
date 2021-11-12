@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, UpdateResult, Connection } from 'typeorm';
-import { Project, User, Setting } from 'libs/datasource/db/entity';
+import { Connection, Like, Repository, UpdateResult } from 'typeorm';
+import { Project, Setting, User } from 'libs/datasource/db/entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import {
+  IPaginationOptions,
   paginate,
   Pagination,
-  IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
+import { hashPassword } from 'libs/shared/auth';
 
 @Injectable()
 export class UserService {
@@ -26,8 +27,8 @@ export class UserService {
     const user = new User();
     user.username = createUserDto.username;
     user.email = createUserDto.email;
-    // todo 密码加密
-    user.password = createUserDto.password;
+    // 密码加密
+    user.password = await hashPassword(createUserDto.password);
 
     return await this.userRepository.save(user);
   }
