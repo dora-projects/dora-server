@@ -1,10 +1,23 @@
-import { Controller, Get, Ip, Logger, Post, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Ip,
+  Logger,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { SystemService } from './system.service';
 import { timeFormNow } from 'libs/shared';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 const uptime = new Date().toISOString();
 
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@ApiTags('system')
 @Controller()
 export class SystemController {
   private readonly logger = new Logger(SystemController.name);

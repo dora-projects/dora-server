@@ -4,12 +4,16 @@ import {
   Get,
   ParseIntPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { IssuesService } from './issues.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { Issue } from 'libs/datasource';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('issues')
 @Controller()
 export class IssuesController {
