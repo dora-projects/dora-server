@@ -12,7 +12,7 @@ export class MailService {
     const user = this.configService.get<string>('email.user');
     const pass = this.configService.get<string>('email.pass');
 
-    if (process.env.emailHost) {
+    if (host) {
       return {
         host,
         port,
@@ -34,15 +34,17 @@ export class MailService {
         return reject('Missing required args to send email.');
       }
 
+      const transport = this.detectTransport();
       const content = {
-        from,
+        from: from || transport.auth.user,
         to,
         subject,
         text,
         html,
       };
 
-      const transport = this.detectTransport();
+      // console.log('transport', transport);
+
       nodemailer.createTransport(transport).sendMail(content, (error, info) => {
         if (error) {
           return reject(error.message);
