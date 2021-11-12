@@ -9,6 +9,7 @@ import {
   Put,
   Query,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import {
@@ -28,6 +29,7 @@ import { Project, User } from 'libs/datasource';
 import { ErrorRes, SuccessOrErrorRes, SuccessRes } from '../common/responseDto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { UpdateResult } from 'typeorm';
+import { UnauthorizedOperation } from '../common/error';
 
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -55,14 +57,28 @@ export class ProjectController {
   @Get('manager/project')
   @ApiQuery({ name: 'id', type: 'number', required: false })
   @ApiQuery({ name: 'appKey', type: 'string', required: false })
-  async projectInfo(@Query() query): Promise<Project | undefined> {
+  async projectInfo(
+    @Request() req,
+    @Query() query,
+  ): Promise<Project | undefined> {
+    const userId = req.user?.result?.id;
     const { id, appKey } = query;
-    if (id) {
-      return this.projectService.findById(id);
+
+    let project: Project;
+    if (id) project = await this.projectService.findById(id);
+    if (appKey) project = await this.projectService.findByAppKey(appKey);
+
+    if (!project) {
+      throw new BadRequestException('项目不存在');
     }
-    if (appKey) {
-      return this.projectService.findByAppKey(appKey);
-    }
+
+    const canAccess = await this.projectService.isUserCanAccessProject(
+      project.appKey,
+      userId,
+    );
+    if (!canAccess) throw new UnauthorizedOperation('无权限访问该项目');
+
+    return project;
   }
 
   @Delete('manager/project/:id')
