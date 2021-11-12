@@ -29,7 +29,7 @@ export class AlertContact {
     default: ContactType.User,
     comment: '通知类型',
   })
-  type: string;
+  type: ContactType;
 
   @ManyToOne(() => AlertRule, (rule) => rule.contacts)
   rule: AlertRule;

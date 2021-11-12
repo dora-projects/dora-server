@@ -9,6 +9,7 @@ export const MyCacheModule = CacheModule.registerAsync({
     store: redisStore,
     host: configService.get('redis.host'),
     port: configService.get('redis.port'),
+    password: configService.get('redis.password'),
   }),
   inject: [ConfigService],
 });

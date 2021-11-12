@@ -10,7 +10,7 @@ import {
   Project,
 } from 'libs/datasource';
 import { NotifyProcessor } from './notify.processor';
-import { MailService } from './mail.service';
+import { MailService } from 'apps/manager/src/common/service/mail.service';
 import { AlertService } from 'apps/manager/src/alert/alert.service';
 import { ProjectService } from 'apps/manager/src/project/project.service';
 

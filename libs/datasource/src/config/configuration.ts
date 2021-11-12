@@ -12,6 +12,7 @@ dotenv.config({
 
 export default () => {
   return {
+    dora_url: process.env.DORA_URL,
     relay_port: parseInt(process.env.RELAY_PORT, 10),
     manager_port: parseInt(process.env.MANAGER_PORT, 10),
     jwt_secret: process.env.JWT_SECRET,
@@ -32,6 +33,12 @@ export default () => {
       node: process.env.ELASTICSEARCH_NODE,
       username: process.env.ELASTIC_USERNAME,
       password: process.env.ELASTIC_PASSWORD,
+    },
+    email: {
+      host: process.env.EMAIL_SERVER_HOST,
+      port: parseInt(process.env.EMAIL_SERVER_PORT, 10),
+      user: process.env.EMAIL_SERVER_USER,
+      pass: process.env.EMAIL_SERVER_PASSWORD,
     },
   };
 };

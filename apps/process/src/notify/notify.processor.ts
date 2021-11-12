@@ -11,12 +11,10 @@ export class NotifyProcessor {
   private readonly logger = new Logger(NotifyProcessor.name);
 
   @Process()
-  async handleAlertErrorMessage(job: Job) {
+  async receiveErrorEvent(job: Job) {
     try {
-      this.logger.debug('AlertProcessor got error data!');
-      // check rules
-      // todo 优化
-      await this.alertService.checkProjectAlertRules(job.data);
+      this.logger.debug('NotifyProcessor got error data!');
+      await this.alertService.handleErrorEvent(job.data);
     } catch (e) {
       this.logger.error(e);
       await job.moveToFailed({ message: e?.message }, true);

@@ -15,8 +15,6 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 const uptime = new Date().toISOString();
 
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 @ApiTags('system')
 @Controller()
 export class SystemController {
@@ -36,6 +34,8 @@ export class SystemController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('manager/system/elastic/stats')
   async getElasticStats(): Promise<any> {
     const res = await this.elasticsearchService.indices.stats({
@@ -53,6 +53,8 @@ export class SystemController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('manager/system/bull/counts')
   async getCounts(): Promise<any> {
     return await this.reportService.getJobCounts();
