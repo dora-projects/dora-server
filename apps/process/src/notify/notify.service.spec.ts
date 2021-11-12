@@ -1,7 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotifyService } from './notify.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AlertContact, AlertRule, MyDatabase, Project } from 'libs/datasource';
+import {
+  AlertBullQueueModule,
+  AlertContact,
+  AlertRule,
+  MyDatabase,
+  MyElasticModule,
+  Project,
+} from 'libs/datasource';
+import { NotifyProcessor } from './notify.processor';
+import { MailService } from './mail.service';
+import { AlertService } from 'apps/manager/src/alert/alert.service';
+import { ProjectService } from 'apps/manager/src/project/project.service';
 
 describe('NotifyService', () => {
   let service: NotifyService;
@@ -9,17 +20,25 @@ describe('NotifyService', () => {
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [
-        MyDatabase,
         TypeOrmModule.forFeature([Project, AlertRule, AlertContact]),
+        AlertBullQueueModule,
+        MyElasticModule,
+        MyDatabase,
       ],
-      providers: [NotifyService],
+      providers: [
+        NotifyService,
+        NotifyProcessor,
+        MailService,
+        AlertService,
+        ProjectService,
+      ],
     }).compile();
 
     service = moduleRef.get<NotifyService>(NotifyService);
   });
 
   it('', async () => {
-    const r = await service.getProjectRules('12');
-    expect(r).toEqual('Hello alert!');
+    // const r = await service.getProjectRules('12');
+    // expect(r).toEqual('Hello alert!');
   });
 });

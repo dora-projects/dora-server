@@ -24,7 +24,7 @@
     "...": "",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest --detectOpenHandles",
+    "test": "jest --detectOpenHandles --forceExit",
     "test:ui": "npx majestic",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -134,6 +134,9 @@
     "roots": [
       "<rootDir>/apps/",
       "<rootDir>/libs/"
+    ],
+    "modulePaths": [
+      "<rootDir>"
     ],
     "moduleNameMapper": {
       "^libs/shared(|/.*)$": "<rootDir>/libs/shared/src/$1",
