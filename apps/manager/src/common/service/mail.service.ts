@@ -36,7 +36,7 @@ export class MailService {
 
       const transport = this.detectTransport();
       const content = {
-        from: from || transport.auth.user,
+        from: from || transport.auth?.user,
         to,
         subject,
         text,

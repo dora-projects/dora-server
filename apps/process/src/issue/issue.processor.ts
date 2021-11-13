@@ -19,7 +19,7 @@ export class IssueProcessor {
       await this.issueService.createIssueIfNotExist(event);
       // await dumpJson('Issue_', job);
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e, e?.stack);
       await job.moveToFailed({ message: e?.message }, true);
     }
   }

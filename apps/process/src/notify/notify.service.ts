@@ -45,7 +45,7 @@ export class NotifyService {
     const project = await this.projectService.findByAppKey(appKey);
     if (!project) {
       this.logger.debug(`未查询到项目 appKey：${appKey}`);
-      return;
+      return null;
     }
     const rules = await this.alertService.queryRule(project.id);
     return { project, rules };
@@ -55,8 +55,11 @@ export class NotifyService {
   async handleErrorEvent(data: any) {
     const appKey = data?.appKey;
     if (!appKey) return;
-    const { project, rules } = await this.queryRules(appKey);
-    await this.rulesCheck(project, rules);
+    const result = await this.queryRules(appKey);
+
+    if (result && result.project && Array.isArray(result.rules)) {
+      await this.rulesCheck(result.project, result.rules);
+    }
   }
 
   async rulesCheck(project: Project, rules: AlertRule[]): Promise<void> {

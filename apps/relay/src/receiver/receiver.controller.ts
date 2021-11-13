@@ -56,7 +56,7 @@ export class ReceiverController {
       }
       return 'ok';
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e, e?.stack);
       return e;
     }
   }
@@ -98,7 +98,7 @@ export class ReceiverController {
       }
       return 'ok';
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e, e?.stack);
       return e;
     }
   }

@@ -85,7 +85,7 @@ export class AlertController {
     try {
       return await this.alertService.getRuleContacts(ruleId);
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e, e?.stack);
       return e;
     }
   }
@@ -99,7 +99,7 @@ export class AlertController {
     try {
       await this.alertService.addRuleContact(ruleId, userId);
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e, e?.stack);
     }
     return { success: true };
   }
@@ -112,7 +112,7 @@ export class AlertController {
     try {
       await this.alertService.removeRuleContact(contactId);
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e, e?.stack);
     }
     return { success: true };
   }

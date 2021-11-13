@@ -51,7 +51,7 @@ export class EventProcessor {
         `Elasticsearch save ${ElasticIndexOfError} status:${res.statusCode}`,
       );
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e, e?.stack);
       await job.moveToFailed({ message: e?.message }, true);
     }
   }
@@ -79,7 +79,7 @@ export class EventProcessor {
         `Elasticsearch save ${ElasticIndexOfPref} status:${res.statusCode}`,
       );
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e, e?.stack);
       await job.moveToFailed({ message: e?.message }, true);
     }
   }

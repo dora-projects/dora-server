@@ -16,7 +16,7 @@ export class NotifyProcessor {
       this.logger.debug('NotifyProcessor got error data!');
       await this.alertService.handleErrorEvent(job.data);
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e, e?.stack);
       await job.moveToFailed({ message: e?.message }, true);
     }
   }

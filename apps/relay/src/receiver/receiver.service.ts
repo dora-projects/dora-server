@@ -26,7 +26,7 @@ export class ReceiverService {
         removeOnComplete: true,
       });
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e, e?.stack);
     }
   }
 
@@ -38,7 +38,7 @@ export class ReceiverService {
         removeOnComplete: true,
       });
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e, e?.stack);
     }
   }
 }

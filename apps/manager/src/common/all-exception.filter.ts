@@ -66,7 +66,7 @@ export class AllExceptionFilter implements ExceptionFilter {
       // 返回
       response.status(status).json({ error: { ...error, ...common } });
     } catch (e) {
-      this.logger.error('系统错误', e);
+      this.logger.error('系统错误', e, e?.stack);
       response.status(500).json({
         error: { code: ErrorCode.ServerError, message: '系统错误', ...common },
       });
