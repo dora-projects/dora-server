@@ -71,6 +71,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   await configure(app);
 
+  app.enableShutdownHooks();
+
   console.log(chalk.green(banner(`manager started at ${await app.getUrl()}`)));
 }
 

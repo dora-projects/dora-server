@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { MyConfigModule } from 'libs/datasource/config';
 import { MyDatabase, MyElasticModule } from 'libs/datasource';
-import { AppService } from './app.service';
+import { AppService, AppShutdownService } from './app.service';
 import { LoggerMiddleware } from './common/logger.middleware';
 
 import { AnalysisModule } from './analysis/analysis.module';
@@ -28,7 +28,7 @@ import { AlertModule } from './alert/alert.module';
     SourcemapModule,
     SystemModule,
   ],
-  providers: [AppService],
+  providers: [AppService, AppShutdownService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
