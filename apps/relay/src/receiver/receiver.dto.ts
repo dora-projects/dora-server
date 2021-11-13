@@ -52,6 +52,7 @@ export type PrefEvent = EventCommon & {
     lcp: number;
     fp: number;
     fcp: number;
+    fid: number;
     ttfb: number;
   };
 };

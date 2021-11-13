@@ -46,6 +46,7 @@ export class SentryService {
         lcp: data?.measurements?.lcp?.value,
         fp: data?.measurements?.fp?.value,
         fcp: data?.measurements?.fcp?.value,
+        fid: data?.measurements?.fid?.value,
         ttfb: data?.measurements?.ttfb?.value,
       },
       release: data?.release,

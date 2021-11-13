@@ -1,7 +1,7 @@
 import { Controller, Get, Ip, Logger, Post, Req } from '@nestjs/common';
 import { ReceiverService } from './receiver.service';
 import { SentryService } from './sentry.service';
-import { dumpJson, timeFormNow } from 'libs/shared';
+import { __DEV__, dumpJson, timeFormNow } from 'libs/shared';
 
 const uptime = new Date().toISOString();
 
@@ -46,7 +46,9 @@ export class ReceiverController {
       };
 
       //debug
-      // await dumpJson('sentryStore', storeData);
+      if (__DEV__) {
+        await dumpJson(`api-store-${storeData?.type}`, storeData);
+      }
 
       this.logger.debug('relay sentryStore....');
 
@@ -78,7 +80,7 @@ export class ReceiverController {
         }
       }
 
-      const envelopeData = {
+      const envelopeData: any = {
         sentry_key,
         sentry_version,
         ip,
@@ -86,7 +88,9 @@ export class ReceiverController {
       };
 
       //debug
-      // await dumpJson('sentryEnvelope', envelopeData);
+      if (__DEV__) {
+        await dumpJson(`api-envelope-${envelopeData?.type}`, envelopeData);
+      }
 
       this.logger.debug('relay sentryEnvelope....');
 
