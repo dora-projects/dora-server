@@ -15,10 +15,10 @@ export class AlertLog {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   release: string;
 
-  @Column()
+  @Column({ nullable: true })
   environment: string;
 
   @Column({ comment: '告警内容' })

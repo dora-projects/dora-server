@@ -19,23 +19,23 @@ export class Issue {
   @Column()
   appKey: string;
 
-  @Column()
+  @Column({ nullable: true })
   type: string;
+
+  @Column({ nullable: true })
+  value: string;
+
+  @Column({ nullable: true })
+  url: string;
+
+  @Column({ nullable: true })
+  release: string;
+
+  @Column({ nullable: true })
+  environment: string;
 
   @Column({ type: 'integer' })
   total: number;
-
-  @Column()
-  value: string;
-
-  @Column()
-  url: string;
-
-  @Column()
-  release: string;
-
-  @Column()
-  environment: string;
 
   @Column()
   recently: Date;

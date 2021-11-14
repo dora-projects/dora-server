@@ -26,8 +26,15 @@ export class IssueService {
     // update
     if (item) {
       await this.issueRepository.update(
-        { appKey, fingerprint },
-        { url, recently: new Date(timestamp), total: ++item.total },
+        {
+          appKey,
+          fingerprint,
+        },
+        {
+          url,
+          recently: new Date(timestamp),
+          total: ++item.total,
+        },
       );
     } else {
       // create
