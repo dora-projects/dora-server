@@ -101,7 +101,7 @@ export class NotifyService {
     rule: AlertRule,
     actualValue: number,
   ) {
-    const { name, appKey } = project;
+    const { name, id: projectId, appKey } = project;
     const {
       id: ruleId,
       name: ruleName,
@@ -131,12 +131,14 @@ export class NotifyService {
           const email = contact.user.email;
           if (email) {
             await this.sendMailToUser(email, title, message, link);
+            await this.alertService.createAlertLog(ruleId, projectId, message);
             this.logger.log(`邮件告警：${title + message}`);
           }
         }
         // 钉钉
         if (contact.type === 'ding') {
           await this.sendMsgToDingDingBot();
+          await this.alertService.createAlertLog(ruleId, projectId, message);
           this.logger.log(`钉钉告警：${title + message}`);
         }
       }

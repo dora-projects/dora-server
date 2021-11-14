@@ -11,6 +11,13 @@ import {
 
 import { AlertRule } from './alert.rule.entity';
 import { User } from 'libs/datasource/db/entity/user.entity';
+import { AlertLog } from 'libs/datasource/db/entity/alert.log.entity';
+
+export enum ProjectType {
+  React = 'react',
+  Vue = 'vue',
+  Web = 'web',
+}
 
 @Entity()
 export class Project {
@@ -21,33 +28,41 @@ export class Project {
   @Index({ unique: true })
   appKey: string;
 
-  @Column()
-  type: string;
+  @Column({
+    type: 'enum',
+    enum: ProjectType,
+    default: ProjectType.Web,
+    comment: '项目类型',
+  })
+  type: ProjectType;
 
-  @Column()
+  @Column({ comment: '项目名' })
   @Index({ unique: true })
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, comment: '项目描述' })
   detail: string;
 
-  // 多对一
   // @ManyToOne(() => Team, (team) => team.projects)
   // team: Team;
 
-  // 多对多
   @ManyToMany(() => User, (pro) => pro.projects, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   users: User[];
 
-  // 一对多
   @OneToMany(() => AlertRule, (alertRule) => alertRule.project, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   alertRules: AlertRule[];
+
+  @OneToMany(() => AlertLog, (alertLog) => alertLog.project, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  alertLogs: AlertLog[];
 
   @CreateDateColumn()
   createdAt: Date;

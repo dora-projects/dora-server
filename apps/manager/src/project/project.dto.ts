@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
+  IsEnum,
   IsNumber,
   IsOptional,
-  Length,
   MaxLength,
 } from 'class-validator';
+import { ProjectType } from 'libs/datasource';
 
 export class CreateProjectDto {
   @ApiProperty({ description: '项目名' })
@@ -18,8 +19,8 @@ export class CreateProjectDto {
   detail: string;
 
   @ApiProperty({ description: '类型' })
-  @Length(0, 10)
-  type: string;
+  @IsEnum(ProjectType)
+  type: ProjectType;
 }
 
 export class UpdateProjectDto extends CreateProjectDto {

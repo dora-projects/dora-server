@@ -9,6 +9,7 @@ import { ProjectService } from 'apps/manager/src/project/project.service';
 import {
   AlertBullQueueModule,
   AlertContact,
+  AlertLog,
   AlertRule,
   MyCacheModule,
   MyDatabase,
@@ -18,7 +19,7 @@ import {
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Project, AlertRule, AlertContact]),
+    TypeOrmModule.forFeature([Project, AlertRule, AlertContact, AlertLog]),
     MyCacheModule,
     MyElasticModule,
     MyDatabase,

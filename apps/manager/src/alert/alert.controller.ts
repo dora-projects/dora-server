@@ -18,7 +18,7 @@ import {
   RuleToggleDto,
   UpdateRuleDto,
 } from './alert.dto';
-import { AlertContact, AlertRule } from 'libs/datasource';
+import { AlertContact, AlertLog, AlertRule } from 'libs/datasource';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -35,6 +35,13 @@ export class AlertController {
     @Query('projectId') projectId: number,
   ): Promise<AlertRule[]> {
     return await this.alertService.queryRule(projectId);
+  }
+
+  @Get('manager/alert/logs')
+  async getAlertLogs(
+    @Query('projectId') projectId: number,
+  ): Promise<AlertLog[]> {
+    return await this.alertService.queryAlertLogs(projectId);
   }
 
   @Put('manager/alert/rule')

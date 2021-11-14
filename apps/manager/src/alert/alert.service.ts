@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { AlertContact, AlertRule } from 'libs/datasource';
+import { AlertContact, AlertLog, AlertRule } from 'libs/datasource';
 import { Connection, Repository, UpdateResult } from 'typeorm';
 import { AddRuleDto, UpdateRuleDto } from './alert.dto';
 
@@ -11,6 +11,8 @@ export class AlertService {
     private connection: Connection,
     @InjectRepository(AlertRule)
     private readonly alertRuleRepository: Repository<AlertRule>,
+    @InjectRepository(AlertLog)
+    private readonly alertLogRepository: Repository<AlertLog>,
     @InjectRepository(AlertContact)
     private readonly alertContactRepository: Repository<AlertContact>,
   ) {}
@@ -92,6 +94,7 @@ export class AlertService {
       .createQueryBuilder('rule')
       .where('rule.projectId = :id', { id: projectId })
       .leftJoinAndSelect('rule.contacts', 'contact')
+      .leftJoinAndSelect('rule.logs', 'logs')
       .leftJoinAndSelect('contact.user', 'user')
       .getMany();
   }
@@ -162,5 +165,37 @@ export class AlertService {
 
   async removeRuleContact(contactId: number): Promise<void> {
     await this.alertContactRepository.delete({ id: contactId });
+  }
+
+  async createAlertLog(
+    ruleId: number,
+    projectId: number,
+    content: string,
+  ): Promise<AlertLog> {
+    const log = new AlertLog();
+    log.content = content;
+    const logResult = await this.alertLogRepository.save(log);
+
+    await this.alertLogRepository
+      .createQueryBuilder()
+      .relation(AlertLog, 'rule')
+      .of(logResult)
+      .set(ruleId);
+
+    await this.alertLogRepository
+      .createQueryBuilder()
+      .relation(AlertLog, 'project')
+      .of(logResult)
+      .set(projectId);
+
+    return logResult;
+  }
+
+  async queryAlertLogs(projectId: number): Promise<AlertLog[]> {
+    return await this.alertLogRepository
+      .createQueryBuilder('log')
+      .where('log.projectId = :id', { id: projectId })
+      .leftJoinAndSelect('log.rule', 'rule')
+      .getMany();
   }
 }

@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 import { AlertRule } from './alert.rule.entity';
+import { Project } from './project.entity';
 
 @Entity()
 export class AlertLog {
@@ -16,6 +17,9 @@ export class AlertLog {
 
   @ManyToOne(() => AlertRule, (rule) => rule.logs)
   rule: AlertRule;
+
+  @ManyToOne(() => Project, (project) => project.alertLogs)
+  project: Project;
 
   @Column({ comment: '告警内容' })
   content: string;
