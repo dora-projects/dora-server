@@ -24,8 +24,20 @@ export class IssuesController {
     @Query('appKey') appKey,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit,
+    @Query('release') release,
+    @Query('environment') environment,
+    @Query('form') form,
+    @Query('to') to,
   ): Promise<Pagination<Issue>> {
     limit = limit > 100 ? 100 : limit;
-    return this.issuesService.list(appKey, { page, limit });
+    return this.issuesService.list({
+      appKey,
+      release,
+      environment,
+      form,
+      to,
+      page,
+      limit,
+    });
   }
 }

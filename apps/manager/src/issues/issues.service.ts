@@ -6,7 +6,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { Issue } from 'libs/datasource';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository } from 'typeorm';
+import { Connection, Between, Repository } from 'typeorm';
 
 @Injectable()
 export class IssuesService {
@@ -18,12 +18,28 @@ export class IssuesService {
     private readonly issueRepository: Repository<Issue>,
   ) {}
 
-  async list(appKey, options: IPaginationOptions): Promise<Pagination<Issue>> {
+  async list(
+    params: IPaginationOptions & {
+      appKey: string;
+      release: string;
+      environment: string;
+      form: number;
+      to: number;
+    },
+  ): Promise<Pagination<Issue>> {
+    const { appKey, release, environment, form, to } = params;
+
     const queryBuilder = this.issueRepository.createQueryBuilder('issue');
     queryBuilder.orderBy('issue.recently', 'DESC');
     queryBuilder.where({
       appKey: appKey,
+      recently: Between(new Date(+form), new Date(+to)),
     });
-    return paginate<Issue>(queryBuilder, options);
+
+    if (release) queryBuilder.andWhere({ release });
+    if (environment) queryBuilder.andWhere({ release });
+
+    const { limit, page } = params;
+    return paginate<Issue>(queryBuilder, { limit, page });
   }
 }
