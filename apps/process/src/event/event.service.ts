@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { SearchService } from 'libs/datasource/elasticsearch/elasticsearch.service';
 import { AlertQueue, IssueQueue } from 'libs/shared/constant';
 import { sha256 } from 'libs/shared';
 import { userAgentParser } from 'libs/shared/uaParser';
@@ -9,7 +8,6 @@ import { userAgentParser } from 'libs/shared/uaParser';
 @Injectable()
 export class EventService {
   constructor(
-    private readonly searchService: SearchService,
     @InjectQueue(AlertQueue) private readonly alertQueue: Queue,
     @InjectQueue(IssueQueue) private readonly issueQueue: Queue,
   ) {}

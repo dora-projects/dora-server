@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
-
-import { EventProcessor } from './event.processor';
-import { EventService } from './event.service';
 import {
   AlertBullQueueModule,
   EventBullQueueModule,
   IssueQueueModule,
 } from 'libs/datasource/bull';
 import { MyElasticModule } from 'libs/datasource/elasticsearch';
-import { SearchService } from 'libs/datasource/elasticsearch/elasticsearch.service';
+
+import { EventProcessor } from './event.processor';
+import { EventService } from './event.service';
 
 @Module({
   imports: [
@@ -17,6 +16,6 @@ import { SearchService } from 'libs/datasource/elasticsearch/elasticsearch.servi
     IssueQueueModule,
     MyElasticModule,
   ],
-  providers: [EventProcessor, EventService, SearchService],
+  providers: [EventProcessor, EventService],
 })
 export class EventModule {}

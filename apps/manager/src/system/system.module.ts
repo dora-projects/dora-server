@@ -9,7 +9,6 @@ import {
   MyBullModule,
 } from 'libs/datasource/bull';
 import { MyElasticModule } from 'libs/datasource/elasticsearch';
-import { SearchService } from 'libs/datasource/elasticsearch/elasticsearch.service';
 
 @Module({
   imports: [
@@ -20,6 +19,6 @@ import { SearchService } from 'libs/datasource/elasticsearch/elasticsearch.servi
     AlertBullQueueModule,
   ],
   controllers: [SystemController],
-  providers: [SystemService, SearchService],
+  providers: [SystemService],
 })
 export class SystemModule {}
