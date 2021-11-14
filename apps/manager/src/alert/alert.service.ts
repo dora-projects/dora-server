@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { AlertContact, AlertLog, AlertRule } from 'libs/datasource';
-import { Connection, Repository, UpdateResult } from 'typeorm';
+import { Between, Connection, Repository, UpdateResult } from 'typeorm';
 import { AddRuleDto, UpdateRuleDto } from './alert.dto';
 
 @Injectable()
@@ -191,10 +191,17 @@ export class AlertService {
     return logResult;
   }
 
-  async queryAlertLogs(projectId: number): Promise<AlertLog[]> {
+  async queryAlertLogs(
+    projectId: number,
+    from: number,
+    to: number,
+  ): Promise<AlertLog[]> {
     return await this.alertLogRepository
       .createQueryBuilder('log')
       .where('log.projectId = :id', { id: projectId })
+      .andWhere({
+        createdAt: Between(new Date(+from), new Date(+to)),
+      })
       .leftJoinAndSelect('log.rule', 'rule')
       .getMany();
   }

@@ -23,17 +23,17 @@ export class IssuesService {
       appKey: string;
       release: string;
       environment: string;
-      form: number;
+      from: number;
       to: number;
     },
   ): Promise<Pagination<Issue>> {
-    const { appKey, release, environment, form, to } = params;
+    const { appKey, release, environment, from, to } = params;
 
     const queryBuilder = this.issueRepository.createQueryBuilder('issue');
     queryBuilder.orderBy('issue.recently', 'DESC');
     queryBuilder.where({
       appKey: appKey,
-      recently: Between(new Date(+form), new Date(+to)),
+      recently: Between(new Date(+from), new Date(+to)),
     });
 
     if (release) queryBuilder.andWhere({ release });

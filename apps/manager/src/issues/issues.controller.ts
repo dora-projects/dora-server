@@ -26,7 +26,7 @@ export class IssuesController {
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit,
     @Query('release') release,
     @Query('environment') environment,
-    @Query('form') form,
+    @Query('from') from,
     @Query('to') to,
   ): Promise<Pagination<Issue>> {
     limit = limit > 100 ? 100 : limit;
@@ -34,7 +34,7 @@ export class IssuesController {
       appKey,
       release,
       environment,
-      form,
+      from,
       to,
       page,
       limit,

@@ -15,14 +15,20 @@ export class AlertLog {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  release: string;
+
+  @Column()
+  environment: string;
+
+  @Column({ comment: '告警内容' })
+  content: string;
+
   @ManyToOne(() => AlertRule, (rule) => rule.logs)
   rule: AlertRule;
 
   @ManyToOne(() => Project, (project) => project.alertLogs)
   project: Project;
-
-  @Column({ comment: '告警内容' })
-  content: string;
 
   @CreateDateColumn()
   createdAt: Date;

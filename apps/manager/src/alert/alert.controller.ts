@@ -40,8 +40,10 @@ export class AlertController {
   @Get('manager/alert/logs')
   async getAlertLogs(
     @Query('projectId') projectId: number,
+    @Query('from') from,
+    @Query('to') to,
   ): Promise<AlertLog[]> {
-    return await this.alertService.queryAlertLogs(projectId);
+    return await this.alertService.queryAlertLogs(projectId, from, to);
   }
 
   @Put('manager/alert/rule')
