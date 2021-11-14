@@ -1,13 +1,6 @@
 version: '3.7'
 
 services:
-  webapp:
-    image: nancode/dora-app
-    ports:
-      - '9001:80'
-    depends_on:
-      - manager
-
   manager:
     image: nancode/dora
     ports:
@@ -27,3 +20,9 @@ services:
     env_file: .env.production
     entrypoint: [ 'node', './relay/main.js' ]
 
+  webapp:
+    image: nancode/dora-app
+    ports:
+      - '9001:80'
+    depends_on:
+      - manager

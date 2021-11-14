@@ -6,8 +6,4 @@ export const MyConfigModule = ConfigModule.forRoot({
   ignoreEnvFile: true,
   isGlobal: true,
   cache: true,
-  validate: (c) => {
-    console.log(c);
-    return c;
-  },
 });

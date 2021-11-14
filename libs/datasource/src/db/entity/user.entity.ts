@@ -3,8 +3,6 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToMany,
-  JoinColumn,
-  OneToOne,
   CreateDateColumn,
   UpdateDateColumn,
   JoinTable,
@@ -19,18 +17,18 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'text' })
+  @Column()
   username: string;
 
   @Index({ unique: true })
-  @Column({ type: 'text' })
+  @Column()
   email: string;
 
   @Exclude({ toPlainOnly: true })
-  @Column({ type: 'text' })
+  @Column()
   password: string;
 
-  @Column({ type: 'text', default: 'admin' })
+  @Column({ default: 'admin' })
   role: string;
 
   @Column({ default: true })

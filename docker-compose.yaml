@@ -1,45 +1,52 @@
 version: '3.7'
 
 services:
-  postgres:
-    image: postgres:12
+  mysql:
+    image: mysql:5.7.22
+    container_name: mysql
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
     ports:
-      - '5432:5432'
+      - '3306:3306'
     environment:
-      POSTGRES_USER: dora
-      POSTGRES_PASSWORD: default_password
-      POSTGRES_DB: dora
-      PG_DATA: /var/lib/postgresql/data
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: default_password
+      MYSQL_DATABASE: dora
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - mysql-data:/var/lib/mysql
 
   redis:
     image: redis:6
+    container_name: redis
     command: >
       --requirepass default_password
     ports:
       - '6379:6379'
+    volumes:
+      - redis-data:/data
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+    container_name: elasticsearch
     ports:
       - '9200:9200'
       - '9300:9300'
     environment:
       ES_JAVA_OPTS: '-Xmx1g -Xms1g'
       ELASTIC_PASSWORD: default_password
-      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
-      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
       discovery.type: single-node
+      cluster.name: "docker-cluster"
+      network.host: '0.0.0.0'
+      xpack.license.self_generated.type: 'basic'
+      xpack.security.enabled: 'true'
+      xpack.monitoring.collection.enabled: 'false'
     volumes:
-      - type: bind
-        source: ./elasticsearch.yml
-        target: /usr/share/elasticsearch/config/elasticsearch.yml
-        read_only: true
-      - type: volume
-        source: elasticsearch
-        target: /usr/share/elasticsearch/data
+      - elasticsearch-data:/usr/share/elasticsearch/data
 
 volumes:
-  pgdata:
-  elasticsearch:
+  mysql-data:
+  redis-data:
+  elasticsearch-data:

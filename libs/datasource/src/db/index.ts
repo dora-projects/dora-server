@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import {
   AlertContact,
   AlertRule,
+  AlertLog,
   Issue,
   IssueStatus,
   Project,
@@ -30,6 +31,7 @@ export const MyDatabase = TypeOrmModule.forRootAsync({
     entities: [
       AlertContact,
       AlertRule,
+      AlertLog,
       Issue,
       IssueStatus,
       Project,

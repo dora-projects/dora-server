@@ -17,18 +17,18 @@ export class Project {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'text' })
+  @Column()
   @Index({ unique: true })
   appKey: string;
 
-  @Column({ type: 'text' })
+  @Column()
   type: string;
 
-  @Column({ type: 'text' })
+  @Column()
   @Index({ unique: true })
   name: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ nullable: true })
   detail: string;
 
   // 多对一
