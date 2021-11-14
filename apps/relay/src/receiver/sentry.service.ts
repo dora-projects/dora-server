@@ -5,6 +5,7 @@ import { PrefEvent, ErrorEvent } from './receiver.dto';
 export class SentryService {
   async storeDataAdapter(data: any) {
     if (!data.exception) return null;
+    if (!data.sentry_key) return null;
 
     const pickErrorData: ErrorEvent = {
       type: 'error',
@@ -31,6 +32,7 @@ export class SentryService {
 
   async envelopeDataAdapter(data: any) {
     if (!data.measurements) return null;
+    if (!data.sentry_key) return null;
 
     const pickData: PrefEvent = {
       type: 'pref',
