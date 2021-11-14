@@ -63,7 +63,7 @@ export class UserController {
 
   @Get('manager/user/setting')
   async getSetting(@Request() req): Promise<Setting> {
-    const userId = req.user?.result?.id;
+    const userId = req.user?.id;
     return await this.userService.getSettingOrDefault(userId);
   }
 
@@ -73,7 +73,7 @@ export class UserController {
     @Body() updateDefaultDto: UpdateDefaultDashboardDto,
   ): Promise<UpdateResult | InsertResult> {
     const { projectId } = updateDefaultDto;
-    const userId = req.user?.result?.id;
+    const userId = req.user?.id;
     return await this.userService.updateSetting(userId, projectId);
   }
 }

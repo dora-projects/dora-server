@@ -28,7 +28,7 @@ export class AnalysisController {
     @Request() req,
     @Body() eqlQueryBody: EqlQueryBody,
   ): Promise<any> {
-    const userId = req.user?.result?.id;
+    const userId = req.user?.id;
     const { eql } = eqlQueryBody;
     const result = await this.analysisService.doQuery(eql, userId);
     return result?.body;

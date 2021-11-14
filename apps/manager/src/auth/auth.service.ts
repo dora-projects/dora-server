@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { RegisterUserDto } from './auth.dto';
 import { verifyPassword } from 'libs/shared/auth';
+import { User } from 'libs/datasource';
 
 @Injectable()
 export class AuthService {
@@ -36,5 +37,9 @@ export class AuthService {
   // 注册
   async register(user: RegisterUserDto) {
     return await this.usersService.create(user);
+  }
+
+  async findUser(email: string): Promise<User> {
+    return await this.usersService.findByEmail(email);
   }
 }

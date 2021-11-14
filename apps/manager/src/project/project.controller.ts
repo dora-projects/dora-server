@@ -43,7 +43,7 @@ export class ProjectController {
     @Body() createProjectDto: CreateProjectDto,
     @Request() req,
   ): Promise<Project | void> {
-    const userId = req.user?.result?.id;
+    const userId = req.user?.id;
     return await this.projectService.create(createProjectDto, userId);
   }
 
@@ -61,7 +61,7 @@ export class ProjectController {
     @Request() req,
     @Query() query,
   ): Promise<Project | undefined> {
-    const userId = req.user?.result?.id;
+    const userId = req.user?.id;
     const { id, appKey } = query;
 
     let project: Project;
@@ -89,7 +89,7 @@ export class ProjectController {
 
   @Get('manager/my/projects')
   async projectList(@Request() req): Promise<Project[]> {
-    const userId = req.user?.result?.id;
+    const userId = req.user?.id;
     return await this.projectService.findUserProjects(userId);
   }
 
