@@ -14,7 +14,6 @@ export class IssueProcessor {
   @Process()
   async handleIssueCreateMessage(job: Job) {
     try {
-      this.logger.debug('IssueProcessor got error data!');
       const event = job.data;
       await this.issueService.createIssueIfNotExist(event);
       // await dumpJson('Issue_', job);

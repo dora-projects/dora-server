@@ -46,11 +46,9 @@ export class ReceiverController {
       };
 
       //debug
-      if (__DEV__) {
-        await dumpJson(`api-store-${storeData?.type}`, storeData);
-      }
-
-      this.logger.debug('relay sentryStore....');
+      // if (__DEV__) {
+      // await dumpJson(`api-store-${storeData?.type}`, storeData);
+      // }
 
       const data = await this.sentryService.storeDataAdapter(storeData);
       if (data) {
@@ -88,11 +86,9 @@ export class ReceiverController {
       };
 
       //debug
-      if (__DEV__) {
-        await dumpJson(`api-envelope-${envelopeData?.type}`, envelopeData);
-      }
-
-      this.logger.debug('relay sentryEnvelope....');
+      // if (__DEV__) {
+      //   await dumpJson(`api-envelope-${envelopeData?.type}`, envelopeData);
+      // }
 
       const pickData = await this.sentryService.envelopeDataAdapter(
         envelopeData,

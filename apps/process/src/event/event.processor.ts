@@ -24,7 +24,6 @@ export class EventProcessor {
   // 错误消息
   @Process(ErrorEventQueueName)
   async handleErrorMessage(job: Job) {
-    this.logger.debug('EventProcessor got error data');
     const data = job.data;
     try {
       // step1: 聚合
@@ -34,22 +33,15 @@ export class EventProcessor {
       const resultStep2 = await this.eventService.userAgentParser(resultStep1);
 
       // step3: 保存
-      const res = await this.elasticsearchService.index({
-        index: ElasticIndexOfError,
-        body: resultStep2,
-      });
+      await this.eventService.batchSaveDocs(ElasticIndexOfError, resultStep2);
 
       // step4: 发送给告警 和 Issue
       await this.eventService.sendAlertQueue(resultStep2);
       await this.eventService.sendIssueQueue(resultStep2);
 
-      if (__DEV__) {
-        await dumpJson('error', resultStep2);
-      }
-
-      this.logger.debug(
-        `Elasticsearch save ${ElasticIndexOfError} status:${res.statusCode}`,
-      );
+      // if (__DEV__) {
+      //   await dumpJson('error', resultStep2);
+      // }
     } catch (e) {
       this.logger.error(e, e?.stack);
       await job.moveToFailed({ message: e?.message }, true);
@@ -59,25 +51,17 @@ export class EventProcessor {
   // 性能消息
   @Process(PerfEventQueueName)
   async handlePrefMessage(job: Job) {
-    this.logger.debug('EventProcessor got perf data');
     const data = job.data;
     try {
       // step1: uaParser
       const resultStep1 = await this.eventService.userAgentParser(data);
 
       // step2: 保存
-      const res = await this.elasticsearchService.index({
-        index: ElasticIndexOfPref,
-        body: resultStep1,
-      });
+      await this.eventService.batchSaveDocs(ElasticIndexOfPref, resultStep1);
 
-      if (__DEV__) {
-        await dumpJson('perf', resultStep1);
-      }
-
-      this.logger.debug(
-        `Elasticsearch save ${ElasticIndexOfPref} status:${res.statusCode}`,
-      );
+      // if (__DEV__) {
+      //   await dumpJson('perf', resultStep1);
+      // }
     } catch (e) {
       this.logger.error(e, e?.stack);
       await job.moveToFailed({ message: e?.message }, true);
