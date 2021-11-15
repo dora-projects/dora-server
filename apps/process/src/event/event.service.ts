@@ -63,7 +63,9 @@ export class EventService {
       refresh: true,
       body: this.esBatchInsertedData,
     });
-    this.logger.debug(`esBulk 插入${len}条耗时: ${(Date.now() - now) / 1000}s`);
+    this.logger.debug(
+      `esBulk 插入${len / 2}条耗时: ${(Date.now() - now) / 1000}s`,
+    );
 
     this.esBatchInsertedData = [];
     this.esBatchInsertedLastTime = Date.now();
