@@ -8,10 +8,12 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ElasticIndexOfError, ElasticIndexOfPref } from 'libs/shared/constant';
 
 @Injectable()
-export class AppBootService implements OnApplicationBootstrap {
+export class AppService
+  implements OnApplicationBootstrap, OnApplicationShutdown
+{
   constructor(private readonly elasticsearchService: ElasticsearchService) {}
 
-  private readonly logger = new Logger(AppBootService.name);
+  private readonly logger = new Logger(AppService.name);
 
   async onApplicationBootstrap() {
     const exist = await this.checkExist();
@@ -34,7 +36,7 @@ export class AppBootService implements OnApplicationBootstrap {
   }
 
   async createEsIndex(): Promise<void> {
-    const resPref = await this.elasticsearchService.indices.create({
+    await this.elasticsearchService.indices.create({
       index: ElasticIndexOfPref,
       body: {
         mappings: {
@@ -47,7 +49,7 @@ export class AppBootService implements OnApplicationBootstrap {
       },
     });
 
-    const resError = await this.elasticsearchService.indices.create({
+    await this.elasticsearchService.indices.create({
       index: ElasticIndexOfError,
       body: {
         mappings: {
@@ -60,13 +62,8 @@ export class AppBootService implements OnApplicationBootstrap {
       },
     });
   }
-}
 
-@Injectable()
-export class AppShutdownService implements OnApplicationShutdown {
-  private readonly logger = new Logger(AppShutdownService.name);
-
-  onApplicationShutdown(signal: string) {
+  onApplicationShutdown(signal?: string): any {
     console.log();
     this.logger.log(`Received signal:${signal}`);
     this.logger.log('App exit！');
