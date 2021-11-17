@@ -38,13 +38,6 @@ describe('AnalysisService', () => {
     // expect(typeof result).toEqual('number');
   });
 
-  it('test getWebVitalsTotal', async () => {
-    const result = await service.getWebVitalsTotal({
-      type: 'pref',
-    });
-    console.log(JSON.stringify(result, null, 2));
-  });
-
   it('test getWebVitalsPercentiles', async () => {
     const result = await service.getWebVitalsPercentiles({
       type: 'pref',
@@ -54,6 +47,27 @@ describe('AnalysisService', () => {
 
   it('test getWebVitalsRange', async () => {
     const result = await service.getWebVitalsRange({
+      type: 'pref',
+    });
+    console.log(JSON.stringify(result, null, 2));
+  });
+
+  it('test getWebVitalsHistogram', async () => {
+    const result = await service.getWebVitalsHistogram({
+      type: 'pref',
+    });
+    console.log(JSON.stringify(result, null, 2));
+  });
+
+  it('test getFiledOptions environment', async () => {
+    const result = await service.getFiledCount('environment', {
+      type: 'pref',
+    });
+    console.log(JSON.stringify(result, null, 2));
+  });
+
+  it('test getFiledOptions release', async () => {
+    const result = await service.getFiledCount('release', {
       type: 'pref',
     });
     console.log(JSON.stringify(result, null, 2));

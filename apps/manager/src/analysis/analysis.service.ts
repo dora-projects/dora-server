@@ -232,4 +232,57 @@ export class AnalysisService {
     });
     return res.body?.aggregations;
   }
+
+  async getFiledCountList(
+    field: string,
+    params: CommonParams & RangeParams,
+  ): Promise<any> {
+    const filter = this.commonQueryFilter(params);
+    const res = await this.elasticsearchService.search({
+      index: 'dora*',
+      body: {
+        size: 0,
+        query: { bool: { filter } },
+        aggregations: {
+          [field]: {
+            terms: {
+              field: `${field}.keyword`,
+              size: 10,
+              order: {
+                count: 'desc',
+              },
+            },
+            aggregations: {
+              count: {
+                cardinality: {
+                  field: 'event_id.keyword',
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    return res.body?.aggregations?.[field]?.buckets;
+  }
+
+  async getFiledOptions(field: string, appKey: string) {
+    const filter = this.commonQueryFilter({ appKey });
+    const res = await this.elasticsearchService.search({
+      index: 'dora*',
+      body: {
+        size: 0,
+        query: { bool: { filter } },
+        aggregations: {
+          [field]: {
+            terms: {
+              field: `${field}.keyword`,
+              size: 10,
+            },
+          },
+        },
+      },
+    });
+    return res.body?.aggregations?.[field]?.buckets;
+  }
 }

@@ -40,6 +40,22 @@ export class AnalysisController {
     return await this.analysisService.getWebVitalsHistogram(query);
   }
 
+  @Get('manager/analysis/filed/count/list')
+  async queryFiledCountList(
+    @Query('field') field: string,
+    @Query() query: CommonParams & RangeParams,
+  ): Promise<any> {
+    return await this.analysisService.getFiledCountList(field, query);
+  }
+
+  @Get('manager/analysis/filed/options')
+  async queryFiledOptions(
+    @Query('field') field: string,
+    @Query('appKey') appKey: string,
+  ): Promise<any> {
+    return await this.analysisService.getFiledOptions(field, appKey);
+  }
+
   @Post('manager/analysis/eql')
   async clientEql(
     @Request() req,
