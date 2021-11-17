@@ -38,35 +38,24 @@ describe('AnalysisService', () => {
     // expect(typeof result).toEqual('number');
   });
 
-  it('test getFirstContentfulPaint', async () => {
-    const result = await service.getFirstContentfulPaintRange({
+  it('test getWebVitalsTotal', async () => {
+    const result = await service.getWebVitalsTotal({
       type: 'pref',
     });
-    console.log(result);
-    // expect(typeof result).toEqual('number');
+    console.log(JSON.stringify(result, null, 2));
   });
 
-  it('test getLargestContentfulPaint', async () => {
-    const result = await service.getLargestContentfulPaintRange({
+  it('test getWebVitalsPercentiles', async () => {
+    const result = await service.getWebVitalsPercentiles({
       type: 'pref',
     });
-    console.log(result);
-    // expect(typeof result).toEqual('number');
+    console.log(JSON.stringify(result, null, 2));
   });
 
-  it('test getFirstInputDelay', async () => {
-    const result = await service.getFirstInputDelayRange({
+  it('test getWebVitalsRange', async () => {
+    const result = await service.getWebVitalsRange({
       type: 'pref',
     });
-    console.log(result);
-    // expect(typeof result).toEqual('number');
-  });
-
-  it('test getCumulativeLayoutShift', async () => {
-    const result = await service.getCumulativeLayoutShiftRange({
-      type: 'pref',
-    });
-    console.log(result);
-    // expect(typeof result).toEqual('number');
+    console.log(JSON.stringify(result, null, 2));
   });
 });
