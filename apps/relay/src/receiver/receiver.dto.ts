@@ -46,8 +46,8 @@ export type ErrorEvent = EventCommon & {
   };
 };
 
-export type PrefEvent = EventCommon & {
-  type: 'pref';
+export type PerfEvent = EventCommon & {
+  type: 'perf';
   measurements: {
     lcp: number;
     fp: number;

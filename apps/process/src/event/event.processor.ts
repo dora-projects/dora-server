@@ -4,7 +4,7 @@ import { Job } from 'bull';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import {
   ElasticIndexOfError,
-  ElasticIndexOfPref,
+  ElasticIndexOfPerf,
   ErrorEventQueueName,
   EventQueue,
   PerfEventQueueName,
@@ -50,14 +50,14 @@ export class EventProcessor {
 
   // 性能消息
   @Process(PerfEventQueueName)
-  async handlePrefMessage(job: Job) {
+  async handlePerfMessage(job: Job) {
     const data = job.data;
     try {
       // step1: uaParser
       const resultStep1 = await this.eventService.userAgentParser(data);
 
       // step2: 保存
-      await this.eventService.batchSaveDocs(ElasticIndexOfPref, resultStep1);
+      await this.eventService.batchSaveDocs(ElasticIndexOfPerf, resultStep1);
 
       // if (__DEV__) {
       //   await dumpJson('perf', resultStep1);

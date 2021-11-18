@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrefEvent, ErrorEvent } from './receiver.dto';
+import { PerfEvent, ErrorEvent } from './receiver.dto';
 
 @Injectable()
 export class SentryService {
@@ -34,8 +34,8 @@ export class SentryService {
     if (!data.measurements) return null;
     if (!data.sentry_key) return null;
 
-    const pickData: PrefEvent = {
-      type: 'pref',
+    const pickData: PerfEvent = {
+      type: 'perf',
       appKey: data?.sentry_key,
       event_id: data?.event_id,
       timestamp: data?.timestamp * 1000,

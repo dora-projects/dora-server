@@ -40,36 +40,32 @@ describe('AnalysisService', () => {
 
   it('test getWebVitalsPercentiles', async () => {
     const result = await service.getWebVitalsPercentiles({
-      type: 'pref',
+      type: 'perf',
     });
     console.log(JSON.stringify(result, null, 2));
   });
 
   it('test getWebVitalsRange', async () => {
     const result = await service.getWebVitalsRange({
-      type: 'pref',
+      type: 'perf',
     });
     console.log(JSON.stringify(result, null, 2));
   });
 
   it('test getWebVitalsHistogram', async () => {
     const result = await service.getWebVitalsHistogram({
-      type: 'pref',
+      type: 'perf',
     });
     console.log(JSON.stringify(result, null, 2));
   });
 
   it('test getFiledOptions environment', async () => {
-    const result = await service.getFiledCount('environment', {
-      type: 'pref',
-    });
+    const result = await service.getFiledOptions('environment', '');
     console.log(JSON.stringify(result, null, 2));
   });
 
   it('test getFiledOptions release', async () => {
-    const result = await service.getFiledCount('release', {
-      type: 'pref',
-    });
+    const result = await service.getFiledOptions('release', '');
     console.log(JSON.stringify(result, null, 2));
   });
 });

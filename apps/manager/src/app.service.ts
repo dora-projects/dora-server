@@ -5,7 +5,7 @@ import {
   OnApplicationBootstrap,
 } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
-import { ElasticIndexOfError, ElasticIndexOfPref } from 'libs/shared/constant';
+import { ElasticIndexOfError, ElasticIndexOfPerf } from 'libs/shared/constant';
 
 @Injectable()
 export class AppService
@@ -26,7 +26,7 @@ export class AppService
   async checkExist(): Promise<boolean> {
     try {
       const res = await this.elasticsearchService.indices.exists({
-        index: [ElasticIndexOfPref, ElasticIndexOfError],
+        index: [ElasticIndexOfPerf, ElasticIndexOfError],
       });
       return res.body;
     } catch (e) {
@@ -37,7 +37,7 @@ export class AppService
 
   async createEsIndex(): Promise<void> {
     await this.elasticsearchService.indices.create({
-      index: ElasticIndexOfPref,
+      index: ElasticIndexOfPerf,
       body: {
         mappings: {
           properties: {
