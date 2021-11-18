@@ -11,9 +11,9 @@ import {
 import { classToPlain, Exclude } from 'class-transformer';
 import { Project } from 'libs/datasource/db/entity/project.entity';
 
-export enum RoleType {
-  Admin = 'admin',
+export enum Role {
   User = 'user',
+  Admin = 'admin',
 }
 
 @Entity()
@@ -34,11 +34,11 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: RoleType,
-    default: RoleType.Admin,
+    enum: Role,
+    default: Role.User,
     comment: '角色',
   })
-  role: RoleType;
+  role: Role;
 
   @Column({ default: true, comment: '是否激活' })
   isActive: boolean;

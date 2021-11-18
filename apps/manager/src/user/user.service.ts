@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { Connection, Like, Repository, UpdateResult } from 'typeorm';
-import { Project, Setting, User } from 'libs/datasource/db/entity';
+import { Project, Role, Setting, User } from 'libs/datasource/db/entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import {
   IPaginationOptions,
@@ -24,11 +24,15 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const count = await this.countUser();
     const user = new User();
     user.username = createUserDto.username;
     user.email = createUserDto.email;
     // 密码加密
     user.password = await hashPassword(createUserDto.password);
+
+    // 第一个用户为 admin
+    user.role = count > 0 ? Role.User : Role.Admin;
 
     return await this.userRepository.save(user);
   }

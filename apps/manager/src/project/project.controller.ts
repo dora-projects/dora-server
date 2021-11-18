@@ -25,13 +25,15 @@ import {
   JoinProjectDto,
   UpdateProjectDto,
 } from './project.dto';
-import { Project, User } from 'libs/datasource';
+import { Project, Role, User } from 'libs/datasource';
 import { ErrorRes, SuccessOrErrorRes, SuccessRes } from '../common/responseDto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { UpdateResult } from 'typeorm';
 import { UnauthorizedOperation } from '../common/error';
+import { Roles } from '../common/roles.decorator';
+import { RolesGuard } from '../common/roles.guard';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 @ApiTags('project')
 @Controller()
@@ -109,6 +111,7 @@ export class ProjectController {
     return { success: true };
   }
 
+  @Roles(Role.Admin)
   @ApiOkResponse({ type: SuccessRes })
   @Post('manager/project/removeUsers')
   async leaveProject(
