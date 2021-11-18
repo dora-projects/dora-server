@@ -11,6 +11,7 @@ import {
   Project,
   Setting,
   User,
+  ProjectRoles,
 } from './entity';
 
 export const MyDatabase = TypeOrmModule.forRootAsync({
@@ -35,6 +36,7 @@ export const MyDatabase = TypeOrmModule.forRootAsync({
       Issue,
       IssueStatus,
       Project,
+      ProjectRoles,
       Setting,
       User,
     ],

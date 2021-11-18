@@ -7,9 +7,11 @@ import {
   UpdateDateColumn,
   JoinTable,
   Index,
+  OneToMany,
 } from 'typeorm';
 import { classToPlain, Exclude } from 'class-transformer';
 import { Project } from 'libs/datasource/db/entity/project.entity';
+import { ProjectRoles } from './project.roles.entity';
 
 export enum Role {
   User = 'user',
@@ -43,12 +45,16 @@ export class User {
   @Column({ default: true, comment: '是否激活' })
   isActive: boolean;
 
-  // 多对多
   // @ManyToMany(() => Team, (team) => team.users)
   // @JoinTable()
   // teams: Team[];
 
-  // 多对多
+  @OneToMany(() => ProjectRoles, (pr) => pr.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  projectRoles: ProjectRoles[];
+
   @ManyToMany(() => Project, (pro) => pro.users)
   @JoinTable()
   projects: Project[];

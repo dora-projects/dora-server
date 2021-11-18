@@ -6,5 +6,6 @@ export * from './issue.entity';
 export * from './issue.status.entity';
 
 export * from './project.entity';
+export * from './project.roles.entity';
 export * from './setting.entity';
 export * from './user.entity';

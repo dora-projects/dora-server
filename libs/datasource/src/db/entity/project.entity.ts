@@ -11,7 +11,8 @@ import {
 
 import { AlertRule } from './alert.rule.entity';
 import { User } from 'libs/datasource/db/entity/user.entity';
-import { AlertLog } from 'libs/datasource/db/entity/alert.log.entity';
+import { AlertLog } from './alert.log.entity';
+import { ProjectRoles } from './project.roles.entity';
 
 export enum ProjectType {
   React = 'react',
@@ -63,6 +64,12 @@ export class Project {
     onDelete: 'CASCADE',
   })
   alertLogs: AlertLog[];
+
+  @OneToMany(() => ProjectRoles, (pr) => pr.project, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  projectRoles: ProjectRoles[];
 
   @CreateDateColumn()
   createdAt: Date;
