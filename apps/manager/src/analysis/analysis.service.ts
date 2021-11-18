@@ -120,7 +120,7 @@ export class AnalysisService {
               field: 'measurements.fp',
               ranges: [
                 { key: 'good', to: 1000 },
-                { key: 'me', from: 1000, to: 2000 },
+                { key: 'meh', from: 1000, to: 3000 },
                 { key: 'bad', from: 3000 },
               ],
             },
@@ -130,7 +130,7 @@ export class AnalysisService {
               field: 'measurements.fcp',
               ranges: [
                 { key: 'good', to: 1000 },
-                { key: 'me', from: 1000, to: 2000 },
+                { key: 'meh', from: 1000, to: 3000 },
                 { key: 'bad', from: 3000 },
               ],
             },
@@ -140,7 +140,7 @@ export class AnalysisService {
               field: 'measurements.lcp',
               ranges: [
                 { key: 'good', to: 2500 },
-                { key: 'me', from: 2500, to: 4000 },
+                { key: 'meh', from: 2500, to: 4000 },
                 { key: 'bad', from: 4000 },
               ],
             },
@@ -150,7 +150,7 @@ export class AnalysisService {
               field: 'measurements.fid',
               ranges: [
                 { key: 'good', to: 100 },
-                { key: 'me', from: 100, to: 300 },
+                { key: 'meh', from: 100, to: 300 },
                 { key: 'bad', from: 300 },
               ],
             },
@@ -160,7 +160,7 @@ export class AnalysisService {
               field: 'measurements.cls',
               ranges: [
                 { key: 'good', to: 0.1 },
-                { key: 'me', from: 0.1, to: 0.25 },
+                { key: 'meh', from: 0.1, to: 0.25 },
                 { key: 'bad', from: 0.25 },
               ],
             },
@@ -213,19 +213,54 @@ export class AnalysisService {
         query: { bool: { filter } },
         aggregations: {
           fp: {
-            histogram: { field: 'measurements.fp', interval: 50 },
+            histogram: {
+              field: 'measurements.fp',
+              interval: 50,
+              extended_bounds: {
+                min: 0,
+                max: 3500,
+              },
+            },
           },
           fcp: {
-            histogram: { field: 'measurements.fcp', interval: 50 },
+            histogram: {
+              field: 'measurements.fcp',
+              interval: 50,
+              extended_bounds: {
+                min: 0,
+                max: 3500,
+              },
+            },
           },
           lcp: {
-            histogram: { field: 'measurements.lcp', interval: 50 },
+            histogram: {
+              field: 'measurements.lcp',
+              interval: 50,
+              extended_bounds: {
+                min: 0,
+                max: 3500,
+              },
+            },
           },
           fid: {
-            histogram: { field: 'measurements.fid', interval: 0.5 },
+            histogram: {
+              field: 'measurements.fid',
+              interval: 10,
+              extended_bounds: {
+                min: 0,
+                max: 1000,
+              },
+            },
           },
           cls: {
-            histogram: { field: 'measurements.cls', interval: 0.01 },
+            histogram: {
+              field: 'measurements.cls',
+              interval: 0.02,
+              extended_bounds: {
+                min: 0,
+                max: 1,
+              },
+            },
           },
         },
       },
