@@ -25,6 +25,7 @@ export class User {
   id: number;
 
   @Column({ comment: '用户名' })
+  @Index({ unique: true })
   username: string;
 
   @Index({ unique: true })

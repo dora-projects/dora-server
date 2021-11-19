@@ -5,12 +5,13 @@ import {
   IsString,
   MaxLength,
   IsOptional,
+  IsAlphanumeric,
 } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ description: '用户名' })
   @MaxLength(14)
-  @IsString()
+  @IsAlphanumeric()
   username: string;
 
   @ApiProperty({ description: '邮箱' })
@@ -29,7 +30,7 @@ export class UpdateUserDto {
 
   @ApiProperty({ description: '用户名' })
   @MaxLength(14)
-  @IsString()
+  @IsAlphanumeric()
   username: string;
 
   @ApiProperty({ description: '邮箱' })
