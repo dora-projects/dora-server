@@ -11,10 +11,10 @@ export class CreateCatDto {
   breed: string;
 }
 
-export class EqlQueryBody {
-  @ApiProperty({ description: '查询体' })
-  eql: Record<string, any>;
-}
+// export class EqlQueryBody {
+//   @ApiProperty({ description: '查询体' })
+//   eql: Record<string, any>;
+// }
 
 export class RangeParams {
   @ApiProperty({ description: '开始时间' })
@@ -29,6 +29,9 @@ export class TrendRangeParams extends RangeParams {
 }
 
 export class CommonParams {
+  @ApiProperty({ description: '条数' })
+  size?: number;
+
   @ApiProperty({ description: '时间类型' })
   type?: string;
 
@@ -40,4 +43,7 @@ export class CommonParams {
 
   @ApiProperty({ description: '环境' })
   environment?: string;
+
+  @ApiProperty({ description: '数据指纹' })
+  fingerprint?: string;
 }

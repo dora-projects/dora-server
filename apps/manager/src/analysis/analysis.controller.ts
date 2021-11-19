@@ -1,16 +1,8 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AnalysisService } from './analysis.service';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { CommonParams, EqlQueryBody, RangeParams } from './analysis.dto';
+import { CommonParams, RangeParams, TrendRangeParams } from './analysis.dto';
 
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -18,6 +10,23 @@ import { CommonParams, EqlQueryBody, RangeParams } from './analysis.dto';
 @Controller()
 export class AnalysisController {
   constructor(private readonly analysisService: AnalysisService) {}
+
+  @Get('manager/analysis/logs')
+  async queryLogs(@Query() query: CommonParams & RangeParams): Promise<any> {
+    return await this.analysisService.getLogs(query);
+  }
+
+  @Get('manager/analysis/event/count')
+  async queryCount(@Query() query: CommonParams & RangeParams): Promise<any> {
+    return await this.analysisService.eventTypeCount(query);
+  }
+
+  @Get('manager/analysis/event/trend')
+  async queryTrend(
+    @Query() query: CommonParams & TrendRangeParams,
+  ): Promise<any> {
+    return await this.analysisService.eventTypeTrend(query);
+  }
 
   @Get('manager/analysis/web_vitals/range')
   async queryWebVitalsRange(
@@ -56,14 +65,14 @@ export class AnalysisController {
     return await this.analysisService.getFiledOptions(field, appKey);
   }
 
-  @Post('manager/analysis/eql')
-  async clientEql(
-    @Request() req,
-    @Body() eqlQueryBody: EqlQueryBody,
-  ): Promise<any> {
-    const userId = req.user?.id;
-    const { eql } = eqlQueryBody;
-    const result = await this.analysisService.doQuery(eql, userId);
-    return result?.body;
-  }
+  // @Post('manager/analysis/eql')
+  // async clientEql(
+  //   @Request() req,
+  //   @Body() eqlQueryBody: EqlQueryBody,
+  // ): Promise<any> {
+  //   const userId = req.user?.id;
+  //   const { eql } = eqlQueryBody;
+  //   const result = await this.analysisService.doQuery(eql, userId);
+  //   return result?.body;
+  // }
 }

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ProjectService } from '../project/project.service';
-import { BadRequestException, UnauthorizedOperation } from '../common/error';
 import { CommonParams, RangeParams, TrendRangeParams } from './analysis.dto';
 
 @Injectable()
@@ -11,39 +10,35 @@ export class AnalysisService {
     private readonly elasticsearchService: ElasticsearchService,
   ) {}
 
-  getHello(): string {
-    return 'Hello !';
-  }
+  // matchAppKeyInString(input: string): string {
+  //   const result = input.match(/"appKey":"(\w+)"/);
+  //   if (result && result.length >= 2) {
+  //     return result[1];
+  //   }
+  //   return null;
+  // }
 
-  matchAppKeyInString(input: string): string {
-    const result = input.match(/"appKey":"(\w+)"/);
-    if (result && result.length >= 2) {
-      return result[1];
-    }
-    return null;
-  }
-
-  async doQuery(eql: any, userId: number): Promise<any> {
-    if (!eql) return;
-    const eqlString = JSON.stringify(eql);
-    const appKey = this.matchAppKeyInString(eqlString);
-    if (!appKey) {
-      throw new BadRequestException('查询语句未找到 appKey');
-    }
-
-    const canAccess = await this.projectService.isUserCanAccessProject(
-      appKey,
-      userId,
-    );
-    if (!canAccess) throw new UnauthorizedOperation('无权限访问该项目');
-
-    const result = await this.elasticsearchService.search({
-      index: 'dora*',
-      body: eql,
-    });
-
-    return result;
-  }
+  // async doQuery(eql: any, userId: number): Promise<any> {
+  //   if (!eql) return;
+  //   const eqlString = JSON.stringify(eql);
+  //   const appKey = this.matchAppKeyInString(eqlString);
+  //   if (!appKey) {
+  //     throw new BadRequestException('查询语句未找到 appKey');
+  //   }
+  //
+  //   const canAccess = await this.projectService.isUserCanAccessProject(
+  //     appKey,
+  //     userId,
+  //   );
+  //   if (!canAccess) throw new UnauthorizedOperation('无权限访问该项目');
+  //
+  //   const result = await this.elasticsearchService.search({
+  //     index: 'dora*',
+  //     body: eql,
+  //   });
+  //
+  //   return result;
+  // }
 
   commonQueryFilter(params: CommonParams & RangeParams) {
     const filter: any[] = [];
@@ -53,12 +48,27 @@ export class AnalysisService {
     if (params.environment) {
       filter.push({ match: { environment: params.environment } });
     }
+    if (params.fingerprint) {
+      filter.push({ match: { fingerprint: params.fingerprint } });
+    }
     if (params.from && params?.to) {
       filter.push({
         range: { timestamp: { gte: params.from, lte: params.to } },
       });
     }
     return filter;
+  }
+
+  async getLogs(params: CommonParams & RangeParams): Promise<any> {
+    const filter = this.commonQueryFilter(params);
+    const res = await this.elasticsearchService.search({
+      index: 'dora*',
+      body: {
+        size: params?.size || 100,
+        query: { bool: { filter } },
+      },
+    });
+    return res.body?.hits;
   }
 
   async eventTypeCount(params: CommonParams & RangeParams) {
@@ -76,7 +86,7 @@ export class AnalysisService {
         },
       },
     });
-    return res.body?.aggregations?.count?.value;
+    return res.body?.aggregations?.count;
   }
 
   async eventTypeTrend(params: CommonParams & TrendRangeParams) {
