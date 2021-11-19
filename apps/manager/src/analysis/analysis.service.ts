@@ -343,12 +343,52 @@ export class AnalysisService {
             terms: {
               field: `release.keyword`,
               size: params?.size || 10,
-              order: {
-                timestamp: 'desc',
-              },
+              order: { earliest: 'desc' },
             },
             aggregations: {
-              eventCount: {
+              latest: { max: { field: 'timestamp' } },
+              earliest: { min: { field: 'timestamp' } },
+              // latest: {
+              //   top_hits: {
+              //     sort: [
+              //       {
+              //         timestamp: {
+              //           order: 'desc',
+              //         },
+              //       },
+              //     ],
+              //     _source: {
+              //       includes: ['timestamp', 'type'],
+              //     },
+              //     size: 1,
+              //   },
+              // },
+              // earliest: {
+              //   top_hits: {
+              //     sort: [
+              //       {
+              //         timestamp: {
+              //           order: 'asc',
+              //         },
+              //       },
+              //     ],
+              //     _source: {
+              //       includes: ['timestamp', 'type'],
+              //     },
+              //     size: 1,
+              //   },
+              // },
+              countError: {
+                filter: { term: { type: 'error' } },
+                aggs: {
+                  count: {
+                    cardinality: {
+                      field: 'event_id.keyword',
+                    },
+                  },
+                },
+              },
+              countEvent: {
                 cardinality: {
                   field: 'event_id.keyword',
                 },
@@ -373,6 +413,6 @@ export class AnalysisService {
         },
       },
     });
-    return res.body?.aggregations;
+    return res.body?.aggregations?.release?.buckets;
   }
 }

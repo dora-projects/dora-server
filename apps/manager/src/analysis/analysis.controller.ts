@@ -65,6 +65,13 @@ export class AnalysisController {
     return await this.analysisService.getFiledOptions(field, appKey);
   }
 
+  @Get('manager/analysis/release/list')
+  async queryReleaseList(
+    @Query() query: CommonParams & RangeParams,
+  ): Promise<any> {
+    return await this.analysisService.getReleaseList(query);
+  }
+
   // @Post('manager/analysis/eql')
   // async clientEql(
   //   @Request() req,

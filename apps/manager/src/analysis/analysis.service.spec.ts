@@ -75,7 +75,11 @@ describe('AnalysisService', () => {
   });
 
   it('test getReleaseList', async () => {
-    const result = await service.getReleaseList({});
+    const result = await service.getReleaseList({
+      appKey: 'ccdbeabee46345918d09357427de9f33',
+      from: 1637251200000,
+      to: 1637322281743,
+    });
     console.log(JSON.stringify(result, null, 2));
   });
 });
