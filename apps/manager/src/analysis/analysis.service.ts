@@ -292,7 +292,7 @@ export class AnalysisService {
           [field]: {
             terms: {
               field: `${field}.keyword`,
-              size: 10,
+              size: params?.size || 10,
               order: {
                 count: 'desc',
               },
@@ -329,5 +329,50 @@ export class AnalysisService {
       },
     });
     return res.body?.aggregations?.[field]?.buckets;
+  }
+
+  async getReleaseList(params: CommonParams & RangeParams) {
+    const filter = this.commonQueryFilter(params);
+    const res = await this.elasticsearchService.search({
+      index: 'dora*',
+      body: {
+        size: 0,
+        query: { bool: { filter } },
+        aggregations: {
+          release: {
+            terms: {
+              field: `release.keyword`,
+              size: params?.size || 10,
+              order: {
+                timestamp: 'desc',
+              },
+            },
+            aggregations: {
+              eventCount: {
+                cardinality: {
+                  field: 'event_id.keyword',
+                },
+              },
+              fp: {
+                percentiles: { field: 'measurements.fp', percents: [75] },
+              },
+              fcp: {
+                percentiles: { field: 'measurements.fcp', percents: [75] },
+              },
+              lcp: {
+                percentiles: { field: 'measurements.lcp', percents: [75] },
+              },
+              fid: {
+                percentiles: { field: 'measurements.fid', percents: [75] },
+              },
+              cls: {
+                percentiles: { field: 'measurements.cls', percents: [75] },
+              },
+            },
+          },
+        },
+      },
+    });
+    return res.body?.aggregations;
   }
 }

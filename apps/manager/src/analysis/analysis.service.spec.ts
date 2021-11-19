@@ -73,4 +73,9 @@ describe('AnalysisService', () => {
     const result = await service.getLogs({});
     console.log(JSON.stringify(result, null, 2));
   });
+
+  it('test getReleaseList', async () => {
+    const result = await service.getReleaseList({});
+    console.log(JSON.stringify(result, null, 2));
+  });
 });
