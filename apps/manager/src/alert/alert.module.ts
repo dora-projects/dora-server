@@ -8,5 +8,6 @@ import { AlertContact, AlertLog, AlertRule } from 'libs/datasource';
   imports: [TypeOrmModule.forFeature([AlertRule, AlertLog, AlertContact])],
   controllers: [AlertController],
   providers: [AlertService],
+  exports: [AlertService],
 })
 export class AlertModule {}

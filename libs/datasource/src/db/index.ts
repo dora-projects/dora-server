@@ -26,7 +26,8 @@ export const MyDatabase = TypeOrmModule.forRootAsync({
     password: configService.get<string>('typeorm.password'),
     database: configService.get<string>('typeorm.db'),
 
-    // logging: ['error'],
+    // logging: 'all',
+    // logger: 'file',
 
     autoLoadEntities: true,
     entities: [

@@ -2,25 +2,26 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
+  Get,
   ParseIntPipe,
   Post,
-  Get,
-  Delete,
-  Query,
   Put,
-  Request,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-import { InsertResult, UpdateResult } from 'typeorm';
-import { ApiQuery, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Pagination } from 'nestjs-typeorm-paginate';
 
 import { UserService } from './user.service';
-import { Setting, User } from 'libs/datasource';
-import { CreateUserDto, UpdateDefaultDashboardDto } from './user.dto';
+import { Role, User } from 'libs/datasource';
+import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { RolesGuard } from '../common/roles.guard';
+import { Roles } from '../common/roles.decorator';
+import { SuccessRes } from '../common/responseDto';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 @ApiTags('user')
 @Controller()
@@ -33,10 +34,11 @@ export class UserController {
     return await this.userService.create(user);
   }
 
-  @ApiBody({ type: CreateUserDto })
+  @ApiBody({ type: UpdateUserDto })
   @Post('manager/user/update')
-  async updateUser(@Body() user: CreateUserDto): Promise<User> {
-    return await this.userService.create(user);
+  async updateUser(@Body() user: UpdateUserDto): Promise<SuccessRes> {
+    await this.userService.update(user);
+    return { success: true };
   }
 
   @Get('manager/search/users')
@@ -55,25 +57,26 @@ export class UserController {
     return this.userService.paginate({ page, limit });
   }
 
+  @Roles(Role.Admin)
   @Delete('manager/user')
   @ApiQuery({ name: 'id', required: false })
   async delUser(@Query('id') id: string): Promise<void> {
-    return await this.userService.remove(id);
+    return await this.userService.deleteUser(id);
   }
 
-  @Get('manager/user/setting')
-  async getSetting(@Request() req): Promise<Setting> {
-    const userId = req.user?.id;
-    return await this.userService.getSettingOrDefault(userId);
-  }
-
-  @Post('manager/user/setting')
-  async UpdateSetting(
-    @Request() req,
-    @Body() updateDefaultDto: UpdateDefaultDashboardDto,
-  ): Promise<UpdateResult | InsertResult> {
-    const { projectId } = updateDefaultDto;
-    const userId = req.user?.id;
-    return await this.userService.updateSetting(userId, projectId);
-  }
+  // @Get('manager/user/setting')
+  // async getSetting(@Request() req): Promise<Setting> {
+  //   const userId = req.user?.id;
+  //   return await this.userService.getSettingOrDefault(userId);
+  // }
+  //
+  // @Post('manager/user/setting')
+  // async UpdateSetting(
+  //   @Request() req,
+  //   @Body() updateDefaultDto: UpdateDefaultDashboardDto,
+  // ): Promise<UpdateResult | InsertResult> {
+  //   const { projectId } = updateDefaultDto;
+  //   const userId = req.user?.id;
+  //   return await this.userService.updateSetting(userId, projectId);
+  // }
 }

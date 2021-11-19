@@ -1,19 +1,19 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsAlphanumeric,
-  IsEmail,
   IsNumber,
+  IsEmail,
   IsString,
   MaxLength,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ description: '用户名' })
-  @IsAlphanumeric()
   @MaxLength(14)
+  @IsString()
   username: string;
 
-  @ApiProperty({ required: false, description: '邮箱' })
+  @ApiProperty({ description: '邮箱' })
   @IsEmail()
   email: string;
 
@@ -22,10 +22,22 @@ export class CreateUserDto {
   password: string;
 }
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
-
-export class UpdateDefaultDashboardDto {
-  @ApiProperty({ description: '项目 id' })
+export class UpdateUserDto {
+  @ApiProperty({ description: '用户 id' })
   @IsNumber()
-  projectId: number;
+  id: number;
+
+  @ApiProperty({ description: '用户名' })
+  @MaxLength(14)
+  @IsString()
+  username: string;
+
+  @ApiProperty({ description: '邮箱' })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ description: '密码' })
+  @IsString()
+  @IsOptional()
+  password: string;
 }

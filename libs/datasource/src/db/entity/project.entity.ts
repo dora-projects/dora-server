@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   ManyToMany,
+  DeleteDateColumn,
 } from 'typeorm';
 
 import { AlertRule } from './alert.rule.entity';
@@ -76,4 +77,7 @@ export class Project {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

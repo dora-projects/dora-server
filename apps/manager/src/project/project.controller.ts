@@ -23,17 +23,16 @@ import {
 import {
   CreateProjectDto,
   JoinProjectDto,
+  LeaveProjectDto,
   UpdateProjectDto,
 } from './project.dto';
-import { Project, Role, User } from 'libs/datasource';
+import { Project, ProjectRoleEnum, User } from 'libs/datasource';
 import { ErrorRes, SuccessOrErrorRes, SuccessRes } from '../common/responseDto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { UpdateResult } from 'typeorm';
 import { UnauthorizedOperation } from '../common/error';
-import { Roles } from '../common/roles.decorator';
-import { RolesGuard } from '../common/roles.guard';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 @ApiTags('project')
 @Controller()
@@ -85,8 +84,19 @@ export class ProjectController {
 
   @Delete('manager/project/:id')
   @ApiParam({ name: 'id' })
-  async deleteProject(@Param('id') id: number): Promise<void> {
-    return await this.projectService.delete(id);
+  async deleteProject(
+    @Request() req,
+    @Param('id') projectId: number,
+  ): Promise<{ success: boolean }> {
+    const loginUserId = req.user?.id;
+    await this.projectService.requireProjectRole(
+      loginUserId,
+      projectId,
+      ProjectRoleEnum.Owner,
+    );
+
+    await this.projectService.delete(projectId);
+    return { success: true };
   }
 
   @Get('manager/my/projects')
@@ -104,21 +114,37 @@ export class ProjectController {
   @ApiInternalServerErrorResponse({ type: ErrorRes })
   @Post('manager/project/addUsers')
   async joinProject(
+    @Request() req,
     @Body() joinProjectDto: JoinProjectDto,
   ): Promise<SuccessOrErrorRes> {
     const { projectId, userIds } = joinProjectDto;
-    await this.projectService.projectAddUser(projectId, userIds);
+
+    // const loginUserId = req.user?.id;
+    // await this.projectService.requireProjectRole(
+    //   loginUserId,
+    //   projectId,
+    //   ProjectRoleEnum.Owner,
+    // );
+    await this.projectService.projectAddUsers(projectId, userIds);
     return { success: true };
   }
 
-  @Roles(Role.Admin)
   @ApiOkResponse({ type: SuccessRes })
   @Post('manager/project/removeUsers')
   async leaveProject(
-    @Body() joinProjectDto: JoinProjectDto,
+    @Request() req,
+    @Body() leaveProjectDto: LeaveProjectDto,
   ): Promise<SuccessRes> {
-    const { projectId, userIds } = joinProjectDto;
-    await this.projectService.projectRemoveUser(projectId, userIds);
+    const { projectId, userId } = leaveProjectDto;
+
+    const loginUserId = req.user?.id;
+    await this.projectService.requireProjectRole(
+      loginUserId,
+      projectId,
+      ProjectRoleEnum.Owner,
+    );
+
+    await this.projectService.projectRemoveUser(projectId, userId);
     return { success: true };
   }
 }

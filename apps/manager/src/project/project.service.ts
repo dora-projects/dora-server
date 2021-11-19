@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as assert from 'assert';
-import { Project, User } from 'libs/datasource';
+import { Project, ProjectRoleEnum, ProjectRoles, User } from 'libs/datasource';
 import {
   Connection,
   QueryFailedError,
@@ -19,6 +19,10 @@ export class ProjectService {
     private connection: Connection,
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    @InjectRepository(ProjectRoles)
+    private readonly projectRolesRepository: Repository<ProjectRoles>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(
@@ -37,7 +41,8 @@ export class ProjectService {
       project.appKey = u.replace(/-/g, '');
 
       const result = await this.projectRepository.save(project);
-      await this.projectAddUser(result.id, [userId]);
+      await this.projectAddUser(result.id, userId, ProjectRoleEnum.Owner);
+
       return result;
     } catch (e) {
       if (e instanceof QueryFailedError) {
@@ -70,7 +75,7 @@ export class ProjectService {
   async delete(projectId: number): Promise<void> {
     await this.projectRepository
       .createQueryBuilder()
-      .delete()
+      .softDelete()
       .from(Project)
       .where('id = :id', { id: projectId })
       .execute();
@@ -85,27 +90,91 @@ export class ProjectService {
   }
 
   async findProjectUsers(projectId: number) {
-    return await this.projectRepository
-      .createQueryBuilder()
-      .relation(Project, 'users')
-      .of(projectId)
-      .loadMany();
+    const result = await this.projectRepository
+      .createQueryBuilder('p')
+      .where('p.id = :id', { id: projectId })
+      .leftJoinAndSelect('p.users', 'users')
+      .leftJoinAndSelect(
+        'users.projectRoles',
+        'projectRoles',
+        'projectRoles.projectId = :id',
+        { id: projectId },
+      )
+      .getOne();
+    return result.users;
   }
 
-  async projectAddUser(projectId: number, userIds: number[]) {
-    return await this.projectRepository
-      .createQueryBuilder()
-      .relation(Project, 'users')
-      .of(projectId)
-      .add(userIds);
+  async projectAddUsers(
+    projectId: number,
+    userIds: number[],
+    projectRole = ProjectRoleEnum.Developer,
+  ) {
+    for (const userId of userIds) {
+      await this.projectAddUser(projectId, userId, projectRole);
+    }
   }
 
-  async projectRemoveUser(projectId: number, userIds: number[]) {
-    return await this.projectRepository
+  async projectAddUser(
+    projectId: number,
+    userId: number,
+    projectRole = ProjectRoleEnum.Developer,
+  ) {
+    await this.projectRepository
       .createQueryBuilder()
       .relation(Project, 'users')
       .of(projectId)
-      .remove(userIds);
+      .add(userId);
+
+    const role = new ProjectRoles();
+    role.projectRole = projectRole;
+    const newRole = await this.projectRolesRepository.save(role);
+
+    await this.projectRolesRepository
+      .createQueryBuilder()
+      .relation(ProjectRoles, 'project')
+      .of(newRole)
+      .set(projectId);
+
+    await this.projectRolesRepository
+      .createQueryBuilder()
+      .relation(ProjectRoles, 'user')
+      .of(newRole)
+      .set(userId);
+  }
+
+  async projectRemoveUser(projectId: number, userId: number) {
+    await this.projectRepository
+      .createQueryBuilder()
+      .relation(Project, 'users')
+      .of(projectId)
+      .remove(userId);
+
+    await this.projectRolesRepository
+      .createQueryBuilder('projectRoles')
+      .where('projectRoles.projectId = :projectId', { projectId: projectId })
+      .andWhere('projectRoles.userId = :userId', { userId: userId })
+      .delete();
+  }
+
+  async findProjectRoles(userId: number, projectId: number) {
+    return this.projectRolesRepository
+      .createQueryBuilder('pr')
+      .where('pr.projectId = :projectId', { projectId })
+      .andWhere('pr.userId = :userId', { userId })
+      .leftJoinAndSelect('pr.user', 'user')
+      .leftJoinAndSelect('pr.project', 'project')
+      .getOne();
+  }
+
+  async requireProjectRole(
+    userId: number,
+    projectId: number,
+    role: ProjectRoleEnum,
+  ) {
+    const result = await this.findProjectRoles(userId, projectId);
+    if (result?.projectRole !== role) {
+      throw new ForbiddenException();
+    }
   }
 
   async isUserCanAccessProject(

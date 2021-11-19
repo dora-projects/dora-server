@@ -37,6 +37,24 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
+  async update(updateUserDto: UpdateUserDto): Promise<UpdateResult> {
+    const newData: any = {
+      username: updateUserDto.username,
+      email: updateUserDto.email,
+    };
+
+    // 密码加密
+    if (updateUserDto.password) {
+      newData.password = await hashPassword(updateUserDto.password);
+    }
+
+    return await this.userRepository.update({ id: updateUserDto.id }, newData);
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await this.userRepository.softDelete(id);
+  }
+
   async countUser(): Promise<number> {
     return await this.userRepository.createQueryBuilder().getCount();
   }
@@ -69,71 +87,48 @@ export class UserService {
     });
   }
 
-  async update(
-    id: number,
-    updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
-    const { username, password, email } = updateUserDto;
-    return await this.userRepository.update(
-      { id },
-      { username, password, email },
-    );
-  }
-
-  async remove(id: string): Promise<void> {
-    await this.userRepository.delete(id);
-  }
-
-  async getSettingOrDefault(userId: number) {
-    const setting = await this.getSetting(userId);
-    if (setting?.project) return setting;
-
-    // 默认提供一个项目展示
-    const project = await this.projectRepository
-      .createQueryBuilder()
-      .relation(User, 'projects')
-      .of(userId)
-      .loadOne();
-
-    return {
-      id: null,
-      user: null,
-      project: project,
-    } as Setting;
-  }
-
-  async getSetting(userId: number) {
-    return await this.settingRepository
-      .createQueryBuilder('setting')
-      .leftJoinAndSelect('setting.user', 'user')
-      .leftJoinAndSelect('setting.project', 'project')
-      .where('user.id = :id', { id: userId })
-      .getOne();
-  }
-
-  async updateSetting(userId: number, projectId: number) {
-    const setting = await this.getSetting(userId);
-    const user = await this.userRepository.findOne(userId);
-    const project = await this.projectRepository.findOne(projectId);
-
-    if (setting && user && project) {
-      // update
-      return await this.settingRepository
-        .createQueryBuilder()
-        .update(setting)
-        .set({ user, project })
-        .execute();
-    }
-
-    // create
-    return await this.settingRepository
-      .createQueryBuilder()
-      .insert()
-      .into(Setting)
-      .values({
-        user,
-        project,
-      })
-      .execute();
-  }
+  // async getSettingOrDefault(userId: number) {
+  //   const setting = await this.getSetting(userId);
+  //   if (setting?.project) return setting;
+  //
+  //   return {
+  //     id: null,
+  //     user: null,
+  //   } as Setting;
+  // }
+  //
+  // async getSetting(userId: number) {
+  //   return await this.settingRepository
+  //     .createQueryBuilder('setting')
+  //     .leftJoinAndSelect('setting.user', 'user')
+  //     .leftJoinAndSelect('setting.project', 'project')
+  //     .where('user.id = :id', { id: userId })
+  //     .getOne();
+  // }
+  //
+  // async updateSetting(userId: number, projectId: number) {
+  //   const setting = await this.getSetting(userId);
+  //   const user = await this.userRepository.findOne(userId);
+  //   const project = await this.projectRepository.findOne(projectId);
+  //
+  //   if (setting && user && project) {
+  //     // update
+  //     return await this.settingRepository
+  //       .createQueryBuilder()
+  //       .update(setting)
+  //       .set({ user, project })
+  //       .execute();
+  //   }
+  //
+  //   // create
+  //   return await this.settingRepository
+  //     .createQueryBuilder()
+  //     .insert()
+  //     .into(Setting)
+  //     .values({
+  //       user,
+  //       project,
+  //     })
+  //     .execute();
+  // }
 }

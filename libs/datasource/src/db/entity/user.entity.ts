@@ -8,6 +8,7 @@ import {
   JoinTable,
   Index,
   OneToMany,
+  DeleteDateColumn,
 } from 'typeorm';
 import { classToPlain, Exclude } from 'class-transformer';
 import { Project } from 'libs/datasource/db/entity/project.entity';
@@ -64,6 +65,9 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 
   toJSON() {
     return classToPlain(this);

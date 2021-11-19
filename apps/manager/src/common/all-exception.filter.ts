@@ -56,7 +56,7 @@ export class AllExceptionFilter implements ExceptionFilter {
         error = errorResponse.error;
       } else {
         // 直接抛出的异常
-        this.logger.error('服务异常，响应：', exception);
+        this.logger.error(`服务异常，响应：${exception?.stack}`);
         error = {
           code: ErrorCode.ServerError,
           message: exception?.message || '服务异常',

@@ -38,3 +38,13 @@ export class JoinProjectDto {
   @IsArray()
   userIds: number[];
 }
+
+export class LeaveProjectDto {
+  @ApiProperty({ description: '项目 id' })
+  @IsNumber()
+  projectId: number;
+
+  @ApiProperty({ description: '用户 id' })
+  @IsNumber()
+  userId: number;
+}
