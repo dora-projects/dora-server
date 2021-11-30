@@ -1,113 +1,86 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as assert from 'assert';
-import { Project, ProjectRoleEnum, ProjectRoles, User } from 'libs/datasource';
-import {
-  Connection,
-  QueryFailedError,
-  Repository,
-  UpdateResult,
-} from 'typeorm';
-import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { CreateProjectDto, UpdateProjectDto } from './project.dto';
-import { RecordExistException } from '../common/error';
+import { PrismaService } from 'libs/shared/prisma.service';
+import { Project, User, PROJECT_ROLE } from '@prisma/client';
 
 @Injectable()
 export class ProjectService {
-  constructor(
-    @InjectConnection()
-    private connection: Connection,
-    @InjectRepository(Project)
-    private readonly projectRepository: Repository<Project>,
-    @InjectRepository(ProjectRoles)
-    private readonly projectRolesRepository: Repository<ProjectRoles>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async create(
     createProjectDto: CreateProjectDto,
     userId: number,
   ): Promise<Project | void> {
     assert(!!userId);
-
-    try {
-      const project = new Project();
-      project.name = createProjectDto.name;
-      project.type = createProjectDto.type;
-      project.detail = createProjectDto.detail;
-
-      const u: string = uuid();
-      project.appKey = u.replace(/-/g, '');
-
-      const result = await this.projectRepository.save(project);
-      await this.projectAddUser(result.id, userId, ProjectRoleEnum.Owner);
-
-      return result;
-    } catch (e) {
-      if (e instanceof QueryFailedError) {
-        throw new RecordExistException('项目名已存在');
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  async update(updateProjectDto: UpdateProjectDto): Promise<UpdateResult> {
-    const { id, name, type, detail } = updateProjectDto;
-    return await this.projectRepository.update({ id }, { name, type, detail });
-  }
-
-  async findById(id: number): Promise<Project> {
-    return await this.projectRepository.findOne({
-      where: { id },
-    });
-  }
-
-  async findByAppKey(appKey: string): Promise<Project> {
-    return await this.projectRepository.findOne({
-      where: {
-        appKey: appKey,
+    return await this.prismaService.project.create({
+      data: {
+        name: createProjectDto.name,
+        type: createProjectDto.type,
+        detail: createProjectDto.detail,
+        appKey: uuid().replace(/-/g, ''),
+        user_projects: {
+          create: {
+            userId: userId,
+          },
+        },
       },
     });
   }
 
-  async delete(projectId: number): Promise<void> {
-    await this.projectRepository
-      .createQueryBuilder()
-      .softDelete()
-      .from(Project)
-      .where('id = :id', { id: projectId })
-      .execute();
+  async update(updateProjectDto: UpdateProjectDto): Promise<Project> {
+    const { id, name, type, detail } = updateProjectDto;
+    return await this.prismaService.project.update({
+      where: { id },
+      data: { name, type, detail },
+    });
+  }
+
+  async findById(id: number): Promise<any> {
+    return await this.prismaService.project.findUnique({ where: { id } });
+  }
+
+  async findByAppKey(appKey: string): Promise<Project> {
+    return await this.prismaService.project.findUnique({ where: { appKey } });
+  }
+
+  async delete(projectId: number): Promise<Project> {
+    return await this.prismaService.project.delete({
+      where: {
+        id: projectId,
+      },
+    });
   }
 
   async findUserProjects(userId: number): Promise<Project[]> {
-    return await this.projectRepository
-      .createQueryBuilder()
-      .relation(User, 'projects')
-      .of(userId)
-      .loadMany();
+    return await this.prismaService.project.findMany({
+      where: {
+        user_projects: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+    });
   }
 
-  async findProjectUsers(projectId: number) {
-    const result = await this.projectRepository
-      .createQueryBuilder('p')
-      .where('p.id = :id', { id: projectId })
-      .leftJoinAndSelect('p.users', 'users')
-      .leftJoinAndSelect(
-        'users.projectRoles',
-        'projectRoles',
-        'projectRoles.projectId = :id',
-        { id: projectId },
-      )
-      .getOne();
-    return result.users;
+  async findProjectUsers(projectId: number): Promise<User[]> {
+    return await this.prismaService.user.findMany({
+      where: {
+        user_projects: {
+          some: {
+            projectId: projectId,
+          },
+        },
+      },
+    });
   }
 
   async projectAddUsers(
     projectId: number,
     userIds: number[],
-    projectRole = ProjectRoleEnum.Developer,
+    projectRole = PROJECT_ROLE.developer,
   ) {
     for (const userId of userIds) {
       await this.projectAddUser(projectId, userId, projectRole);
@@ -117,61 +90,60 @@ export class ProjectService {
   async projectAddUser(
     projectId: number,
     userId: number,
-    projectRole = ProjectRoleEnum.Developer,
+    projectRole = PROJECT_ROLE.developer,
   ) {
-    await this.projectRepository
-      .createQueryBuilder()
-      .relation(Project, 'users')
-      .of(projectId)
-      .add(userId);
-
-    const role = new ProjectRoles();
-    role.projectRole = projectRole;
-    const newRole = await this.projectRolesRepository.save(role);
-
-    await this.projectRolesRepository
-      .createQueryBuilder()
-      .relation(ProjectRoles, 'project')
-      .of(newRole)
-      .set(projectId);
-
-    await this.projectRolesRepository
-      .createQueryBuilder()
-      .relation(ProjectRoles, 'user')
-      .of(newRole)
-      .set(userId);
+    return await this.prismaService.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        user_projects: {
+          createMany: {
+            data: {
+              userId,
+            },
+          },
+        },
+        project_roles: {
+          createMany: {
+            data: {
+              userId,
+              projectRole,
+            },
+          },
+        },
+      },
+    });
   }
 
   async projectRemoveUser(projectId: number, userId: number) {
-    await this.projectRepository
-      .createQueryBuilder()
-      .relation(Project, 'users')
-      .of(projectId)
-      .remove(userId);
-
-    await this.projectRolesRepository
-      .createQueryBuilder('projectRoles')
-      .where('projectRoles.projectId = :projectId', { projectId: projectId })
-      .andWhere('projectRoles.userId = :userId', { userId: userId })
-      .delete();
+    return await this.prismaService.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        user_projects: {
+          deleteMany: [{ userId }],
+        },
+        project_roles: {
+          deleteMany: { userId },
+        },
+      },
+    });
   }
 
-  async findProjectRoles(userId: number, projectId: number) {
-    return this.projectRolesRepository
-      .createQueryBuilder('pr')
-      .where('pr.projectId = :projectId', { projectId })
-      .andWhere('pr.userId = :userId', { userId })
-      .leftJoinAndSelect('pr.user', 'user')
-      .leftJoinAndSelect('pr.project', 'project')
-      .getOne();
+  async findProjectRole(userId: number, projectId: number) {
+    return await this.prismaService.projectRoles.findUnique({
+      where: {},
+    });
   }
 
   async requireProjectRole(
     userId: number,
     projectId: number,
-    role: ProjectRoleEnum,
+    role: PROJECT_ROLE,
   ) {
-    const result = await this.findProjectRoles(userId, projectId);
+    const result = await this.findProjectRole(userId, projectId);
     if (result?.projectRole !== role) {
       throw new ForbiddenException();
     }

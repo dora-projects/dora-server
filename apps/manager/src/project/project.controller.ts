@@ -26,11 +26,10 @@ import {
   LeaveProjectDto,
   UpdateProjectDto,
 } from './project.dto';
-import { Project, ProjectRoleEnum, User } from 'libs/datasource';
 import { ErrorRes, SuccessOrErrorRes, SuccessRes } from '../common/responseDto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { UpdateResult } from 'typeorm';
 import { UnauthorizedOperation } from '../common/error';
+import { Project, User, PROJECT_ROLE } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -51,7 +50,7 @@ export class ProjectController {
   @Post('manager/project')
   async updateProject(
     @Body() updateProjectDto: UpdateProjectDto,
-  ): Promise<UpdateResult | void> {
+  ): Promise<Project | void> {
     return await this.projectService.update(updateProjectDto);
   }
 
@@ -92,7 +91,7 @@ export class ProjectController {
     await this.projectService.requireProjectRole(
       loginUserId,
       projectId,
-      ProjectRoleEnum.Owner,
+      PROJECT_ROLE.owner,
     );
 
     await this.projectService.delete(projectId);
@@ -141,7 +140,7 @@ export class ProjectController {
     await this.projectService.requireProjectRole(
       loginUserId,
       projectId,
-      ProjectRoleEnum.Owner,
+      PROJECT_ROLE.owner,
     );
 
     await this.projectService.projectRemoveUser(projectId, userId);

@@ -27,7 +27,12 @@ describe('ProjectService', () => {
   });
 
   it('findProjectRoles', async () => {
-    const res = await service.findProjectRoles(1, 1);
+    const res = await service.findProjectRole(1, 1);
+    console.log(JSON.stringify(res, null, 2));
+  });
+
+  it('findById', async () => {
+    const res = await service.findById(1);
     console.log(JSON.stringify(res, null, 2));
   });
 });
