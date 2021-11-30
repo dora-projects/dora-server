@@ -41,7 +41,7 @@ export const MyDatabase = TypeOrmModule.forRootAsync({
       Setting,
       User,
     ],
-    synchronize: true,
+    synchronize: false,
   }),
   inject: [ConfigService],
 });

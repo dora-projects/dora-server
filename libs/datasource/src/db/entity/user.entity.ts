@@ -19,6 +19,11 @@ export enum Role {
   Admin = 'admin',
 }
 
+export enum UserStatus {
+  Enable,
+  Disable,
+}
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -44,8 +49,13 @@ export class User {
   })
   role: Role;
 
-  @Column({ default: true, comment: '是否激活' })
-  isActive: boolean;
+  @Column({
+    type: 'enum',
+    enum: UserStatus,
+    default: UserStatus.Enable,
+    comment: '用户状态',
+  })
+  status: UserStatus;
 
   // @ManyToMany(() => Team, (team) => team.users)
   // @JoinTable()
