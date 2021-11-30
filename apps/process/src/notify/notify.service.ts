@@ -2,12 +2,12 @@ import { Inject, Injectable, Logger, CACHE_MANAGER } from '@nestjs/common';
 import type { Cache } from 'cache-manager';
 import { AlertService } from 'apps/manager/src/alert/alert.service';
 import { ProjectService } from 'apps/manager/src/project/project.service';
-import { AlertRule, Project } from 'libs/datasource';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ElasticIndexOfError } from 'libs/shared/constant';
 import { MailService } from 'apps/manager/src/common/service/mail.service';
 import { ConfigService } from '@nestjs/config';
 import { dateNow } from 'libs/shared';
+import { Project, AlertRule, AlertContact, AlertLog } from '@prisma/client';
 
 @Injectable()
 export class NotifyService {
@@ -65,7 +65,7 @@ export class NotifyService {
   async rulesCheck(project: Project, rules: AlertRule[]): Promise<void> {
     for await (const rule of rules) {
       if (!rule.open) return;
-      const rFilter = rule.filter;
+      const rFilter = rule.filter as any[];
 
       // 构建查询体
       const eql = [];
@@ -128,6 +128,8 @@ export class NotifyService {
       for await (const contact of contacts) {
         // email
         if (contact.type === 'user') {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           const email = contact.user.email;
           if (email) {
             await this.sendMailToUser(email, title, message, link);

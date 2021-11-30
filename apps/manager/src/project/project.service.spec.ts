@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MyConfigModule } from 'libs/datasource/config';
-import { MyDatabase, MyElasticModule } from 'libs/datasource';
+import { MyElasticModule } from 'libs/datasource';
 import { ProjectModule } from './project.module';
 import { ProjectService } from './project.service';
 
@@ -9,7 +9,7 @@ describe('ProjectService', () => {
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
-      imports: [MyConfigModule, MyDatabase, MyElasticModule, ProjectModule],
+      imports: [MyConfigModule, MyElasticModule, ProjectModule],
       // providers: [ProjectService],
     }).compile();
 
@@ -27,8 +27,8 @@ describe('ProjectService', () => {
   });
 
   it('findProjectRoles', async () => {
-    const res = await service.findProjectRole(1, 1);
-    console.log(JSON.stringify(res, null, 2));
+    // const res = await service.findProjectRole(1, 1);
+    // console.log(JSON.stringify(res, null, 2));
   });
 
   it('findById', async () => {

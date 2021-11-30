@@ -3,7 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { RegisterUserDto } from './auth.dto';
 import { verifyPassword } from 'libs/shared/auth';
-import { User } from 'libs/datasource';
+import { User, USER_ROLE } from '@prisma/client';
+import { PrismaService } from 'libs/datasource/prisma.service';
 
 @Injectable()
 export class AuthService {

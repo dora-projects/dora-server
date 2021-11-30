@@ -19,7 +19,6 @@ model User {
   lastLoginAt   DateTime       @default(now()) @db.DateTime(6)
   deletedAt     DateTime?      @db.DateTime(6)
   alert_contact AlertContact?
-  project_roles ProjectRoles[]
   user_projects UserProjects[]
 
   @@map("user")
@@ -36,38 +35,20 @@ model Project {
   deletedAt     DateTime?      @db.DateTime(6)
   alert_log     AlertLog[]
   alert_rule    AlertRule[]
-  project_roles ProjectRoles[]
   user_projects UserProjects[]
 
   @@map("project")
 }
 
 model UserProjects {
-  user      User    @relation(fields: [userId], references: [id])
+  prole     PROJECT_ROLE @default(developer)
+  user      User         @relation(fields: [userId], references: [id])
   userId    Int
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project      @relation(fields: [projectId], references: [id])
   projectId Int
 
   @@id([userId, projectId])
-  @@index([userId])
-  @@index([projectId])
   @@map("user_projects")
-}
-
-model ProjectRoles {
-  id          Int          @id @default(autoincrement())
-  projectRole PROJECT_ROLE @default(developer)
-  createdAt   DateTime     @default(now()) @db.DateTime(6)
-  updatedAt   DateTime     @default(now()) @db.DateTime(6)
-  projectId   Int?
-  userId      Int?
-  project     Project?     @relation(fields: [projectId], references: [id])
-  user        User?        @relation(fields: [userId], references: [id])
-
-  @@index([userId])
-  @@index([projectId])
-  @@unique([userId, projectId])
-  @@map("project_roles")
 }
 
 model Issue {

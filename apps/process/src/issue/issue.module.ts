@@ -1,22 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { IssueService } from './issue.service';
 import { IssueProcessor } from './issue.processor';
-import {
-  MyDatabase,
-  MyElasticModule,
-  IssueQueueModule,
-  Project,
-  Issue,
-} from 'libs/datasource';
+import { MyElasticModule, IssueQueueModule } from 'libs/datasource';
+import { PrismaService } from 'libs/datasource/prisma.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Project, Issue]),
-    IssueQueueModule,
-    MyElasticModule,
-    MyDatabase,
-  ],
-  providers: [IssueService, IssueProcessor],
+  imports: [IssueQueueModule, MyElasticModule],
+  providers: [IssueService, IssueProcessor, PrismaService],
 })
 export class IssueModule {}

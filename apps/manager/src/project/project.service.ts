@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as assert from 'assert';
 import { v4 as uuid } from 'uuid';
 import { CreateProjectDto, UpdateProjectDto } from './project.dto';
-import { PrismaService } from 'libs/shared/prisma.service';
+import { PrismaService } from 'libs/datasource/prisma.service';
 import { Project, User, PROJECT_ROLE } from '@prisma/client';
 
 @Injectable()
@@ -23,6 +23,7 @@ export class ProjectService {
         user_projects: {
           create: {
             userId: userId,
+            prole: PROJECT_ROLE.owner,
           },
         },
       },
@@ -65,11 +66,21 @@ export class ProjectService {
     });
   }
 
-  async findProjectUsers(projectId: number): Promise<User[]> {
+  async findProjectUsers(projectId: number): Promise<any[]> {
     return await this.prismaService.user.findMany({
       where: {
         user_projects: {
           some: {
+            projectId: projectId,
+          },
+        },
+      },
+      select: {
+        username: true,
+        email: true,
+        id: true,
+        user_projects: {
+          where: {
             projectId: projectId,
           },
         },
@@ -82,16 +93,10 @@ export class ProjectService {
     userIds: number[],
     projectRole = PROJECT_ROLE.developer,
   ) {
+    const data: { userId: number; prole: PROJECT_ROLE }[] = [];
     for (const userId of userIds) {
-      await this.projectAddUser(projectId, userId, projectRole);
+      data.push({ userId: userId, prole: projectRole });
     }
-  }
-
-  async projectAddUser(
-    projectId: number,
-    userId: number,
-    projectRole = PROJECT_ROLE.developer,
-  ) {
     return await this.prismaService.project.update({
       where: {
         id: projectId,
@@ -99,17 +104,7 @@ export class ProjectService {
       data: {
         user_projects: {
           createMany: {
-            data: {
-              userId,
-            },
-          },
-        },
-        project_roles: {
-          createMany: {
-            data: {
-              userId,
-              projectRole,
-            },
+            data,
           },
         },
       },
@@ -125,16 +120,16 @@ export class ProjectService {
         user_projects: {
           deleteMany: [{ userId }],
         },
-        project_roles: {
-          deleteMany: { userId },
-        },
       },
     });
   }
 
-  async findProjectRole(userId: number, projectId: number) {
-    return await this.prismaService.projectRoles.findUnique({
-      where: {},
+  async findProjectRoles(userId: number, projectId: number) {
+    return await this.prismaService.userProjects.findFirst({
+      where: {
+        userId: userId,
+        projectId: projectId,
+      },
     });
   }
 
@@ -143,8 +138,8 @@ export class ProjectService {
     projectId: number,
     role: PROJECT_ROLE,
   ) {
-    const result = await this.findProjectRole(userId, projectId);
-    if (result?.projectRole !== role) {
+    const result = await this.findProjectRoles(userId, projectId);
+    if (result?.prole !== role) {
       throw new ForbiddenException();
     }
   }

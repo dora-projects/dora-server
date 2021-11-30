@@ -11,15 +11,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Pagination } from 'nestjs-typeorm-paginate';
 
 import { UserService } from './user.service';
-import { Role, User } from 'libs/datasource';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { RolesGuard } from '../common/roles.guard';
 import { Roles } from '../common/roles.decorator';
 import { SuccessRes } from '../common/responseDto';
+import { User, USER_ROLE } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -52,15 +51,15 @@ export class UserController {
   getUsers(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit,
-  ): Promise<Pagination<User>> {
+  ): Promise<User[]> {
     limit = limit > 100 ? 100 : limit;
-    return this.userService.paginate({ page, limit });
+    return this.userService.userList({ page, limit });
   }
 
-  @Roles(Role.Admin)
+  @Roles(USER_ROLE.admin)
   @Delete('manager/user')
   @ApiQuery({ name: 'id', required: false })
-  async delUser(@Query('id') id: string): Promise<void> {
+  async delUser(@Query('id', ParseIntPipe) id: number): Promise<User> {
     return await this.userService.deleteUser(id);
   }
 
