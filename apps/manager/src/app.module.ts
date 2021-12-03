@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { MyConfigModule } from 'libs/datasource/config';
-import { MyDatabase, MyElasticModule } from 'libs/datasource';
+import { MyElasticModule } from 'libs/datasource';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from './common/logger.middleware';
 
@@ -18,7 +18,6 @@ import { AlertModule } from './alert/alert.module';
   imports: [
     MyElasticModule,
     MyConfigModule,
-    MyDatabase,
     AuthModule,
     UserModule,
     ProjectModule,

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MyConfigModule } from 'libs/datasource/config';
 import { AnalysisService } from './analysis.service';
-import { MyDatabase, MyElasticModule } from 'libs/datasource';
+import { MyElasticModule } from 'libs/datasource';
 import { ProjectModule } from '../project/project.module';
 
 describe('AnalysisService', () => {
@@ -9,7 +9,7 @@ describe('AnalysisService', () => {
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
-      imports: [MyConfigModule, MyDatabase, MyElasticModule, ProjectModule],
+      imports: [MyConfigModule, MyElasticModule, ProjectModule],
       providers: [AnalysisService],
     }).compile();
 

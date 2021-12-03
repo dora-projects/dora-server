@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  username      String         @unique @db.VarChar(255)
+  email         String         @unique @db.VarChar(255)
+  password      String         @db.VarChar(255)
+  role          USER_ROLE      @default(user)
+  status        USER_STATUS    @default(enable)
+  createdAt     DateTime       @default(now()) @db.DateTime(6)
+  updatedAt     DateTime       @default(now()) @db.DateTime(6)
+  lastLoginAt   DateTime       @default(now()) @db.DateTime(6)
+  deletedAt     DateTime?      @db.DateTime(6)
+  alert_contact AlertContact?
+  user_projects UserProjects[]
+
+  @@map("user")
+}
+
+model Project {
+  id            Int            @id @default(autoincrement())
+  appKey        String         @unique @db.VarChar(255)
+  type          PROJECT_TYPE   @default(web)
+  name          String         @unique @db.VarChar(255)
+  detail        String?        @db.VarChar(255)
+  createdAt     DateTime       @default(now()) @db.DateTime(6)
+  updatedAt     DateTime       @default(now()) @db.DateTime(6)
+  deletedAt     DateTime?      @db.DateTime(6)
+  alert_log     AlertLog[]
+  alert_rule    AlertRule[]
+  user_projects UserProjects[]
+
+  @@map("project")
+}
+
+model UserProjects {
+  prole     PROJECT_ROLE @default(developer)
+  user      User         @relation(fields: [userId], references: [id])
+  userId    Int
+  project   Project      @relation(fields: [projectId], references: [id])
+  projectId Int
+
+  @@id([userId, projectId])
+  @@map("user_projects")
+}
+
+model Issue {
+  id          Int      @id @default(autoincrement())
+  fingerprint String   @db.VarChar(255)
+  appKey      String   @db.VarChar(255)
+  type        String?  @db.VarChar(255)
+  value       String?  @db.VarChar(255)
+  url         String?  @db.VarChar(255)
+  release     String?  @db.VarChar(255)
+  environment String?  @db.VarChar(255)
+  total       Int
+  recently    DateTime @db.DateTime(0)
+  createdAt   DateTime @default(now()) @db.DateTime(6)
+  updatedAt   DateTime @default(now()) @db.DateTime(6)
+
+
+  @@unique([fingerprint, appKey])
+  @@map("issue")
+}
+
+model IssueStatus {
+  id        Int      @id @default(autoincrement())
+  status    String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @db.DateTime(6)
+  updatedAt DateTime @default(now()) @db.DateTime(6)
+
+  @@map("issue_status")
+}
+
+model AlertContact {
+  id         Int                @id @default(autoincrement())
+  type       ALERT_CONTACT_TYPE @default(user)
+  createdAt  DateTime           @default(now()) @db.DateTime(6)
+  updatedAt  DateTime           @default(now()) @db.DateTime(6)
+  ruleId     Int?
+  userId     Int?               @unique
+  alert_rule AlertRule?         @relation(fields: [ruleId], references: [id])
+  user       User?              @relation(fields: [userId], references: [id])
+
+
+  @@index([ruleId])
+  @@map("alert_contact")
+}
+
+model AlertLog {
+  id          Int        @id @default(autoincrement())
+  release     String?    @db.VarChar(255)
+  environment String?    @db.VarChar(255)
+  content     String     @db.VarChar(255)
+  createdAt   DateTime   @default(now()) @db.DateTime(6)
+  updatedAt   DateTime   @default(now()) @db.DateTime(6)
+  ruleId      Int?
+  projectId   Int?
+  project     Project?   @relation(fields: [projectId], references: [id])
+  alert_rule  AlertRule? @relation(fields: [ruleId], references: [id])
+
+
+  @@index([ruleId])
+  @@index([projectId])
+  @@map("alert_log")
+}
+
+model AlertRule {
+  id                 Int            @id @default(autoincrement())
+  name               String         @db.VarChar(255)
+  filter             Json
+  thresholdsTime     Int
+  thresholdsOperator String         @default(">") @db.VarChar(255)
+  thresholdsQuota    Int
+  silence            Int            @default(10)
+  open               Int            @default(1) @db.TinyInt
+  createdAt          DateTime       @default(now()) @db.DateTime(6)
+  updatedAt          DateTime       @default(now()) @db.DateTime(6)
+  projectId          Int?
+  project            Project?       @relation(fields: [projectId], references: [id])
+  alert_contact      AlertContact[]
+  alert_log          AlertLog[]
+
+
+  @@index([projectId])
+  @@map("alert_rule")
+}
+
+enum ALERT_CONTACT_TYPE {
+  user
+  ding
+}
+
+enum PROJECT_TYPE {
+  react
+  vue
+  web
+}
+
+enum PROJECT_ROLE {
+  owner
+  developer
+}
+
+enum USER_ROLE {
+  user
+  admin
+}
+
+enum USER_STATUS {
+  enable
+  disable
+}

@@ -18,8 +18,8 @@ import {
   RuleToggleDto,
   UpdateRuleDto,
 } from './alert.dto';
-import { AlertContact, AlertLog, AlertRule } from 'libs/datasource';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { AlertRule, AlertContact, AlertLog } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()

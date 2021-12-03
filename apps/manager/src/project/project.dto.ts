@@ -6,7 +6,7 @@ import {
   IsOptional,
   MaxLength,
 } from 'class-validator';
-import { ProjectType } from 'libs/datasource';
+import { PROJECT_TYPE } from '@prisma/client';
 
 export class CreateProjectDto {
   @ApiProperty({ description: '项目名' })
@@ -19,8 +19,8 @@ export class CreateProjectDto {
   detail: string;
 
   @ApiProperty({ description: '类型' })
-  @IsEnum(ProjectType)
-  type: ProjectType;
+  @IsEnum(PROJECT_TYPE)
+  type: PROJECT_TYPE;
 }
 
 export class UpdateProjectDto extends CreateProjectDto {
