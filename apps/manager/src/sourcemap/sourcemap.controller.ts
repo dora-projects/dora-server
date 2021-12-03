@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { SourcemapService } from './sourcemap.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
@@ -10,7 +10,7 @@ import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 export class SourcemapController {
   constructor(private readonly sourcemapService: SourcemapService) {}
 
-  @Get('manager/sourcemaps')
+  @Post('manager/sourcemap/parser')
   getHello(): string {
     return this.sourcemapService.getHello();
   }

@@ -8,6 +8,7 @@ import { LoggerMiddleware } from './common/logger.middleware';
 import { AnalysisModule } from './analysis/analysis.module';
 import { IssuesModule } from './issues/issues.module';
 import { ProjectModule } from './project/project.module';
+import { FileModule } from './file/file.module';
 import { SourcemapModule } from './sourcemap/sourcemap.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
@@ -21,6 +22,7 @@ import { AlertModule } from './alert/alert.module';
     AuthModule,
     UserModule,
     ProjectModule,
+    FileModule,
     AlertModule,
     AnalysisModule,
     IssuesModule,
