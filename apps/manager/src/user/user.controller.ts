@@ -17,7 +17,7 @@ import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { RolesGuard } from '../common/roles.guard';
 import { Roles } from '../common/roles.decorator';
-import { SuccessRes } from '../common/responseDto';
+import { PaginationRes, SuccessRes } from '../common/responseDto';
 import { User, USER_ROLE } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -51,7 +51,7 @@ export class UserController {
   getUsers(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit,
-  ): Promise<User[]> {
+  ): Promise<PaginationRes<User>> {
     limit = limit > 100 ? 100 : limit;
     return this.userService.userList({ page, limit });
   }

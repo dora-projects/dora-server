@@ -3,6 +3,7 @@ import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { hashPassword } from 'libs/shared/auth';
 import { User, USER_ROLE } from '@prisma/client';
 import { PrismaService } from 'libs/datasource/prisma.service';
+import { PaginationRes } from '../common/responseDto';
 
 @Injectable()
 export class UserService {
@@ -52,12 +53,20 @@ export class UserService {
     return await this.prismaService.user.count();
   }
 
-  async userList(options: { page: number; limit: number }): Promise<User[]> {
+  async userList(options: {
+    page: number;
+    limit: number;
+  }): Promise<PaginationRes<User>> {
     const { page, limit } = options;
-    return await this.prismaService.user.findMany({
+    const result = await this.prismaService.user.findMany({
       skip: (page - 1) * limit,
       take: limit,
     });
+    return {
+      items: result,
+      page,
+      limit,
+    };
   }
 
   async findOne(id: number): Promise<User> {
@@ -90,6 +99,17 @@ export class UserService {
             },
           },
         ],
+      },
+    });
+  }
+
+  async updateLastLogin(id: number): Promise<User> {
+    return await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        lastLoginAt: new Date(),
       },
     });
   }

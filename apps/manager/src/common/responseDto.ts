@@ -11,3 +11,12 @@ export class ErrorRes {
 }
 
 export type SuccessOrErrorRes = SuccessRes | ErrorRes;
+
+export class PaginationRes<T> {
+  @ApiProperty({ description: '数据' })
+  items: T[];
+  @ApiProperty({ description: '页码' })
+  page: number;
+  @ApiProperty({ description: '单页条数' })
+  limit: number;
+}

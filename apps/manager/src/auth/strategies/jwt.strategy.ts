@@ -17,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     const email = payload?.result?.email;
-    const user = await this.authService.findUser(email);
+    const user = await this.authService.findUserAndUpdateLastLogin(email);
     if (!user) {
       throw new UnauthorizedException('登录失效');
     }

@@ -43,4 +43,10 @@ export class AuthService {
   async findUser(email: string): Promise<User> {
     return await this.usersService.findByEmail(email);
   }
+
+  async findUserAndUpdateLastLogin(email: string): Promise<User> {
+    const user = await this.usersService.findByEmail(email);
+    await this.usersService.updateLastLogin(user.id);
+    return user;
+  }
 }
