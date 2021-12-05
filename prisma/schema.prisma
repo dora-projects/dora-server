@@ -36,6 +36,7 @@ model Project {
   alert_log     AlertLog[]
   alert_rule    AlertRule[]
   user_projects UserProjects[]
+  Sourcemap     Sourcemap[]
 
   @@map("project")
 }
@@ -49,6 +50,18 @@ model UserProjects {
 
   @@id([userId, projectId])
   @@map("user_projects")
+}
+
+model Sourcemap {
+  id          Int      @id @default(autoincrement())
+  path        String?  @db.VarChar(255)
+  release     String?  @db.VarChar(255)
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   Int
+  createdAt   DateTime @default(now()) @db.DateTime(6)
+  updatedAt   DateTime @default(now()) @db.DateTime(6)
+
+  @@map("sourcemap")
 }
 
 model Issue {

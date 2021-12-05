@@ -7,16 +7,17 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import * as uuid from 'uuid';
+import * as path from 'path';
 import { Express } from 'express';
 import { diskStorage } from 'multer';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { formatBytes } from 'libs/shared/utils';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+// import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { FileService } from './file.service';
-import { UploadDto } from './file.dto';
 
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+// todo 鉴权
+// @UseGuards(JwtAuthGuard)
+// @ApiBearerAuth()
 @ApiTags('file')
 @Controller()
 export class FileController {
@@ -28,19 +29,15 @@ export class FileController {
       storage: diskStorage({
         destination: './uploads',
         filename: (req, file, callback) => {
-          callback(null, Date.now() + file.originalname);
+          callback(null, uuid.v4() + path.extname(file.originalname));
         },
       }),
     }),
   )
-  uploadFile(
-    @Body() body: UploadDto,
+  async uploadFile(
+    @Body() body,
     @UploadedFile() file: Express.Multer.File,
-  ) {
-    return {
-      filename: file.filename,
-      path: file.path,
-      size: formatBytes(file.size),
-    };
+  ): Promise<any> {
+    return this.fileService.handleUploadType(body, file);
   }
 }

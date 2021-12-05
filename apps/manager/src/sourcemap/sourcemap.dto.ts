@@ -1,12 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateCatDto {
+export class QueryDto {
   @ApiProperty()
-  name: string;
+  projectId: number;
+}
 
+export class DeleteDto {
   @ApiProperty()
-  age: number;
-
-  @ApiProperty()
-  breed: string;
+  projectId: number;
 }

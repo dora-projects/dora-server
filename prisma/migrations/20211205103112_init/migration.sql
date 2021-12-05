@@ -34,26 +34,22 @@ CREATE TABLE `project` (
 
 -- CreateTable
 CREATE TABLE `user_projects` (
+    `prole` ENUM('owner', 'developer') NOT NULL DEFAULT 'developer',
     `userId` INTEGER NOT NULL,
     `projectId` INTEGER NOT NULL,
 
-    INDEX `user_projects_userId_idx`(`userId`),
-    INDEX `user_projects_projectId_idx`(`projectId`),
     PRIMARY KEY (`userId`, `projectId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `project_roles` (
+CREATE TABLE `sourcemap` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `projectRole` ENUM('owner', 'developer') NOT NULL DEFAULT 'developer',
+    `path` VARCHAR(255) NULL,
+    `release` VARCHAR(255) NULL,
+    `projectId` INTEGER NOT NULL,
     `createdAt` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     `updatedAt` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    `projectId` INTEGER NULL,
-    `userId` INTEGER NULL,
 
-    INDEX `project_roles_userId_idx`(`userId`),
-    INDEX `project_roles_projectId_idx`(`projectId`),
-    UNIQUE INDEX `project_roles_userId_projectId_key`(`userId`, `projectId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -141,10 +137,7 @@ ALTER TABLE `user_projects` ADD CONSTRAINT `user_projects_userId_fkey` FOREIGN K
 ALTER TABLE `user_projects` ADD CONSTRAINT `user_projects_projectId_fkey` FOREIGN KEY (`projectId`) REFERENCES `project`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `project_roles` ADD CONSTRAINT `project_roles_projectId_fkey` FOREIGN KEY (`projectId`) REFERENCES `project`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `project_roles` ADD CONSTRAINT `project_roles_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `sourcemap` ADD CONSTRAINT `sourcemap_projectId_fkey` FOREIGN KEY (`projectId`) REFERENCES `project`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `alert_contact` ADD CONSTRAINT `alert_contact_ruleId_fkey` FOREIGN KEY (`ruleId`) REFERENCES `alert_rule`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
