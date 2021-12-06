@@ -78,7 +78,6 @@ model Issue {
   createdAt   DateTime @default(now()) @db.DateTime(6)
   updatedAt   DateTime @default(now()) @db.DateTime(6)
 
-
   @@unique([fingerprint, appKey])
   @@map("issue")
 }
@@ -102,23 +101,19 @@ model AlertContact {
   alert_rule AlertRule?         @relation(fields: [ruleId], references: [id])
   user       User?              @relation(fields: [userId], references: [id])
 
-
   @@index([ruleId])
   @@map("alert_contact")
 }
 
 model AlertLog {
-  id          Int        @id @default(autoincrement())
-  release     String?    @db.VarChar(255)
-  environment String?    @db.VarChar(255)
-  content     String     @db.VarChar(255)
-  createdAt   DateTime   @default(now()) @db.DateTime(6)
-  updatedAt   DateTime   @default(now()) @db.DateTime(6)
-  ruleId      Int?
-  projectId   Int?
-  project     Project?   @relation(fields: [projectId], references: [id])
-  alert_rule  AlertRule? @relation(fields: [ruleId], references: [id])
-
+  id         Int        @id @default(autoincrement())
+  content    String     @db.VarChar(255)
+  createdAt  DateTime   @default(now()) @db.DateTime(6)
+  updatedAt  DateTime   @default(now()) @db.DateTime(6)
+  project    Project?   @relation(fields: [projectId], references: [id])
+  projectId  Int?
+  alert_rule AlertRule? @relation(fields: [ruleId], references: [id])
+  ruleId     Int?
 
   @@index([ruleId])
   @@index([projectId])
@@ -140,7 +135,6 @@ model AlertRule {
   project            Project?       @relation(fields: [projectId], references: [id])
   alert_contact      AlertContact[]
   alert_log          AlertLog[]
-
 
   @@index([projectId])
   @@map("alert_rule")

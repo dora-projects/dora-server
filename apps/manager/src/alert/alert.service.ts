@@ -54,7 +54,11 @@ export class AlertService {
         },
       },
       include: {
-        alert_contact: true,
+        alert_contact: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
   }
