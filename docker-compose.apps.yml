@@ -7,6 +7,8 @@ services:
       - '9000:9000'
     env_file: .env.production
     entrypoint: [ 'node', './manager/main.js' ]
+    volumes:
+      - ./uploads:/server/uploads
 
   process:
     image: nancode/dora

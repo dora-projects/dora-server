@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prepare": "husky install",
-    "prebuild": "rimraf dist",
+    "prebuild": "rimraf dist && prisma generate",
     "start": "concurrently \"npm run start:manager\" \"npm run start:process\" \"npm run start:relay\"",
     "start:manager": "cross-env NODE_ENV=development nest start manager --watch",
     "start:process": "cross-env NODE_ENV=development nest start process --watch",
