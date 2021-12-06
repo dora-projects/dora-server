@@ -10,6 +10,7 @@ import { IssuesService } from './issues.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { Issue } from '@prisma/client';
+import { PaginationRes } from '../common/responseDto';
 
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -27,7 +28,7 @@ export class IssuesController {
     @Query('environment') environment,
     @Query('from') from,
     @Query('to') to,
-  ): Promise<Issue[]> {
+  ): Promise<PaginationRes<Issue>> {
     limit = limit > 100 ? 100 : limit;
     return this.issuesService.list({
       appKey,
