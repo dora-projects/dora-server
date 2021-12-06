@@ -15,7 +15,7 @@ RUN apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
 
 COPY --from=builder /server/dist/apps  /server
 COPY --from=builder /server/package.json  /server
-RUN yarn install --production
+COPY --from=builder /server/node_modules  /server/node_modules
 #RUN yarn install --production --registry https://registry.npm.taobao.org/
 
 # default
