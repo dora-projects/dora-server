@@ -26,7 +26,7 @@ export class IssuesService {
       },
     };
     if (environment) cond.environment = environment;
-    if (release) cond.environment = environment;
+    if (release) cond.release = release;
 
     const total = await this.prismaService.issue.count({
       where: cond,
