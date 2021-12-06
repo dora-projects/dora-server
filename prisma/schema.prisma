@@ -47,8 +47,6 @@ model UserProjects {
   userId    Int
   project   Project      @relation(fields: [projectId], references: [id])
   projectId Int
-  createdAt DateTime     @default(now()) @db.DateTime(6)
-  updatedAt DateTime     @default(now()) @db.DateTime(6)
 
   @@id([userId, projectId])
   @@map("user_projects")

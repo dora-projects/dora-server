@@ -37,8 +37,6 @@ CREATE TABLE `user_projects` (
     `prole` ENUM('owner', 'developer') NOT NULL DEFAULT 'developer',
     `userId` INTEGER NOT NULL,
     `projectId` INTEGER NOT NULL,
-    `createdAt` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    `updatedAt` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
 
     PRIMARY KEY (`userId`, `projectId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
