@@ -1,8 +1,9 @@
 export interface ExceptionFrame {
-  colno: number;
-  filename: string;
-  function: string;
-  lineno: number;
+  url: string;
+  func: string;
+  args: any[];
+  line: number;
+  column: number;
 }
 
 export interface Breadcrumb {
@@ -30,25 +31,25 @@ export interface EventCommon {
   };
 }
 
+export interface ErrorValue {
+  type: string;
+  value: string;
+  stacktrace: {
+    frames: ExceptionFrame[];
+  };
+}
+
 export type ErrorEvent = EventCommon & {
-  type: 'error';
+  type: string;
   breadcrumbs: Breadcrumb[];
-  exception: {
-    values: [
-      {
-        type: string;
-        value: string;
-        stacktrace: {
-          frames: ExceptionFrame[];
-        };
-      },
-    ];
+  error: {
+    values: ErrorValue[];
   };
 };
 
 export type PerfEvent = EventCommon & {
-  type: 'perf';
-  measurements: {
+  type: string;
+  perf: {
     lcp: number;
     fp: number;
     fcp: number;

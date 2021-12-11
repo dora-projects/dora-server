@@ -36,8 +36,8 @@ export class IssueService {
       });
     } else {
       // create
-      const type = lodash.get(event, 'exception.values[0].type');
-      const value = lodash.get(event, 'exception.values[0].value');
+      const type = lodash.get(event, 'error.values[0].type');
+      const value = lodash.get(event, 'error.values[0].value');
 
       return await this.prismaService.issue.create({
         data: {

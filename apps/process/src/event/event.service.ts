@@ -37,8 +37,8 @@ export class EventService {
 
   // todo 聚合
   async aggregationError(data): Promise<any> {
-    if (data?.exception) {
-      data.fingerprint = sha256(JSON.stringify(data.exception));
+    if (data?.error) {
+      data.fingerprint = sha256(JSON.stringify(data.error));
     }
     return data;
   }

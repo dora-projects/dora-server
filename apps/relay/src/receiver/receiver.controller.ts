@@ -15,7 +15,7 @@ export class ReceiverController {
   ) {}
 
   @Get()
-  async test(): Promise<any> {
+  async info(): Promise<any> {
     return {
       app: 'relay',
       uptime,
@@ -24,13 +24,13 @@ export class ReceiverController {
   }
 
   @Post('/report')
-  async report(): Promise<string> {
-    // await this.eventService.handleEvent(req.body, ip);
-    return 'ok';
+  async report(@Ip() ip: string, @Req() req: any): Promise<any> {
+    await this.receiverService.handleEvent({ ip, body: req.body });
+    return { success: true };
   }
 
   @Post('api/:id/store')
-  async sentryStore(@Ip() ip: string, @Req() req: any): Promise<string> {
+  async sentryStore(@Ip() ip: string, @Req() req: any): Promise<any> {
     try {
       // query
       const { sentry_key, sentry_version } = req.query;
@@ -54,7 +54,7 @@ export class ReceiverController {
       if (data) {
         await this.receiverService.pushErrorEventToQueue(data);
       }
-      return 'ok';
+      return { success: true };
     } catch (e) {
       this.logger.error(e, e?.stack);
       return e;
@@ -62,7 +62,7 @@ export class ReceiverController {
   }
 
   @Post('api/:id/envelope')
-  async sentryEnvelope(@Ip() ip: string, @Req() req: any): Promise<string> {
+  async sentryEnvelope(@Ip() ip: string, @Req() req: any): Promise<any> {
     try {
       // query
       const { sentry_key, sentry_version } = req.query;
@@ -96,7 +96,7 @@ export class ReceiverController {
       if (pickData) {
         await this.receiverService.pushPerfEventToQueue(pickData);
       }
-      return 'ok';
+      return { success: true };
     } catch (e) {
       this.logger.error(e, e?.stack);
       return e;

@@ -127,7 +127,7 @@ export class AnalysisService {
         aggregations: {
           fp: {
             range: {
-              field: 'measurements.fp',
+              field: 'perf.fp',
               ranges: [
                 { key: 'good', to: 1000 },
                 { key: 'meh', from: 1000, to: 3000 },
@@ -137,7 +137,7 @@ export class AnalysisService {
           },
           fcp: {
             range: {
-              field: 'measurements.fcp',
+              field: 'perf.fcp',
               ranges: [
                 { key: 'good', to: 1000 },
                 { key: 'meh', from: 1000, to: 3000 },
@@ -147,7 +147,7 @@ export class AnalysisService {
           },
           lcp: {
             range: {
-              field: 'measurements.lcp',
+              field: 'perf.lcp',
               ranges: [
                 { key: 'good', to: 2500 },
                 { key: 'meh', from: 2500, to: 4000 },
@@ -157,7 +157,7 @@ export class AnalysisService {
           },
           fid: {
             range: {
-              field: 'measurements.fid',
+              field: 'perf.fid',
               ranges: [
                 { key: 'good', to: 100 },
                 { key: 'meh', from: 100, to: 300 },
@@ -167,7 +167,7 @@ export class AnalysisService {
           },
           cls: {
             range: {
-              field: 'measurements.cls',
+              field: 'perf.cls',
               ranges: [
                 { key: 'good', to: 0.1 },
                 { key: 'meh', from: 0.1, to: 0.25 },
@@ -192,19 +192,19 @@ export class AnalysisService {
         query: { bool: { filter } },
         aggregations: {
           fp: {
-            percentiles: { field: 'measurements.fp' },
+            percentiles: { field: 'perf.fp' },
           },
           fcp: {
-            percentiles: { field: 'measurements.fcp' },
+            percentiles: { field: 'perf.fcp' },
           },
           lcp: {
-            percentiles: { field: 'measurements.lcp' },
+            percentiles: { field: 'perf.lcp' },
           },
           fid: {
-            percentiles: { field: 'measurements.fid' },
+            percentiles: { field: 'perf.fid' },
           },
           cls: {
-            percentiles: { field: 'measurements.cls' },
+            percentiles: { field: 'perf.cls' },
           },
         },
       },
@@ -224,7 +224,7 @@ export class AnalysisService {
         aggregations: {
           fp: {
             histogram: {
-              field: 'measurements.fp',
+              field: 'perf.fp',
               interval: 50,
               extended_bounds: {
                 min: 0,
@@ -234,7 +234,7 @@ export class AnalysisService {
           },
           fcp: {
             histogram: {
-              field: 'measurements.fcp',
+              field: 'perf.fcp',
               interval: 50,
               extended_bounds: {
                 min: 0,
@@ -244,7 +244,7 @@ export class AnalysisService {
           },
           lcp: {
             histogram: {
-              field: 'measurements.lcp',
+              field: 'perf.lcp',
               interval: 50,
               extended_bounds: {
                 min: 0,
@@ -254,7 +254,7 @@ export class AnalysisService {
           },
           fid: {
             histogram: {
-              field: 'measurements.fid',
+              field: 'perf.fid',
               interval: 10,
               extended_bounds: {
                 min: 0,
@@ -264,7 +264,7 @@ export class AnalysisService {
           },
           cls: {
             histogram: {
-              field: 'measurements.cls',
+              field: 'perf.cls',
               interval: 0.02,
               extended_bounds: {
                 min: 0,
@@ -394,19 +394,19 @@ export class AnalysisService {
                 },
               },
               fp: {
-                percentiles: { field: 'measurements.fp', percents: [75] },
+                percentiles: { field: 'perf.fp', percents: [75] },
               },
               fcp: {
-                percentiles: { field: 'measurements.fcp', percents: [75] },
+                percentiles: { field: 'perf.fcp', percents: [75] },
               },
               lcp: {
-                percentiles: { field: 'measurements.lcp', percents: [75] },
+                percentiles: { field: 'perf.lcp', percents: [75] },
               },
               fid: {
-                percentiles: { field: 'measurements.fid', percents: [75] },
+                percentiles: { field: 'perf.fid', percents: [75] },
               },
               cls: {
-                percentiles: { field: 'measurements.cls', percents: [75] },
+                percentiles: { field: 'perf.cls', percents: [75] },
               },
             },
           },

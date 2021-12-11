@@ -1,11 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { PerfEvent, ErrorEvent } from './receiver.dto';
+import { PerfEvent, ErrorEvent, ErrorValue } from './receiver.dto';
 
 @Injectable()
 export class SentryService {
+  formatErrorValues(values): ErrorValue[] {
+    if (Array.isArray(values)) {
+      return values.map((item) => {
+        const frames = item.stacktrace.frames;
+        item.stacktrace.frames = frames.map((frame) => {
+          return {
+            url: frame.filename,
+            func: frame.function,
+            line: frame?.lineno,
+            column: frame?.colno,
+          };
+        });
+        return item;
+      });
+    }
+    return null;
+  }
+
   async storeDataAdapter(data: any) {
     if (!data.exception) return null;
     if (!data.sentry_key) return null;
+
+    const values = this.formatErrorValues(data?.exception?.values);
 
     const pickErrorData: ErrorEvent = {
       type: 'error',
@@ -25,7 +45,7 @@ export class SentryService {
         ua: data?.request?.headers?.['User-Agent'],
       },
       breadcrumbs: data?.breadcrumbs,
-      exception: data?.exception,
+      error: { values },
     };
     return pickErrorData;
   }
@@ -44,7 +64,7 @@ export class SentryService {
         version: data?.sdk?.version,
       },
       ip: data?.ip,
-      measurements: {
+      perf: {
         lcp: data?.measurements?.lcp?.value,
         fp: data?.measurements?.fp?.value,
         fcp: data?.measurements?.fcp?.value,
