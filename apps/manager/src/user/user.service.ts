@@ -58,6 +58,8 @@ export class UserService {
     limit: number;
   }): Promise<PaginationRes<User>> {
     const { page, limit } = options;
+
+    const total = await this.prismaService.user.count();
     const result = await this.prismaService.user.findMany({
       skip: (page - 1) * limit,
       take: limit,
@@ -66,6 +68,7 @@ export class UserService {
       items: result,
       page,
       limit,
+      total,
     };
   }
 

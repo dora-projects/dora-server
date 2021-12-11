@@ -1,10 +1,9 @@
 FROM node:14-alpine as builder
 WORKDIR /server
-COPY package.json ./
-RUN yarn install
-#RUN yarn install --registry https://registry.npm.taobao.org/
+COPY package*.json ./
+RUN npm i
 COPY . .
-RUN yarn build
+RUN npm run build
 
 FROM node:14-alpine as runner
 LABEL maintainer="nan <msg@nancode.cn>"
@@ -16,7 +15,6 @@ RUN apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
 COPY --from=builder /server/dist/apps  /server
 COPY --from=builder /server/package.json  /server
 COPY --from=builder /server/node_modules  /server/node_modules
-#RUN yarn install --production --registry https://registry.npm.taobao.org/
 
 # default
 ENTRYPOINT [ "node", "./manager/main.js"]

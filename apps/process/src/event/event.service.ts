@@ -38,7 +38,8 @@ export class EventService {
   // todo 聚合
   async aggregationError(data): Promise<any> {
     if (data?.error) {
-      data.fingerprint = sha256(JSON.stringify(data.error));
+      const errorMessage = lodash.get(data, 'error.values[0].value');
+      data.fingerprint = sha256(`${errorMessage}`);
     }
     return data;
   }

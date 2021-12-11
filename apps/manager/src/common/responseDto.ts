@@ -19,4 +19,6 @@ export class PaginationRes<T> {
   page: number;
   @ApiProperty({ description: '单页条数' })
   limit: number;
+  @ApiProperty({ description: '总条数' })
+  total: number;
 }

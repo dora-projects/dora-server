@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Issue } from '@prisma/client';
 import { PrismaService } from 'libs/datasource/prisma.service';
+import { PaginationRes } from '../common/responseDto';
 
 @Injectable()
 export class IssuesService {
@@ -14,7 +15,7 @@ export class IssuesService {
       from: number;
       to: number;
     },
-  ): Promise<Issue[]> {
+  ): Promise<PaginationRes<Issue>> {
     const { page, limit } = params;
     const { appKey, release, environment, from, to } = params;
     const cond: any = {
@@ -25,9 +26,12 @@ export class IssuesService {
       },
     };
     if (environment) cond.environment = environment;
-    if (release) cond.environment = environment;
+    if (release) cond.release = release;
 
-    return this.prismaService.issue.findMany({
+    const total = await this.prismaService.issue.count({
+      where: cond,
+    });
+    const list = await this.prismaService.issue.findMany({
       skip: (page - 1) * limit,
       take: limit,
       where: cond,
@@ -35,5 +39,12 @@ export class IssuesService {
         recently: 'desc',
       },
     });
+
+    return {
+      items: list,
+      page: page,
+      limit: limit,
+      total,
+    };
   }
 }

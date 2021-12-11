@@ -7,7 +7,7 @@ import { ElasticIndexOfError } from 'libs/shared/constant';
 import { MailService } from 'apps/manager/src/common/service/mail.service';
 import { ConfigService } from '@nestjs/config';
 import { dateNow } from 'libs/shared';
-import { Project, AlertRule, AlertContact, AlertLog } from '@prisma/client';
+import { Project, AlertRule } from '@prisma/client';
 
 @Injectable()
 export class NotifyService {
@@ -23,46 +23,43 @@ export class NotifyService {
   private readonly logger = new Logger(NotifyService.name);
 
   async elasticQueryCount(eql): Promise<number> {
-    const body = {
-      query: {
-        bool: {
-          filter: eql,
-        },
-      },
-    };
-
+    const body = { query: { bool: { filter: eql } } };
     const result = await this.elasticsearchService.count({
       index: ElasticIndexOfError,
       body,
     });
-
     return result.body.count;
-  }
-
-  async queryRules(
-    appKey: string,
-  ): Promise<{ project: Project; rules: AlertRule[] }> {
-    const project = await this.projectService.findByAppKey(appKey);
-    if (!project) {
-      this.logger.debug(`未查询到项目 appKey：${appKey}`);
-      return null;
-    }
-    const rules = await this.alertService.queryRule(project.id);
-    return { project, rules };
   }
 
   // 告警逻辑
   async handleErrorEvent(data: any) {
     const appKey = data?.appKey;
     if (!appKey) return;
-    const result = await this.queryRules(appKey);
 
-    if (result && result.project && Array.isArray(result.rules)) {
-      await this.rulesCheck(result.project, result.rules);
+    const project = await this.projectService.findByAppKey(appKey);
+    if (!project) {
+      this.logger.debug(`未查询到项目 appKey：${appKey}`);
+      return null;
+    }
+    const rules = await this.alertService.queryRule(project.id);
+    if (!rules || rules.length <= 0) return;
+
+    const alertResults = await this.rulesCheck(project, rules);
+    if (!alertResults || alertResults.length <= 0) return;
+
+    for await (const result of alertResults) {
+      await this.notifyToContacts(
+        project,
+        result.rule,
+        result.actualValue,
+        data?.fingerprint,
+      );
     }
   }
 
-  async rulesCheck(project: Project, rules: AlertRule[]): Promise<void> {
+  async rulesCheck(project: Project, rules: AlertRule[]) {
+    const rulesNeedAlert: { actualValue: number; rule: AlertRule }[] = [];
+
     for await (const rule of rules) {
       if (!rule.open) return;
       const rFilter = rule.filter as any[];
@@ -91,15 +88,18 @@ export class NotifyService {
       }
 
       if (isTrigger) {
-        await this.notifyToContacts(project, rule, actualValue);
+        rulesNeedAlert.push({ actualValue, rule: rule });
       }
     }
+
+    return rulesNeedAlert;
   }
 
   async notifyToContacts(
     project: Project,
     rule: AlertRule,
     actualValue: number,
+    fingerprint: string,
   ) {
     const { name, id: projectId, appKey } = project;
     const {
@@ -110,39 +110,38 @@ export class NotifyService {
       thresholdsQuota,
       silence,
     } = rule;
+
     const doraUrl = this.configService.get<string>('dora_url');
     const title = `【Dora告警-${ruleName}】项目：${name} ${dateNow()} `;
     const message = `在${thresholdsTime}秒内发生了${actualValue}次，${thresholdsOperator}${thresholdsQuota}次`;
-    const link = `${doraUrl}/console/${appKey}/issues`;
+    const link = `${doraUrl}/projects/${appKey}/console/issues/${fingerprint}?from=email`;
 
     // 检查是否静默期
     const silenceCacheKey = `rule-${ruleId}-silence`;
     const isInSilentPeriod = await this.cacheManager.get(silenceCacheKey);
-    if (isInSilentPeriod) {
-      return;
-    }
+    if (isInSilentPeriod) return;
 
     // 挨个通知
     const contacts = await this.alertService.getRuleContacts(ruleId);
-    if (Array.isArray(contacts)) {
-      for await (const contact of contacts) {
-        // email
-        if (contact.type === 'user') {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const email = contact.user.email;
-          if (email) {
-            await this.sendMailToUser(email, title, message, link);
-            await this.alertService.createAlertLog(ruleId, projectId, message);
-            this.logger.log(`邮件告警：${title + message}`);
-          }
-        }
-        // 钉钉
-        if (contact.type === 'ding') {
-          await this.sendMsgToDingDingBot();
+    if (!contacts || contacts.length <= 0) return;
+
+    for await (const contact of contacts) {
+      // email
+      if (contact.type === 'user') {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const email = contact?.user?.email;
+        if (email) {
+          await this.sendMailToUser(email, title, message, link);
           await this.alertService.createAlertLog(ruleId, projectId, message);
-          this.logger.log(`钉钉告警：${title + message}`);
+          this.logger.log(`邮件告警：${title + message}`);
         }
+      }
+      // 钉钉
+      if (contact.type === 'ding') {
+        await this.sendMsgToDingDingBot();
+        await this.alertService.createAlertLog(ruleId, projectId, message);
+        this.logger.log(`钉钉告警：${title + message}`);
       }
     }
 

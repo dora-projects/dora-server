@@ -54,7 +54,12 @@ export class AlertService {
         },
       },
       include: {
-        alert_contact: true,
+        alert_contact: {
+          include: {
+            user: true,
+          },
+        },
+        alert_log: true,
       },
     });
   }
@@ -145,6 +150,9 @@ export class AlertService {
           gte: new Date(+from),
           lt: new Date(+to),
         },
+      },
+      include: {
+        alert_rule: true,
       },
     });
   }
