@@ -4,8 +4,10 @@ if (process.env.XPROFILER_ENABLE) {
 }
 
 import { NestFactory } from '@nestjs/core';
+import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import * as chalk from 'chalk';
+import { getLogConfig } from 'libs/shared/logger';
 
 const banner = (m) => `
 ██████╗ ██████╗  ██████╗  ██████╗███████╗███████╗███████╗
@@ -20,7 +22,9 @@ ${m}
 `;
 
 async function bootstrap() {
-  await NestFactory.createApplicationContext(AppModule);
+  await NestFactory.createApplicationContext(AppModule, {
+    logger: WinstonModule.createLogger(getLogConfig('process')),
+  });
   console.log(chalk.green(banner('process started！')));
 }
 

@@ -4,10 +4,12 @@ if (process.env.XPROFILER_ENABLE) {
 }
 
 import { NestFactory } from '@nestjs/core';
+import { WinstonModule } from 'nest-winston';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import * as bodyParser from 'body-parser';
 import * as chalk from 'chalk';
+import { getLogConfig } from 'libs/shared/logger';
 
 const banner = (m) => `
 ██████╗ ███████╗██╗      █████╗ ██╗   ██╗
@@ -26,7 +28,9 @@ ${m}
  * todo 限流
  */
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(getLogConfig('relay')),
+  });
   app.enableCors();
   app.use(bodyParser.text());
 

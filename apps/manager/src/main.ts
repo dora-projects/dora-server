@@ -7,8 +7,10 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { WinstonModule } from 'nest-winston';
 import * as chalk from 'chalk';
 import { AppModule } from './app.module';
+import { getLogConfig } from 'libs/shared/logger';
 import { AllExceptionFilter } from './common/all-exception.filter';
 
 const banner = (m) => `
@@ -73,7 +75,9 @@ const configure = async (app) => {
 };
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(getLogConfig('manager')),
+  });
   await configure(app);
 
   app.enableShutdownHooks();
