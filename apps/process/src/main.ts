@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('xprofiler').start();
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as chalk from 'chalk';
