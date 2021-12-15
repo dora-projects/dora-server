@@ -4,6 +4,7 @@ import { hashPassword } from 'libs/shared/auth';
 import { User, USER_ROLE } from '@prisma/client';
 import { PrismaService } from 'libs/datasource/prisma.service';
 import { PaginationRes } from '../common/responseDto';
+import { BadRequestException } from '../common/error';
 
 @Injectable()
 export class UserService {
@@ -14,14 +15,21 @@ export class UserService {
 
     const hashPwd = await hashPassword(createUserDto.password);
 
-    return await this.prismaService.user.create({
-      data: {
-        username: createUserDto.username,
-        email: createUserDto.email,
-        password: hashPwd,
-        role: count > 0 ? USER_ROLE.user : USER_ROLE.admin,
-      },
-    });
+    try {
+      return await this.prismaService.user.create({
+        data: {
+          username: createUserDto.username,
+          email: createUserDto.email,
+          password: hashPwd,
+          role: count > 0 ? USER_ROLE.user : USER_ROLE.admin,
+        },
+      });
+    } catch (e) {
+      if (e?.code === 'P2002') {
+        throw new BadRequestException('该邮箱已注册');
+      }
+      throw e;
+    }
   }
 
   async update(updateUserDto: UpdateUserDto): Promise<User> {

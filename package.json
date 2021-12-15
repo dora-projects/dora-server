@@ -45,6 +45,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.1.0",
     "@prisma/client": "^3.5.0",
+    "ajv": "^8.8.2",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "bull": "^3.29.1",

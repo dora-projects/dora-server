@@ -31,7 +31,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(getLogConfig('relay')),
   });
-  app.enableCors();
+  app.enableCors({
+    origin: (ori, callback) => {
+      callback(null, ori);
+    },
+  });
   app.use(bodyParser.text());
 
   const configService = app.get(ConfigService);

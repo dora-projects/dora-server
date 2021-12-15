@@ -13,7 +13,7 @@ export interface Breadcrumb {
   message: number;
 }
 
-export interface EventCommon {
+export interface EventLike {
   event_id: string;
   appKey: string;
   timestamp: number;
@@ -29,6 +29,8 @@ export interface EventCommon {
     referer: string;
     ua: string;
   };
+
+  [key: string]: any;
 }
 
 export interface ErrorValue {
@@ -39,7 +41,7 @@ export interface ErrorValue {
   };
 }
 
-export type ErrorEvent = EventCommon & {
+export type ErrorEvent = EventLike & {
   type: string;
   breadcrumbs: Breadcrumb[];
   error: {
@@ -47,7 +49,7 @@ export type ErrorEvent = EventCommon & {
   };
 };
 
-export type PerfEvent = EventCommon & {
+export type PerfEvent = EventLike & {
   type: string;
   perf: {
     lcp: number;

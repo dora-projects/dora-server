@@ -6,8 +6,8 @@ import {
   EventQueue,
   PerfEventQueueName,
 } from 'libs/shared/constant';
-import { ErrorEvent, PerfEvent } from './receiver.dto';
-import { dumpJson } from 'libs/shared';
+import { EventLike } from './receiver.dto';
+import { perfValidate, errorValidate } from './schema';
 
 @Injectable()
 export class ReceiverService {
@@ -15,63 +15,71 @@ export class ReceiverService {
 
   constructor(@InjectQueue(EventQueue) private readonly eventQueue: Queue) {}
 
-  async handleEvent(data: { body: any; ip: string }) {
+  async formatData(data, ip) {
     try {
-      const bodyData = JSON.parse(data.body);
-      const context = bodyData.context;
+      const bodyData = JSON.parse(data);
+      const { context, values } = bodyData;
 
-      if (!context || !Array.isArray(bodyData.values)) {
+      if (!context || !Array.isArray(values)) {
         return;
       }
 
-      const events = bodyData.values.map((value) => {
+      return bodyData.values.map((value) => {
         const eventContent = value.content;
         const event_id = value.event_id;
         const timestamp = value.timestamp;
         const request = value.request;
+
         return {
           ...context,
           ...eventContent,
+          ip,
           event_id,
-          ip: data.ip,
           timestamp,
           request,
         };
       });
-
-      for await (const event of events) {
-        switch (event.type) {
-          case 'perf':
-            await this.pushPerfEventToQueue(event);
-            return;
-          case 'error':
-            await this.pushErrorEventToQueue(event);
-            return;
-          case 'api':
-            return;
-          case 'res':
-            return;
-          case 'visit':
-            return;
-          default:
-        }
-      }
     } catch (e) {
-      this.logger.error(e.message, e.stack);
+      return null;
     }
   }
 
-  async verifyEvent(data: any): Promise<any> {
-    // redis cache get project info
-    return data;
+  async verifyAndPushEvent(events: EventLike[]): Promise<any> {
+    let errors: any = [];
+
+    for await (const event of events) {
+      switch (event?.type) {
+        case 'perf':
+          if (perfValidate(event)) {
+            await this.pushPerfEventToQueue(event);
+          } else {
+            errors = errors.concat(perfValidate.errors);
+          }
+          break;
+        case 'error':
+          if (errorValidate(event)) {
+            await this.pushErrorEventToQueue(event);
+          } else {
+            errors = errors.concat(errorValidate.errors);
+          }
+          break;
+        case 'api':
+          break;
+        case 'res':
+          break;
+        case 'visit':
+          break;
+        default:
+      }
+    }
+
+    return errors;
   }
 
   // error
-  async pushErrorEventToQueue(data: ErrorEvent): Promise<any> {
+  async pushErrorEventToQueue(data: EventLike): Promise<any> {
     try {
-      // await dumpJson('error', data);
-      const result = await this.verifyEvent(data);
-      await this.eventQueue.add(ErrorEventQueueName, result, {
+      await this.eventQueue.add(ErrorEventQueueName, data, {
         removeOnComplete: true,
       });
     } catch (e) {
@@ -80,11 +88,9 @@ export class ReceiverService {
   }
 
   // perf
-  async pushPerfEventToQueue(data: PerfEvent): Promise<any> {
+  async pushPerfEventToQueue(data: EventLike): Promise<any> {
     try {
-      // await dumpJson('perf', data);
-      const result = await this.verifyEvent(data);
-      await this.eventQueue.add(PerfEventQueueName, result, {
+      await this.eventQueue.add(PerfEventQueueName, data, {
         removeOnComplete: true,
       });
     } catch (e) {

@@ -25,7 +25,12 @@ export class ReceiverController {
 
   @Post('/report')
   async report(@Ip() ip: string, @Req() req: any): Promise<any> {
-    await this.receiverService.handleEvent({ ip, body: req.body });
+    const events = await this.receiverService.formatData(req.body, ip);
+    if (!events) return { success: 'invalid data' };
+
+    const errResult = await this.receiverService.verifyAndPushEvent(events);
+    if (errResult && errResult.length > 0) return errResult;
+
     return { success: true };
   }
 

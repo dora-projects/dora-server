@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { CreateProjectDto, UpdateProjectDto } from './project.dto';
 import { PrismaService } from 'libs/datasource/prisma.service';
 import { Project, User, PROJECT_ROLE } from '@prisma/client';
+import { BadRequestException } from '../common/error';
 
 @Injectable()
 export class ProjectService {
@@ -14,20 +15,27 @@ export class ProjectService {
     userId: number,
   ): Promise<Project | void> {
     assert(!!userId);
-    return await this.prismaService.project.create({
-      data: {
-        name: createProjectDto.name,
-        type: createProjectDto.type,
-        detail: createProjectDto.detail,
-        appKey: uuid().replace(/-/g, ''),
-        user_projects: {
-          create: {
-            userId: userId,
-            prole: PROJECT_ROLE.owner,
+    try {
+      return await this.prismaService.project.create({
+        data: {
+          name: createProjectDto.name,
+          type: createProjectDto.type,
+          detail: createProjectDto.detail,
+          appKey: uuid().replace(/-/g, ''),
+          user_projects: {
+            create: {
+              userId: userId,
+              prole: PROJECT_ROLE.owner,
+            },
           },
         },
-      },
-    });
+      });
+    } catch (e) {
+      if (e?.code === 'P2002') {
+        throw new BadRequestException('项目名已存在');
+      }
+      throw e;
+    }
   }
 
   async update(updateProjectDto: UpdateProjectDto): Promise<Project> {
