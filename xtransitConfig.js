@@ -7,8 +7,8 @@ module.exports = {
 
   // II. 比较重要的可选配置（不知道怎么配置的别传任何值）
   // disks: [], // 数组，每一项为配置需要监控的 disk 目录全路径
-  // errors: [], // 数组，每一项为配置需要监控的 error 日志文件全路径
-  // packages: [], // 数组，每一项为配置需要监控的 package.json 文件全路径，并且要保证存在平级的 lock 文件（package-lock.json 或者 yarn.lock）
+  errors: ['/server/logs/errors.log'], // 数组，每一项为配置需要监控的 error 日志文件全路径
+  packages: ['/server/package.json'], // 数组，每一项为配置需要监控的 package.json 文件全路径，并且要保证存在平级的 lock 文件（package-lock.json 或者 yarn.lock）
 
   // III. 不是很重要的可选的配置（不知道怎么配置的别传任何值）
   // logDir: '/path/to/xprofiler_output', // xprofiler 插件生成性能日志文件的目录，默认两者均为 os.tmpdir()
