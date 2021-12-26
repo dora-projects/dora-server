@@ -1,4 +1,5 @@
-import { Controller, Get, Ip, Logger, Post, Req } from '@nestjs/common';
+import { Controller, Get, Ip, Logger, Post, Req, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { ReceiverService } from './receiver.service';
 import { SentryService } from './sentry.service';
 import { __DEV__, dumpJson, timeFormNow } from 'libs/shared';
@@ -24,14 +25,20 @@ export class ReceiverController {
   }
 
   @Post('/report')
-  async report(@Ip() ip: string, @Req() req: any): Promise<any> {
+  async report(
+    @Ip() ip: string,
+    @Req() req: any,
+    @Res() res: Response,
+  ): Promise<any> {
     const events = await this.receiverService.formatData(req.body, ip);
-    if (!events) return { success: 'invalid data' };
+    if (!events) {
+      return res.send({ success: 'invalid data' });
+    }
 
     const errResult = await this.receiverService.verifyAndPushEvent(events);
     if (errResult && errResult.length > 0) return errResult;
 
-    return { success: true };
+    return res.json({ success: true });
   }
 
   @Post('api/:id/store')

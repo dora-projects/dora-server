@@ -11,6 +11,8 @@ import { Project, AlertRule } from '@prisma/client';
 
 @Injectable()
 export class NotifyService {
+  private readonly logger = new Logger(NotifyService.name);
+
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly configService: ConfigService,
@@ -19,8 +21,6 @@ export class NotifyService {
     private readonly elasticsearchService: ElasticsearchService,
     private readonly mailService: MailService,
   ) {}
-
-  private readonly logger = new Logger(NotifyService.name);
 
   async elasticQueryCount(eql): Promise<number> {
     const body = { query: { bool: { filter: eql } } };

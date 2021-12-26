@@ -1,39 +1,18 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
+import { Controller, Logger } from '@nestjs/common';
 import * as lodash from 'lodash';
-import { AlertQueue, IssueQueue } from 'libs/shared/constant';
 import { sha256 } from 'libs/shared';
 import { userAgentParser } from 'libs/shared/uaParser';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 
-@Injectable()
+@Controller()
 export class EventService {
-  constructor(
-    @InjectQueue(AlertQueue) private readonly alertQueue: Queue,
-    @InjectQueue(IssueQueue) private readonly issueQueue: Queue,
-    private readonly elasticsearchService: ElasticsearchService,
-  ) {}
-
   private readonly logger = new Logger(EventService.name);
 
   // 记录上次插入的时间
   private esBatchInsertedLastTime: number = Date.now();
   private esBatchInsertedData: any[] = [];
 
-  // 发送给告警队列
-  async sendAlertQueue(data: any): Promise<void> {
-    await this.alertQueue.add(data, {
-      removeOnComplete: true,
-    });
-  }
-
-  // 发送issue队列
-  async sendIssueQueue(data: any): Promise<void> {
-    await this.issueQueue.add(data, {
-      removeOnComplete: true,
-    });
-  }
+  constructor(private readonly elasticsearchService: ElasticsearchService) {}
 
   // todo 聚合
   async aggregationError(data): Promise<any> {

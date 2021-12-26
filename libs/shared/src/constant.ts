@@ -6,14 +6,11 @@ export const ElasticIndexOfError = 'dora_error';
 // 队列前缀
 export const BullPrefix = 'dora';
 
-// 事件
-export const EventQueue = 'event';
-export const ViewEventQueueName = 'event_view';
-export const PerfEventQueueName = 'event_perf';
-export const ErrorEventQueueName = 'event_error';
+export const Message_Error = 'dora_event_error';
+export const Message_Perf = 'dora_event_perf';
+export const Message_Api = 'dora_event_api';
+export const Message_Res = 'dora_event_res';
+export const Message_Visit = 'dora_event_visit';
 
-// 告警
-export const AlertQueue = 'alert';
-
-// issue
-export const IssueQueue = 'issue';
+export const Message_Alert = 'dora_queue_alert';
+export const Message_Issue = 'dora_queue_issue';

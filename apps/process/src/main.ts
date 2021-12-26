@@ -4,6 +4,8 @@ if (process.env.XPROFILER_ENABLE) {
 }
 
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+import { Transport } from '@nestjs/microservices';
 import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import * as chalk from 'chalk';
@@ -22,10 +24,25 @@ ${m}
 `;
 
 async function bootstrap() {
-  await NestFactory.createApplicationContext(AppModule, {
+  const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(getLogConfig('process')),
   });
-  console.log(chalk.green(banner('process started！')));
+
+  const configService = app.get(ConfigService);
+
+  app.connectMicroservice({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        brokers: configService.get('kafka.brokers'),
+      },
+    },
+  });
+  await app.startAllMicroservices();
+
+  await app.listen(configService.get('process_port'));
+
+  console.log(chalk.green(banner(`process started at ${await app.getUrl()}`)));
 }
 
 bootstrap().catch((err) => {

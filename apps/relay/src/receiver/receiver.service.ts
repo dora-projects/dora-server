@@ -1,23 +1,29 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
-import {
-  ErrorEventQueueName,
-  EventQueue,
-  PerfEventQueueName,
-} from 'libs/shared/constant';
-import { EventLike } from './receiver.dto';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
+import { Producer } from '@nestjs/microservices/external/kafka.interface';
+
+import { Message_Error, Message_Perf } from 'libs/shared/constant';
+import { KAFKA_SERVICE } from 'libs/datasource/kafka';
 import { perfValidate, errorValidate } from './schema';
+import { EventLike } from './receiver.dto';
 
 @Injectable()
-export class ReceiverService {
+export class ReceiverService implements OnModuleInit {
   private readonly logger = new Logger(ReceiverService.name);
+  private kafkaProducer: Producer;
 
-  constructor(@InjectQueue(EventQueue) private readonly eventQueue: Queue) {}
+  constructor(
+    @Inject(KAFKA_SERVICE)
+    private clientKafka: ClientKafka,
+  ) {}
+
+  async onModuleInit() {
+    this.kafkaProducer = await this.clientKafka.connect();
+  }
 
   async formatData(data, ip) {
     try {
-      const bodyData = JSON.parse(data);
+      const bodyData = typeof data === 'string' ? JSON.parse(data) : data;
       const { context, values } = bodyData;
 
       if (!context || !Array.isArray(values)) {
@@ -40,6 +46,7 @@ export class ReceiverService {
         };
       });
     } catch (e) {
+      this.logger.debug(e, e?.stack);
       return null;
     }
   }
@@ -79,8 +86,9 @@ export class ReceiverService {
   // error
   async pushErrorEventToQueue(data: EventLike): Promise<any> {
     try {
-      await this.eventQueue.add(ErrorEventQueueName, data, {
-        removeOnComplete: true,
+      await this.kafkaProducer.send({
+        topic: Message_Error,
+        messages: [{ key: Message_Error, value: JSON.stringify(data) }],
       });
     } catch (e) {
       this.logger.error(e, e?.stack);
@@ -90,8 +98,9 @@ export class ReceiverService {
   // perf
   async pushPerfEventToQueue(data: EventLike): Promise<any> {
     try {
-      await this.eventQueue.add(PerfEventQueueName, data, {
-        removeOnComplete: true,
+      await this.kafkaProducer.send({
+        topic: Message_Perf,
+        messages: [{ key: Message_Perf, value: JSON.stringify(data) }],
       });
     } catch (e) {
       this.logger.error(e, e?.stack);

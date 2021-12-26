@@ -1,11 +1,37 @@
 import * as lodash from 'lodash';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from 'libs/datasource/prisma.service';
 import { Issue } from '@prisma/client';
+import { ClientKafka, MessagePattern, Payload } from '@nestjs/microservices';
+import { Message_Issue } from 'libs/shared/constant';
+import { KafkaMessage } from '@nestjs/microservices/external/kafka.interface';
+import { KAFKA_SERVICE } from 'libs/datasource/kafka';
 
 @Injectable()
-export class IssueService {
-  constructor(private readonly prismaService: PrismaService) {}
+export class IssueService implements OnModuleInit {
+  private readonly logger = new Logger(IssueService.name);
+
+  constructor(
+    private readonly prismaService: PrismaService,
+    @Inject(KAFKA_SERVICE)
+    private clientKafka: ClientKafka,
+  ) {}
+
+  async onModuleInit() {
+    this.clientKafka.subscribeToResponseOf(Message_Issue);
+    await this.clientKafka.connect();
+  }
+
+  @MessagePattern(Message_Issue)
+  async issueMessage(@Payload() message: KafkaMessage) {
+    try {
+      const event = message.value;
+      await this.createIssueIfNotExist(event);
+      // await dumpJson('Issue_', job);
+    } catch (e) {
+      this.logger.error(e, e?.stack);
+    }
+  }
 
   async createIssueIfNotExist(event): Promise<Issue> {
     const { appKey, fingerprint, release, environment, timestamp } = event;

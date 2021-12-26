@@ -25,7 +25,6 @@ ${m}
 
 /**
  * relay
- * todo 限流
  */
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -39,9 +38,7 @@ async function bootstrap() {
   app.use(bodyParser.text());
 
   const configService = app.get(ConfigService);
-  const port = configService.get('relay_port');
-
-  await app.listen(port);
+  await app.listen(configService.get('relay_port'));
 
   console.log(chalk.green(banner(`relay started at ${await app.getUrl()}`)));
 }
