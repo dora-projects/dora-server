@@ -1,19 +1,106 @@
-import { Controller, Get, Ip, Logger, Post, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Ip,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { ReceiverService } from './receiver.service';
 import { SentryService } from './sentry.service';
-import { __DEV__, dumpJson, timeFormNow } from 'libs/shared';
+import { timeFormNow } from 'libs/shared';
+import { EventLike } from './receiver.dto';
+import { Message_Error, Message_Perf } from 'libs/shared/constant';
+import { errorValidate, perfValidate } from './schema';
+import { Kafka, Producer } from 'kafkajs';
+import { ConfigService } from '@nestjs/config';
 
 const uptime = new Date().toISOString();
 
 @Controller()
-export class ReceiverController {
+export class ReceiverController implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(ReceiverController.name);
 
   constructor(
+    private readonly configService: ConfigService,
     private readonly receiverService: ReceiverService,
     private readonly sentryService: SentryService,
   ) {}
+
+  private producer: Producer;
+
+  async onModuleInit() {
+    const kafka = new Kafka({
+      clientId: 'relay',
+      brokers: this.configService.get('kafka.brokers'),
+    });
+    this.producer = kafka.producer();
+    await this.producer.connect();
+  }
+
+  async onModuleDestroy() {
+    await this.producer.disconnect();
+  }
+
+  // error
+  async pushErrorEventToQueue(data: EventLike): Promise<any> {
+    try {
+      await this.producer.send({
+        topic: Message_Error,
+        messages: [{ key: Message_Error, value: JSON.stringify(data) }],
+      });
+    } catch (e) {
+      this.logger.error(e, e?.stack);
+    }
+  }
+
+  // perf
+  async pushPerfEventToQueue(data: EventLike): Promise<any> {
+    try {
+      await this.producer.send({
+        topic: Message_Perf,
+        messages: [{ key: Message_Perf, value: JSON.stringify(data) }],
+      });
+    } catch (e) {
+      this.logger.error(e, e?.stack);
+    }
+  }
+
+  async verifyAndPushEvent(events: EventLike[]): Promise<any> {
+    let errors: any = [];
+
+    for await (const event of events) {
+      switch (event?.type) {
+        case 'perf':
+          if (perfValidate(event)) {
+            await this.pushPerfEventToQueue(event);
+          } else {
+            errors = errors.concat(perfValidate.errors);
+          }
+          break;
+        case 'error':
+          if (errorValidate(event)) {
+            await this.pushErrorEventToQueue(event);
+          } else {
+            errors = errors.concat(errorValidate.errors);
+          }
+          break;
+        case 'api':
+          break;
+        case 'res':
+          break;
+        case 'visit':
+          break;
+        default:
+      }
+    }
+
+    return errors;
+  }
 
   @Get()
   async info(): Promise<any> {
@@ -35,7 +122,7 @@ export class ReceiverController {
       return res.send({ success: 'invalid data' });
     }
 
-    const errResult = await this.receiverService.verifyAndPushEvent(events);
+    const errResult = await this.verifyAndPushEvent(events);
     if (errResult && errResult.length > 0) return errResult;
 
     return res.json({ success: true });
@@ -64,7 +151,7 @@ export class ReceiverController {
 
       const data = await this.sentryService.storeDataAdapter(storeData);
       if (data) {
-        await this.receiverService.pushErrorEventToQueue(data);
+        await this.pushErrorEventToQueue(data);
       }
       return { success: true };
     } catch (e) {
@@ -106,7 +193,7 @@ export class ReceiverController {
         envelopeData,
       );
       if (pickData) {
-        await this.receiverService.pushPerfEventToQueue(pickData);
+        await this.pushPerfEventToQueue(pickData);
       }
       return { success: true };
     } catch (e) {

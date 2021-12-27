@@ -11,17 +11,10 @@ import {
   Message_Issue,
   Message_Perf,
 } from 'libs/shared/constant';
-import {
-  KafkaMessage,
-  Producer,
-} from '@nestjs/microservices/external/kafka.interface';
+import { KafkaMessage } from '@nestjs/microservices/external/kafka.interface';
 
 @Controller()
 export class EventController implements OnModuleInit {
-  private readonly logger = new Logger(EventController.name);
-
-  private kafkaProducer: Producer;
-
   constructor(
     private readonly eventService: EventService,
     private readonly elasticsearchService: ElasticsearchService,
@@ -29,13 +22,14 @@ export class EventController implements OnModuleInit {
     private clientKafka: ClientKafka,
   ) {}
 
+  private readonly logger = new Logger(EventController.name);
+
   async onModuleInit() {
-    const topics = [Message_Error, Message_Perf];
+    const topics = [Message_Alert, Message_Issue];
     topics.forEach((topic) => {
       this.clientKafka.subscribeToResponseOf(topic);
     });
-
-    this.kafkaProducer = await this.clientKafka.connect();
+    await this.clientKafka.connect();
   }
 
   // 错误消息
@@ -53,8 +47,8 @@ export class EventController implements OnModuleInit {
       await this.eventService.batchSaveDocs(ElasticIndexOfError, resultStep2);
 
       // step4: 发送给告警 和 Issue
-      await this.sendAlertQueue(resultStep2);
-      await this.sendIssueQueue(resultStep2);
+      this.sendAlertQueue(resultStep2);
+      this.sendIssueQueue(resultStep2);
 
       // if (__DEV__) {
       //   await dumpJson('error', resultStep2);
@@ -84,18 +78,30 @@ export class EventController implements OnModuleInit {
   }
 
   // 发送给告警队列
-  async sendAlertQueue(data: any): Promise<void> {
-    await this.kafkaProducer.send({
-      topic: Message_Alert,
-      messages: [{ key: Message_Alert, value: JSON.stringify(data) }],
-    });
+  sendAlertQueue(data: any) {
+    this.clientKafka
+      .send(Message_Alert, {
+        key: Message_Alert,
+        value: JSON.stringify(data),
+      })
+      .subscribe((reply) => {
+        if (reply) {
+          this.logger.error(reply);
+        }
+      });
   }
 
   // 发送issue队列
-  async sendIssueQueue(data: any): Promise<void> {
-    await this.kafkaProducer.send({
-      topic: Message_Issue,
-      messages: [{ key: Message_Issue, value: JSON.stringify(data) }],
-    });
+  sendIssueQueue(data: any) {
+    this.clientKafka
+      .send(Message_Issue, {
+        key: Message_Issue,
+        value: JSON.stringify(data),
+      })
+      .subscribe((reply) => {
+        if (reply) {
+          this.logger.error(reply);
+        }
+      });
   }
 }
