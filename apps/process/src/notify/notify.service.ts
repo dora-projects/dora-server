@@ -38,7 +38,7 @@ export class NotifyService {
 
     const project = await this.projectService.findByAppKey(appKey);
     if (!project) {
-      this.logger.debug(`未查询到项目 appKey：${appKey}`);
+      this.logger.debug(`告警查询 appKey：${appKey} 未找到 project`);
       return null;
     }
     const rules = await this.alertService.queryRule(project.id);
@@ -111,10 +111,18 @@ export class NotifyService {
       silence,
     } = rule;
 
-    const doraUrl = this.configService.get<string>('dora_url');
-    const title = `【Dora告警-${ruleName}】项目：${name} ${dateNow()} `;
-    const message = `在${thresholdsTime}秒内发生了${actualValue}次，${thresholdsOperator}${thresholdsQuota}次`;
-    const link = `${doraUrl}/projects/${appKey}/console/issues/${fingerprint}?from=email`;
+    const webAppUrl = this.configService.get<string>('dora_url');
+    const { title, message, link } = this.buildMessage({
+      ruleName,
+      projectName: name,
+      thresholdsTime,
+      actualValue,
+      thresholdsOperator,
+      thresholdsQuota,
+      webAppUrl,
+      appKey,
+      fingerprint,
+    });
 
     // 检查是否静默期
     const silenceCacheKey = `rule-${ruleId}-silence`;
@@ -149,6 +157,39 @@ export class NotifyService {
     await this.cacheManager.set(silenceCacheKey, true, {
       ttl: silence * 60,
     });
+  }
+
+  buildMessage(data: {
+    ruleName: string;
+    projectName: string;
+    thresholdsTime: number;
+    actualValue: number;
+    thresholdsOperator: string;
+    thresholdsQuota: number;
+    webAppUrl: string;
+    appKey: string;
+    fingerprint: string;
+  }) {
+    const {
+      ruleName,
+      projectName,
+      thresholdsTime,
+      actualValue,
+      thresholdsOperator,
+      thresholdsQuota,
+      webAppUrl,
+      appKey,
+      fingerprint,
+    } = data;
+
+    const title = `【Dora告警-${ruleName}】项目：${projectName} ${dateNow()} `;
+    const message = `在${thresholdsTime}秒内发生了${actualValue}次，${thresholdsOperator}${thresholdsQuota}次`;
+    const link = `${webAppUrl}/projects/${appKey}/console/issues/${fingerprint}?from=email`;
+    return {
+      title,
+      message,
+      link,
+    };
   }
 
   async sendMailToUser(to, subject, text, link): Promise<void> {

@@ -32,20 +32,17 @@ export class EventService {
   }
 
   // 1.5s 执行一次批量插入
-  public throttleEsBulk = lodash.throttle(this.esBulk, 1500);
+  public throttleEsBulk = lodash.throttle(this.esBulk, 1200);
 
   async esBulk() {
+    const now = Date.now();
     const len = this.esBatchInsertedData.length;
     if (len <= 0) return;
 
-    const now = Date.now();
     const { body: bulkResponse } = await this.elasticsearchService.bulk({
       refresh: true,
       body: this.esBatchInsertedData,
     });
-    this.logger.debug(
-      `esBulk 插入${len / 2}条耗时: ${(Date.now() - now) / 1000}s`,
-    );
 
     this.esBatchInsertedData = [];
     this.esBatchInsertedLastTime = Date.now();
@@ -53,6 +50,11 @@ export class EventService {
     if (bulkResponse?.errors && bulkResponse?.errors.length > 0) {
       this.logger.error(bulkResponse?.errors);
     }
+
+    // log 耗时
+    this.logger.debug(
+      `esBulk 插入${len / 2}条耗时: ${(Date.now() - now) / 1000}s`,
+    );
   }
 
   async batchSaveDocs(index: string, doc: any) {

@@ -1,8 +1,7 @@
 import { Controller, Logger } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { EventPattern } from '@nestjs/microservices';
 import { IssueService } from './issue.service';
-import { Message_Issue } from 'libs/shared/constant';
-import { KafkaMessage } from '@nestjs/microservices/external/kafka.interface';
+import { Event_Issue } from 'libs/shared/constant';
 
 @Controller()
 export class IssueController {
@@ -10,14 +9,14 @@ export class IssueController {
 
   private readonly logger = new Logger(IssueController.name);
 
-  @MessagePattern(Message_Issue)
-  async issueMessage(@Payload() message: KafkaMessage) {
+  @EventPattern(Event_Issue)
+  async issueMessage(data: Record<string, unknown>) {
     try {
-      const event = message.value;
+      const event = data?.value;
+      if (!event) return;
       await this.issueService.createIssueIfNotExist(event);
-      // await dumpJson('Issue_', job);
     } catch (e) {
-      return e;
+      this.logger.error(e, e?.stack);
     }
   }
 }

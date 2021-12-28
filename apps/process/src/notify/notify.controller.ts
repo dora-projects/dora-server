@@ -1,21 +1,22 @@
 import { Controller, Logger } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { EventPattern } from '@nestjs/microservices';
 import { NotifyService } from './notify.service';
-import { Message_Alert } from 'libs/shared/constant';
-import { KafkaMessage } from '@nestjs/microservices/external/kafka.interface';
+import { Event_Alert } from 'libs/shared/constant';
 
 @Controller()
-export class IssueController {
+export class NotifyController {
   constructor(private readonly notifyService: NotifyService) {}
 
-  private readonly logger = new Logger(IssueController.name);
+  private readonly logger = new Logger(NotifyController.name);
 
-  @MessagePattern(Message_Alert)
-  async alertMessage(@Payload() message: KafkaMessage) {
+  @EventPattern(Event_Alert)
+  async alertMessage(data: Record<string, unknown>) {
     try {
-      await this.notifyService.handleErrorEvent(message.value);
+      const event = data?.value;
+      if (!event) return;
+      await this.notifyService.handleErrorEvent(event);
     } catch (e) {
-      return e;
+      this.logger.error(e, e?.stack);
     }
   }
 }

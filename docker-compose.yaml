@@ -33,6 +33,8 @@ services:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+    volumes:
+      - dora-zookeeper:/bitnami/zookeeper
 
   kafka:
     image: 'bitnami/kafka:3'
@@ -47,6 +49,8 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
+    volumes:
+      - dora-kafka:/bitnami/kafka
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0

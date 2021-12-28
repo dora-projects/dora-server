@@ -1,4 +1,4 @@
-import { Controller, Inject, Logger, OnModuleInit } from '@nestjs/common';
+import { Controller, Inject, Logger } from '@nestjs/common';
 import { ClientKafka, MessagePattern, Payload } from '@nestjs/microservices';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { EventService } from './event.service';
@@ -6,31 +6,23 @@ import { KAFKA_SERVICE } from 'libs/datasource/kafka';
 import {
   ElasticIndexOfError,
   ElasticIndexOfPerf,
-  Message_Alert,
+  Event_Alert,
+  Event_Issue,
   Message_Error,
-  Message_Issue,
   Message_Perf,
 } from 'libs/shared/constant';
 import { KafkaMessage } from '@nestjs/microservices/external/kafka.interface';
 
 @Controller()
-export class EventController implements OnModuleInit {
+export class EventController {
   constructor(
     private readonly eventService: EventService,
     private readonly elasticsearchService: ElasticsearchService,
     @Inject(KAFKA_SERVICE)
-    private clientKafka: ClientKafka,
+    private client: ClientKafka,
   ) {}
 
   private readonly logger = new Logger(EventController.name);
-
-  async onModuleInit() {
-    const topics = [Message_Alert, Message_Issue];
-    topics.forEach((topic) => {
-      this.clientKafka.subscribeToResponseOf(topic);
-    });
-    await this.clientKafka.connect();
-  }
 
   // 错误消息
   @MessagePattern(Message_Error)
@@ -77,31 +69,13 @@ export class EventController implements OnModuleInit {
     }
   }
 
-  // 发送给告警队列
+  // 通知告警
   sendAlertQueue(data: any) {
-    this.clientKafka
-      .send(Message_Alert, {
-        key: Message_Alert,
-        value: JSON.stringify(data),
-      })
-      .subscribe((reply) => {
-        if (reply) {
-          this.logger.error(reply);
-        }
-      });
+    this.client.emit(Event_Alert, data);
   }
 
-  // 发送issue队列
+  // 通知issue
   sendIssueQueue(data: any) {
-    this.clientKafka
-      .send(Message_Issue, {
-        key: Message_Issue,
-        value: JSON.stringify(data),
-      })
-      .subscribe((reply) => {
-        if (reply) {
-          this.logger.error(reply);
-        }
-      });
+    this.client.emit(Event_Issue, data);
   }
 }

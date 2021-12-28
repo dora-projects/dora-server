@@ -15,6 +15,9 @@ export const KafkaModule = ClientsModule.registerAsync([
           client: {
             brokers: configService.get('kafka.brokers'),
           },
+          consumer: {
+            groupId: 'dora-server',
+          },
         },
       };
     },

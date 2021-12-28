@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { IssueController } from './notify.controller';
+import { NotifyController } from './notify.controller';
 import { NotifyService } from './notify.service';
 import { MailService } from 'apps/manager/src/common/service/mail.service';
 import { DingTalkService } from 'apps/manager/src/common/service/dingTalk.service';
@@ -11,7 +11,7 @@ import { KafkaModule } from 'libs/datasource/kafka';
 
 @Module({
   imports: [KafkaModule, MyCacheModule, MyElasticModule],
-  controllers: [IssueController],
+  controllers: [NotifyController],
   providers: [
     PrismaService,
     NotifyService,

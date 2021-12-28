@@ -16,8 +16,9 @@ import { timeFormNow } from 'libs/shared';
 import { EventLike } from './receiver.dto';
 import { Message_Error, Message_Perf } from 'libs/shared/constant';
 import { errorValidate, perfValidate } from './schema';
-import { Kafka, Producer } from 'kafkajs';
+import { Kafka, Producer, logLevel } from 'kafkajs';
 import { ConfigService } from '@nestjs/config';
+import { KafkaLogger } from '@nestjs/microservices/helpers/kafka-logger';
 
 const uptime = new Date().toISOString();
 
@@ -36,7 +37,9 @@ export class ReceiverController implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     const kafka = new Kafka({
       clientId: 'relay',
+      logLevel: logLevel.WARN,
       brokers: this.configService.get('kafka.brokers'),
+      logCreator: KafkaLogger.bind(null, this.logger),
     });
     this.producer = kafka.producer();
     await this.producer.connect();
