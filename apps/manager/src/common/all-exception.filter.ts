@@ -51,19 +51,19 @@ export class AllExceptionFilter implements ExceptionFilter {
         error.code = errorResponse.statusCode.toString();
         error.message = `${errorResponse.message}`;
 
-        // 有 error 对象
+        // 有 error 对象 （自定义 error）
       } else if (errorResponse?.error) {
         error = errorResponse.error;
-      } else {
+
         // 直接抛出的异常
-        this.logger.error(`服务异常，响应：${exception?.stack}`);
+      } else {
         error = {
           code: ErrorCode.ServerError,
           message: exception?.message || '服务异常',
         };
+        this.logger.error(`服务异常，响应：${exception?.stack}`);
       }
 
-      // 返回
       response.status(status).json({ error: { ...error, ...common } });
     } catch (e) {
       this.logger.error('系统错误', e, e?.stack);

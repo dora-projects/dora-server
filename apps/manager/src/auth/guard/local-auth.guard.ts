@@ -1,5 +1,6 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { UnauthorizedOperation } from '../../common/error';
 
 @Injectable()
 export class LocalAuthGuard extends AuthGuard('local') {
@@ -16,7 +17,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
   handleRequest(err, user, info) {
     // You can throw an exception based on either "info" or "err" arguments
     if (err || !user) {
-      throw err || new UnauthorizedException(info);
+      throw err || new UnauthorizedOperation(info || '未授权');
     }
     return user;
   }
