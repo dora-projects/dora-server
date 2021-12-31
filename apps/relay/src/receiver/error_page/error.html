@@ -1,0 +1,315 @@
+<style>
+    /** Wrapper class name is provided by JS **/
+    .dora-error-embed-wrapper {
+        display: block;
+        outline: none;
+        position: fixed;
+        z-index: 999;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.6);
+        overflow: auto;
+    }
+
+    .dora-error-embed * {
+        margin: 0;
+        padding: 0;
+        background: inherit;
+        color: inherit;
+    }
+
+    .dora-error-embed {
+        background: #fff;
+        max-height: 80%;
+        margin: 4% auto 0;
+        text-align: left;
+        border: 1px solid #fff;
+        padding: 40px;
+        max-width: 700px;
+        overflow: auto;
+        border-radius: 3px;
+        color: #546076;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, .3), 0 10px 40px rgba(0, 0, 0, .3);
+    }
+
+    .dora-error-embed .clearfix {
+        *zoom: 1;
+    }
+
+    .dora-error-embed .clearfix:before,
+    .dora-error-embed .clearfix:after {
+        display: table;
+        content: "";
+        line-height: 0;
+    }
+
+    .dora-error-embed .clearfix:after {
+        clear: both;
+    }
+
+    .dora-error-embed a,
+    .dora-error-embed a:visited {
+        color: #546076;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .dora-error-embed * {
+        -webkit-font-smoothing: antialiased;
+        font-family: "Helvetica Neue", helvetica, sans-serif;
+    }
+
+    .dora-error-embed p {
+        margin: 0 0 20px;
+    }
+
+    .dora-error-embed form {
+        margin: 0;
+    }
+
+    .dora-error-embed a:active,
+    .dora-error-embed a:focus, a:hover {
+        color: #1E263C;
+        text-decoration: underline;
+    }
+
+    .dora-error-embed h2 {
+        font-size: 28px;
+        font-weight: 500;
+        margin: 0 0 5px;
+        color: #394359;
+    }
+
+    .dora-error-embed header {
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #E8EBF1;
+    }
+
+    .dora-error-embed header p {
+        color: #94A0B3;
+        font-size: 16px;
+    }
+
+    .dora-error-embed .form-field {
+        margin-bottom: 20px;
+        position: relative;
+        width: 100%;
+    }
+
+    .dora-error-embed .form-field label {
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 500;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .dora-error-embed .form-field input,
+    .dora-error-embed .form-field textarea {
+        font-size: 15px;
+        padding: 8px 12px;
+        border: 1px solid #BAC2D3;
+        background: #FBFBFC;
+        border-radius: 0;
+        box-shadow: none;
+        width: 100%;
+        height: auto;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .06);
+        border-radius: 2px;
+    }
+
+    .dora-error-embed .form-field input::-webkit-input-placeholder,
+    .dora-error-embed .form-field textarea::-webkit-input-placeholder {
+        color: #94A0B3;
+    }
+
+    .dora-error-embed .form-field input:focus,
+    .dora-error-embed .form-field textarea:focus {
+        outline: none;
+        border-color: #94A0B3;
+    }
+
+    .dora-error-embed .form-errors input,
+    .dora-error-embed .form-errors textarea {
+        border-color: #E35141;
+    }
+
+    .dora-error-embed .form-field textarea {
+        height: 100px;
+    }
+
+    .dora-error-embed .form-submit .btn {
+        border: none;
+        color: #fff;
+        background: #25A6F7;
+        padding: 10px 15px;
+        margin-right: 15px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        float: left;
+        border: 1px solid #1D87CE;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .12);
+    }
+
+    .dora-error-embed .form-submit .close {
+        padding: 10px 0;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        float: left;
+        border: none;
+    }
+
+    .dora-error-embed .form-submit .btn:hover {
+        background: #1D87CE;
+    }
+
+    .dora-error-embed .form-submit .powered-by {
+        padding: 10px 0;
+        margin: 0;
+        float: right;
+        font-size: 14px;
+    }
+
+    .dora-error-embed .form-submit .powered-by a {
+        text-indent: -9999em;
+        display: inline-block;
+        color: #1E263C;
+        width: 81px;
+        height: 18px;
+        background-repeat: no-repeat;
+        background-size: 81px 18px;
+        margin-left: 4px;
+        position: relative;
+        top: 2px;
+        opacity: .75;
+    }
+
+    .dora-error-embed .message-success,
+    .dora-error-embed .message-error {
+        text-align: center;
+        font-size: 16px;
+        padding: 30px;
+        margin: -21px 0 20px;
+        border-radius: 3px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .06);
+    }
+
+    .dora-error-embed .message-success {
+        border: 1px solid #C9DEC2;
+        background: #FCFEFB;
+    }
+
+    .dora-error-embed .message-error {
+        border: 1px solid #ECCFCC;
+        background: #FEFDFD;
+    }
+
+    .dora-error-embed .error-wrapper p:last-child {
+        margin-bottom: 0;
+    }
+
+    @media screen and (max-height: 570px) {
+        .dora-error-embed {
+            max-height: none;
+            margin-top: 0;
+        }
+    }
+
+    @media screen and (max-width: 660px) {
+        .dora-error-embed {
+            padding: 10px;
+            max-width: none;
+        }
+
+        .dora-error-embed h2 {
+            font-size: 22px;
+        }
+
+        .dora-error-embed header p {
+            font-size: 14px;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .dora-error-embed {
+            padding: 10px;
+            margin-top: 0;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 100%;
+            max-height: none;
+        }
+
+        .dora-error-embed h2 {
+            font-size: 20px;
+            line-height: 24px;
+        }
+
+        .dora-error-embed header p {
+            font-size: 13px;
+        }
+
+        .dora-error-embed header h2 > span,
+        .dora-error-embed header p > span {
+            display: none;
+        }
+
+        .dora-error-embed .form-submit {
+            text-align: center;
+        }
+
+        .dora-error-embed .form-submit .btn,
+        .dora-error-embed .form-submit .close,
+        .dora-error-embed .form-submit .powered-by {
+            float: none;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .dora-error-embed .form-submit .powered-by {
+            margin-top: 10px;
+            font-size: 10px;
+        }
+    }
+</style>
+
+<div class="dora-error-embed clearfix" role="dialog" aria-modal="true" aria-labelledby="dora-error-embed-heading">
+  <header>
+    <h2 id="dora-error-embed-heading">看来，我们有些问题。</h2>
+    <p>已提醒我们的团队。 <span>如果您愿意帮忙，您可以在下方告诉我们发生了什么。</span></p>
+  </header>
+  <form>
+    <div class="error-wrapper"></div>
+    <div class="form-content">
+      <div class="form-field clearfix">
+        <label>姓名</label>
+        <input type="text" name="name" placeholder="Jane Bloggs" maxlength="128" required="" id="id_name">
+      </div>
+      <div class="form-field clearfix">
+        <label>电子邮件</label>
+        <input type="email" name="email" placeholder="jane@example.com" maxlength="75" required="" id="id_email">
+      </div>
+      <div class="form-field clearfix">
+        <label>发生了什么？</label>
+        <textarea name="comments" cols="40" rows="10" placeholder="我点了 'X' 然后触发了" required="" id="id_comments"></textarea>
+      </div>
+    </div>
+    <div class="form-submit clearfix">
+      <button type="submit" class="btn">提交崩溃报告</button>
+      <button class="close">关闭</button>
+    </div>
+  </form>
+</div>

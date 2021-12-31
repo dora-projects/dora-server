@@ -131,6 +131,16 @@ export class ReceiverController implements OnModuleInit, OnModuleDestroy {
     return res.json({ success: true });
   }
 
+  @Get('/api/embed/error-page')
+  async errorPage() {
+    return 'hello';
+  }
+
+  @Post('/api/embed/error-page')
+  async errorPageSubmit() {
+    return 'hello';
+  }
+
   @Post('api/:id/store')
   async sentryStore(@Ip() ip: string, @Req() req: any): Promise<any> {
     try {
