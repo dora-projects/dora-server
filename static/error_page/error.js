@@ -1,21 +1,33 @@
 (function (window, document, JSON) {
   'use strict';
 
-  var template = /*{{ template }}*/ '';
-  var endpoint = /*{{ endpoint }}*/ '';
+  var strings = {
+    generic_error: '提交报告时发生错误，请重试。',
+    form_error: '参数错误',
+    sent_message: '您的反馈已发送。谢谢！',
+  };
+  var template = '/*{{ template }}*/';
+  var endpoint = '/*{{ endpoint }}*/';
 
   var setChild = function (target, child) {
     target.innerHTML = '';
     target.appendChild(child);
   };
 
+  var buildMessage = function (className, message) {
+    var p = document.createElement('p');
+    p.className = className;
+    p.appendChild(document.createTextNode(message));
+    return p;
+  };
+
   var focusable =
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
   var handleFocus;
 
-  var GENERIC_ERROR = '提交报告时发生错误，请重试。';
-  var FORM_ERROR = '参数错误';
-  var FORM_SUCCESS = '您的反馈已发送。谢谢！';
+  var GENERIC_ERROR = buildMessage('message-error', strings.generic_error);
+  var FORM_ERROR = buildMessage('message-error', strings.form_error);
+  var FORM_SUCCESS = buildMessage('message-success', strings.sent_message);
 
   // XMLHttpRequest.DONE does not exist in all browsers
   var XHR_DONE = 4;

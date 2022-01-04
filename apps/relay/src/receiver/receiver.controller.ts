@@ -10,6 +10,8 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import * as fs from 'fs';
+import { join } from 'path';
 import { ReceiverService } from './receiver.service';
 import { SentryService } from './sentry.service';
 import { timeFormNow } from 'libs/shared';
@@ -18,6 +20,7 @@ import { Message_Error, Message_Perf } from 'libs/shared/constant';
 import { errorValidate, perfValidate } from './schema';
 import { Kafka, Producer, logLevel } from 'kafkajs';
 import { ConfigService } from '@nestjs/config';
+import * as terser from 'html-minifier-terser';
 import { KafkaLogger } from '@nestjs/microservices/helpers/kafka-logger';
 
 const uptime = new Date().toISOString();
@@ -33,6 +36,7 @@ export class ReceiverController implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   private producer: Producer;
+  private errorPagesJs: string;
 
   async onModuleInit() {
     const kafka = new Kafka({
@@ -43,6 +47,22 @@ export class ReceiverController implements OnModuleInit, OnModuleDestroy {
     });
     this.producer = kafka.producer();
     await this.producer.connect();
+
+    const errorPagesHtml = fs.readFileSync(
+      join(process.cwd(), 'static/error_page/error.html'),
+      'utf8',
+    );
+    const errorPagesJs = fs.readFileSync(
+      join(process.cwd(), 'static/error_page/error.js'),
+      'utf8',
+    );
+
+    const minifyHtml = await terser.minify(errorPagesHtml, {
+      minifyCSS: true,
+      collapseWhitespace: true,
+    });
+
+    this.errorPagesJs = errorPagesJs.replace('/*{{ template }}*/', minifyHtml);
   }
 
   async onModuleDestroy() {
@@ -132,13 +152,21 @@ export class ReceiverController implements OnModuleInit, OnModuleDestroy {
   }
 
   @Get('/api/embed/error-page')
-  async errorPage() {
-    return 'hello';
+  async errorPage(@Req() req: any, @Res() res: Response) {
+    const BaseUrl = this.configService.get('dora_url');
+    const resScript = this.errorPagesJs.replace(
+      '/*{{ endpoint }}*/',
+      BaseUrl + req.url,
+    );
+
+    return res.setHeader('content-type', 'text/javascript').send(resScript);
   }
 
   @Post('/api/embed/error-page')
-  async errorPageSubmit() {
-    return 'hello';
+  async errorPageSubmit(@Req() req: any, @Res() res: Response) {
+    // todo
+    console.log(req.body);
+    return res.status(200).json({});
   }
 
   @Post('api/:id/store')

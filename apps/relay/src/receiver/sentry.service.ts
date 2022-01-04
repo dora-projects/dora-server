@@ -6,15 +6,18 @@ export class SentryService {
   formatErrorValues(values): ErrorValue[] {
     if (Array.isArray(values)) {
       return values.map((item) => {
-        const frames = item.stacktrace.frames;
-        item.stacktrace.frames = frames.map((frame) => {
-          return {
-            url: frame.filename,
-            func: frame.function,
-            line: frame?.lineno,
-            column: frame?.colno,
-          };
-        });
+        const frames = item.stacktrace?.frames || [];
+
+        item.stacktrace = {
+          frames: frames.map((frame) => {
+            return {
+              url: frame.filename,
+              func: frame.function,
+              line: frame?.lineno,
+              column: frame?.colno,
+            };
+          }),
+        };
         return item;
       });
     }
