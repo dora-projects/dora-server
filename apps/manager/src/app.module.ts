@@ -15,6 +15,8 @@ import { AuthModule } from './auth/auth.module';
 import { SystemModule } from './system/system.module';
 import { AlertModule } from './alert/alert.module';
 
+import { AppController } from './app.controller';
+
 @Module({
   imports: [
     MyElasticModule,
@@ -29,6 +31,7 @@ import { AlertModule } from './alert/alert.module';
     SourcemapModule,
     SystemModule,
   ],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {

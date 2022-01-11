@@ -14,7 +14,6 @@ import * as fs from 'fs';
 import { join } from 'path';
 import { ReceiverService } from './receiver.service';
 import { SentryService } from './sentry.service';
-import { timeFormNow } from 'libs/shared';
 import { EventLike } from './receiver.dto';
 import { Message_Error, Message_Perf } from 'libs/shared/constant';
 import { errorValidate, perfValidate } from './schema';
@@ -22,8 +21,6 @@ import { Kafka, Producer, logLevel } from 'kafkajs';
 import { ConfigService } from '@nestjs/config';
 import * as terser from 'html-minifier-terser';
 import { KafkaLogger } from '@nestjs/microservices/helpers/kafka-logger';
-
-const uptime = new Date().toISOString();
 
 @Controller()
 export class ReceiverController implements OnModuleInit, OnModuleDestroy {
@@ -123,15 +120,6 @@ export class ReceiverController implements OnModuleInit, OnModuleDestroy {
     }
 
     return errors;
-  }
-
-  @Get()
-  async info(): Promise<any> {
-    return {
-      app: 'relay',
-      uptime,
-      formNow: timeFormNow(uptime),
-    };
   }
 
   @Post('/report')

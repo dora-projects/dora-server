@@ -9,12 +9,9 @@ import {
 import { Kafka, Admin } from 'kafkajs';
 import { ConfigService } from '@nestjs/config';
 import { SystemService } from './system.service';
-import { timeFormNow } from 'libs/shared';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-
-const uptime = new Date().toISOString();
 
 @ApiTags('system')
 @Controller()
@@ -40,15 +37,6 @@ export class SystemController implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     await this.kafkaAdmin.disconnect();
-  }
-
-  @Get()
-  async test(): Promise<any> {
-    return {
-      app: 'manager',
-      uptime,
-      formNow: timeFormNow(uptime),
-    };
   }
 
   @UseGuards(JwtAuthGuard)
