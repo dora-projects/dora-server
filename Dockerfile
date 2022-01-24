@@ -13,7 +13,7 @@ RUN apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
 
 COPY --from=builder /server/dist/apps  /server
-COPY --from=builder /server/static  /server
+COPY --from=builder /server/static  /server/static
 COPY --from=builder /server/package.json  /server
 COPY --from=builder /server/package-lock.json  /server
 COPY --from=builder /server/node_modules  /server/node_modules
