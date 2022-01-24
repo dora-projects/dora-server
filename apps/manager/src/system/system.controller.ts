@@ -6,7 +6,6 @@ import {
   OnModuleInit,
   UseGuards,
 } from '@nestjs/common';
-import { Kafka, Admin } from 'kafkajs';
 import { ConfigService } from '@nestjs/config';
 import { SystemService } from './system.service';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
@@ -17,26 +16,19 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 @Controller()
 export class SystemController implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(SystemController.name);
-  private kafkaAdmin: Admin;
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly reportService: SystemService,
+    private readonly systemService: SystemService,
     private readonly elasticsearchService: ElasticsearchService,
   ) {}
 
-  async onModuleInit() {
-    const kafka = new Kafka({
-      clientId: 'dora-manager',
-      brokers: this.configService.get('kafka.brokers'),
-    });
-
-    this.kafkaAdmin = kafka.admin();
-    await this.kafkaAdmin.connect();
+  async onModuleInit(): Promise<void> {
+    return;
   }
 
-  async onModuleDestroy() {
-    await this.kafkaAdmin.disconnect();
+  async onModuleDestroy(): Promise<void> {
+    return;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -62,14 +54,6 @@ export class SystemController implements OnModuleInit, OnModuleDestroy {
   @ApiBearerAuth()
   @Get('manager/system/bull/counts')
   async getCounts(): Promise<any> {
-    const topics = await this.kafkaAdmin.listTopics();
-    const stat: any = {};
-    if (Array.isArray(topics)) {
-      const dora_topics = topics.filter((t) => t.startsWith('dora'));
-      for await (const topic of dora_topics) {
-        stat[topic] = await this.kafkaAdmin.fetchTopicOffsets(topic);
-      }
-    }
-    return stat;
+    return this.systemService.getJobCounts();
   }
 }

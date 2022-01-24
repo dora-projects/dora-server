@@ -1,33 +1,32 @@
-import { Controller, Inject, Logger } from '@nestjs/common';
-import { ClientKafka, MessagePattern, Payload } from '@nestjs/microservices';
+import { Logger } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
-import { EventService } from './event.service';
-import { KAFKA_SERVICE } from 'libs/datasource/kafka';
+import { Processor, Process, InjectQueue } from '@nestjs/bull';
+import { Job, Queue } from 'bull';
+
 import {
   ElasticIndexOfError,
   ElasticIndexOfPerf,
-  Event_Alert,
-  Event_Issue,
-  Message_Error,
-  Message_Perf,
+  Event_Perf,
+  Event_Error,
 } from 'libs/shared/constant';
-import { KafkaMessage } from '@nestjs/microservices/external/kafka.interface';
+import { EventService } from './event.service';
+import { Queue_Alert, Queue_Event, Queue_Issue } from 'libs/shared/constant';
 
-@Controller()
-export class EventController {
+@Processor(Queue_Event)
+export class EventProcess {
   constructor(
     private readonly eventService: EventService,
     private readonly elasticsearchService: ElasticsearchService,
-    @Inject(KAFKA_SERVICE)
-    private client: ClientKafka,
+    @InjectQueue(Queue_Issue) private queueIssue: Queue,
+    @InjectQueue(Queue_Alert) private queueAlert: Queue,
   ) {}
 
-  private readonly logger = new Logger(EventController.name);
+  private readonly logger = new Logger(EventProcess.name);
 
   // 错误消息
-  @MessagePattern(Message_Error)
-  async handleErrorMessage(@Payload() message: KafkaMessage) {
-    const data = message.value;
+  @Process({ name: Event_Error })
+  async handleErrorMessage(job: Job<unknown>) {
+    const data = job.data;
     try {
       // step1: 聚合
       const resultStep1 = await this.eventService.aggregationError(data);
@@ -39,8 +38,8 @@ export class EventController {
       await this.eventService.batchSaveDocs(ElasticIndexOfError, resultStep2);
 
       // step4: 发送给告警 和 Issue
-      this.sendAlertQueue(resultStep2);
-      this.sendIssueQueue(resultStep2);
+      await this.sendAlertQueue(resultStep2);
+      await this.sendIssueQueue(resultStep2);
 
       // if (__DEV__) {
       //   await dumpJson('error', resultStep2);
@@ -51,9 +50,9 @@ export class EventController {
   }
 
   // 性能消息
-  @MessagePattern(Message_Perf)
-  async handlePerfMessage(@Payload() message: KafkaMessage) {
-    const data = message.value;
+  @Process({ name: Event_Perf })
+  async handlePerfMessage(job: Job<unknown>) {
+    const data = job.data;
     try {
       // step1: uaParser
       const resultStep1 = await this.eventService.userAgentParser(data);
@@ -70,12 +69,12 @@ export class EventController {
   }
 
   // 通知告警
-  sendAlertQueue(data: any) {
-    this.client.emit(Event_Alert, data);
+  async sendAlertQueue(data: any) {
+    await this.queueAlert.add(data);
   }
 
   // 通知issue
-  sendIssueQueue(data: any) {
-    this.client.emit(Event_Issue, data);
+  async sendIssueQueue(data: any) {
+    await this.queueIssue.add(data);
   }
 }

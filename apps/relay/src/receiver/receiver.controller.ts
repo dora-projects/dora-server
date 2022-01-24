@@ -3,7 +3,6 @@ import {
   Get,
   Ip,
   Logger,
-  OnModuleDestroy,
   OnModuleInit,
   Post,
   Req,
@@ -14,16 +13,11 @@ import * as fs from 'fs';
 import { join } from 'path';
 import { ReceiverService } from './receiver.service';
 import { SentryService } from './sentry.service';
-import { EventLike } from './receiver.dto';
-import { Message_Error, Message_Perf } from 'libs/shared/constant';
-import { errorValidate, perfValidate } from './schema';
-import { Kafka, Producer, logLevel } from 'kafkajs';
 import { ConfigService } from '@nestjs/config';
 import * as terser from 'html-minifier-terser';
-import { KafkaLogger } from '@nestjs/microservices/helpers/kafka-logger';
 
 @Controller()
-export class ReceiverController implements OnModuleInit, OnModuleDestroy {
+export class ReceiverController implements OnModuleInit {
   private readonly logger = new Logger(ReceiverController.name);
 
   constructor(
@@ -32,19 +26,9 @@ export class ReceiverController implements OnModuleInit, OnModuleDestroy {
     private readonly sentryService: SentryService,
   ) {}
 
-  private producer: Producer;
   private errorPagesJs: string;
 
   async onModuleInit() {
-    const kafka = new Kafka({
-      clientId: 'relay',
-      logLevel: logLevel.WARN,
-      brokers: this.configService.get('kafka.brokers'),
-      logCreator: KafkaLogger.bind(null, this.logger),
-    });
-    this.producer = kafka.producer();
-    await this.producer.connect();
-
     const errorPagesHtml = fs.readFileSync(
       join(process.cwd(), 'static/error_page/error.html'),
       'utf8',
@@ -58,68 +42,7 @@ export class ReceiverController implements OnModuleInit, OnModuleDestroy {
       minifyCSS: true,
       collapseWhitespace: true,
     });
-
     this.errorPagesJs = errorPagesJs.replace('/*{{ template }}*/', minifyHtml);
-  }
-
-  async onModuleDestroy() {
-    await this.producer.disconnect();
-  }
-
-  // error
-  async pushErrorEventToQueue(data: EventLike): Promise<any> {
-    try {
-      await this.producer.send({
-        topic: Message_Error,
-        messages: [{ key: Message_Error, value: JSON.stringify(data) }],
-      });
-    } catch (e) {
-      this.logger.error(e, e?.stack);
-    }
-  }
-
-  // perf
-  async pushPerfEventToQueue(data: EventLike): Promise<any> {
-    try {
-      await this.producer.send({
-        topic: Message_Perf,
-        messages: [{ key: Message_Perf, value: JSON.stringify(data) }],
-      });
-    } catch (e) {
-      this.logger.error(e, e?.stack);
-    }
-  }
-
-  async verifyAndPushEvent(events: EventLike[]): Promise<any> {
-    let errors: any = [];
-
-    for await (const event of events) {
-      switch (event?.type) {
-        case 'perf':
-          if (perfValidate(event)) {
-            await this.pushPerfEventToQueue(event);
-          } else {
-            errors = errors.concat(perfValidate.errors);
-          }
-          break;
-        case 'error':
-          if (errorValidate(event)) {
-            await this.pushErrorEventToQueue(event);
-          } else {
-            errors = errors.concat(errorValidate.errors);
-          }
-          break;
-        case 'api':
-          break;
-        case 'res':
-          break;
-        case 'visit':
-          break;
-        default:
-      }
-    }
-
-    return errors;
   }
 
   @Post('/report')
@@ -133,7 +56,7 @@ export class ReceiverController implements OnModuleInit, OnModuleDestroy {
       return res.send({ success: 'invalid data' });
     }
 
-    const errResult = await this.verifyAndPushEvent(events);
+    const errResult = await this.receiverService.verifyAndPushEvent(events);
     if (errResult && errResult.length > 0) return errResult;
 
     return res.json({ success: true });
@@ -180,7 +103,7 @@ export class ReceiverController implements OnModuleInit, OnModuleDestroy {
 
       const data = await this.sentryService.storeDataAdapter(storeData);
       if (data) {
-        await this.pushErrorEventToQueue(data);
+        await this.receiverService.pushErrorEvent(data);
       }
       return { success: true };
     } catch (e) {
@@ -222,7 +145,7 @@ export class ReceiverController implements OnModuleInit, OnModuleDestroy {
         envelopeData,
       );
       if (pickData) {
-        await this.pushPerfEventToQueue(pickData);
+        await this.receiverService.pushPerfEvent(pickData);
       }
       return { success: true };
     } catch (e) {

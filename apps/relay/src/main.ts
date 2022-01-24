@@ -38,6 +38,7 @@ async function bootstrap() {
   app.use(bodyParser.text());
 
   const configService = app.get(ConfigService);
+
   await app.listen(configService.get('relay_port'));
 
   console.log(chalk.green(banner(`relay started at ${await app.getUrl()}`)));

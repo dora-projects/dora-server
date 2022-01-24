@@ -6,12 +6,16 @@ import {
 } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ElasticIndexOfError, ElasticIndexOfPerf } from 'libs/shared/constant';
+import { PrismaService } from 'libs/datasource';
 
 @Injectable()
 export class AppService
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
-  constructor(private readonly elasticsearchService: ElasticsearchService) {}
+  constructor(
+    private readonly elasticsearchService: ElasticsearchService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   private readonly logger = new Logger(AppService.name);
 
@@ -21,6 +25,8 @@ export class AppService
       this.logger.log('初始化创建 esIndex 设置 mapping...');
       await this.createEsIndex();
     }
+
+    // todo 初始化检查 数据库
   }
 
   async checkExist(): Promise<boolean> {

@@ -1,10 +1,10 @@
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ConfigService } from '@nestjs/config';
 import { MyConfigModule } from 'libs/datasource/config';
+import { ConfigService } from '@nestjs/config';
 
-export const KAFKA_SERVICE = 'KAFKA_SERVICE';
+export const KAFKA_SERVICE = 'kafka_service';
 
-export const KafkaModule = ClientsModule.registerAsync([
+export const MicroserviceModule = ClientsModule.registerAsync([
   {
     name: KAFKA_SERVICE,
     imports: [MyConfigModule],
@@ -13,6 +13,7 @@ export const KafkaModule = ClientsModule.registerAsync([
         transport: Transport.KAFKA,
         options: {
           client: {
+            clientId: 'dora',
             brokers: configService.get('kafka.brokers'),
           },
           consumer: {

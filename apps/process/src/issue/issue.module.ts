@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
 import { IssueService } from './issue.service';
-import { IssueController } from './issue.controller';
-import { MyElasticModule } from 'libs/datasource';
+import { IssueProcess } from './issue.process';
+import { MyElasticModule, registerQueueIssue } from 'libs/datasource';
 import { PrismaService } from 'libs/datasource/prisma.service';
-import { KafkaModule } from 'libs/datasource/kafka';
 
 @Module({
-  imports: [KafkaModule, MyElasticModule],
-  controllers: [IssueController],
-  providers: [IssueService, PrismaService],
+  imports: [registerQueueIssue, MyElasticModule],
+  providers: [IssueProcess, IssueService, PrismaService],
 })
 export class IssueModule {}

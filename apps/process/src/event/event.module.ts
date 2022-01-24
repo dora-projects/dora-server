@@ -1,13 +1,21 @@
 import { Module } from '@nestjs/common';
 import { MyElasticModule } from 'libs/datasource/elasticsearch';
-import { KafkaModule } from 'libs/datasource/kafka';
+import {
+  registerQueueAlert,
+  registerQueueEvent,
+  registerQueueIssue,
+} from 'libs/datasource';
 
-import { EventController } from './event.controller';
+import { EventProcess } from './event.process';
 import { EventService } from './event.service';
 
 @Module({
-  imports: [KafkaModule, MyElasticModule],
-  controllers: [EventController],
-  providers: [EventService],
+  imports: [
+    registerQueueEvent,
+    registerQueueIssue,
+    registerQueueAlert,
+    MyElasticModule,
+  ],
+  providers: [EventProcess, EventService],
 })
 export class EventModule {}

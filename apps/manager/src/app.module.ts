@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { MyConfigModule } from 'libs/datasource/config';
-import { MyElasticModule } from 'libs/datasource';
+import { MyElasticModule, PrismaService, QueueModule } from 'libs/datasource';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from './common/logger.middleware';
 
@@ -19,8 +19,9 @@ import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    MyElasticModule,
     MyConfigModule,
+    MyElasticModule,
+    QueueModule,
     AuthModule,
     UserModule,
     ProjectModule,
@@ -32,7 +33,7 @@ import { AppController } from './app.controller';
     SystemModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, PrismaService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

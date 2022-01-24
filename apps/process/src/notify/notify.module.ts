@@ -1,18 +1,22 @@
 import { Module } from '@nestjs/common';
-import { NotifyController } from './notify.controller';
+import { NotifyProcess } from './notify.process';
 import { NotifyService } from './notify.service';
 import { MailService } from 'apps/manager/src/common/service/mail.service';
 import { DingTalkService } from 'apps/manager/src/common/service/dingTalk.service';
 import { AlertService } from 'apps/manager/src/alert/alert.service';
 import { ProjectService } from 'apps/manager/src/project/project.service';
 
-import { MyCacheModule, MyElasticModule, PrismaService } from 'libs/datasource';
-import { KafkaModule } from 'libs/datasource/kafka';
+import {
+  MyCacheModule,
+  MyElasticModule,
+  PrismaService,
+  registerQueueAlert,
+} from 'libs/datasource';
 
 @Module({
-  imports: [KafkaModule, MyCacheModule, MyElasticModule],
-  controllers: [NotifyController],
+  imports: [registerQueueAlert, MyCacheModule, MyElasticModule],
   providers: [
+    NotifyProcess,
     PrismaService,
     NotifyService,
     MailService,
