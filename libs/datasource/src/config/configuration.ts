@@ -23,9 +23,6 @@ export default (): Conf => {
       port: process.env.REDIS_PORT,
       password: process.env.REDIS_PASSWORD,
     },
-    kafka: {
-      brokers: process.env.KAFKA_BROKERS.split(','),
-    },
     elasticsearch: {
       node: process.env.ELASTICSEARCH_NODE,
       username: process.env.ELASTIC_USERNAME,
