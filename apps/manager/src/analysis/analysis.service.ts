@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ProjectService } from '../project/project.service';
 import { CommonParams, RangeParams, TrendRangeParams } from './analysis.dto';
+import { mappingFlat } from '../common/utils';
 
 @Injectable()
 export class AnalysisService {
@@ -57,6 +58,28 @@ export class AnalysisService {
       });
     }
     return filter;
+  }
+
+  async getMappingsFields(): Promise<any> {
+    const res = await this.elasticsearchService.indices.getMapping({
+      index: 'dora*',
+      ignore_unavailable: true,
+    });
+
+    if (!res.body) {
+      return [];
+    }
+
+    const properties = {};
+    const indices = Object.keys(res.body);
+    indices.forEach((index) => {
+      const mapping = res.body[index];
+      Object.assign(properties, mapping.mappings.properties);
+    });
+
+    const result = {};
+    mappingFlat(properties, result, '');
+    return result;
   }
 
   async getLogs(params: CommonParams & RangeParams): Promise<any> {

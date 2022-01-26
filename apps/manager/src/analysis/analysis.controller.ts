@@ -11,6 +11,11 @@ import { CommonParams, RangeParams, TrendRangeParams } from './analysis.dto';
 export class AnalysisController {
   constructor(private readonly analysisService: AnalysisService) {}
 
+  @Get('manager/analysis/mapping/fields')
+  async queryMappingsFields(): Promise<any> {
+    return await this.analysisService.getMappingsFields();
+  }
+
   @Get('manager/analysis/logs')
   async queryLogs(@Query() query: CommonParams & RangeParams): Promise<any> {
     return await this.analysisService.getLogs(query);

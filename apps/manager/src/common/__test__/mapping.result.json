@@ -1,0 +1,203 @@
+{
+  "anonymousId": {
+    "type": "text"
+  },
+  "appKey": {
+    "type": "text"
+  },
+  "breadcrumbs.category": {
+    "type": "text"
+  },
+  "breadcrumbs.data.arguments.cause": {
+    "type": "text"
+  },
+  "breadcrumbs.data.arguments.code": {
+    "type": "text"
+  },
+  "breadcrumbs.data.arguments.description": {
+    "type": "text"
+  },
+  "breadcrumbs.data.arguments.message": {
+    "type": "text"
+  },
+  "breadcrumbs.data.arguments.name": {
+    "type": "text"
+  },
+  "breadcrumbs.data.arguments.number": {
+    "type": "long"
+  },
+  "breadcrumbs.data.arguments.request": {
+    "type": "text"
+  },
+  "breadcrumbs.data.arguments.stack": {
+    "type": "text"
+  },
+  "breadcrumbs.data.arguments.type": {
+    "type": "text"
+  },
+  "breadcrumbs.data.from": {
+    "type": "text"
+  },
+  "breadcrumbs.data.logger": {
+    "type": "text"
+  },
+  "breadcrumbs.data.method": {
+    "type": "text"
+  },
+  "breadcrumbs.data.status_code": {
+    "type": "long"
+  },
+  "breadcrumbs.data.to": {
+    "type": "text"
+  },
+  "breadcrumbs.data.url": {
+    "type": "text"
+  },
+  "breadcrumbs.event_id": {
+    "type": "text"
+  },
+  "breadcrumbs.level": {
+    "type": "text"
+  },
+  "breadcrumbs.message": {
+    "type": "text"
+  },
+  "breadcrumbs.timestamp": {
+    "type": "float"
+  },
+  "breadcrumbs.type": {
+    "type": "text"
+  },
+  "environment": {
+    "type": "text"
+  },
+  "error.values.mechanism.data.function": {
+    "type": "text"
+  },
+  "error.values.mechanism.data.handler": {
+    "type": "text"
+  },
+  "error.values.mechanism.data.target": {
+    "type": "text"
+  },
+  "error.values.mechanism.handled": {
+    "type": "boolean"
+  },
+  "error.values.mechanism.synthetic": {
+    "type": "boolean"
+  },
+  "error.values.mechanism.type": {
+    "type": "text"
+  },
+  "error.values.stacktrace.frames.column": {
+    "type": "long"
+  },
+  "error.values.stacktrace.frames.func": {
+    "type": "text"
+  },
+  "error.values.stacktrace.frames.line": {
+    "type": "long"
+  },
+  "error.values.stacktrace.frames.url": {
+    "type": "text"
+  },
+  "error.values.type": {
+    "type": "text"
+  },
+  "error.values.value": {
+    "type": "text"
+  },
+  "event_id": {
+    "type": "text"
+  },
+  "fingerprint": {
+    "type": "text"
+  },
+  "ip": {
+    "type": "text"
+  },
+  "release": {
+    "type": "text"
+  },
+  "request.referer": {
+    "type": "text"
+  },
+  "request.ua": {
+    "type": "text"
+  },
+  "request.url": {
+    "type": "text"
+  },
+  "sdk.name": {
+    "type": "text"
+  },
+  "sdk.version": {
+    "type": "text"
+  },
+  "sessionId": {
+    "type": "text"
+  },
+  "subtype": {
+    "type": "text"
+  },
+  "timestamp": {
+    "type": "date"
+  },
+  "type": {
+    "type": "text"
+  },
+  "uaParsed.browser.major": {
+    "type": "text"
+  },
+  "uaParsed.browser.name": {
+    "type": "text"
+  },
+  "uaParsed.browser.version": {
+    "type": "text"
+  },
+  "uaParsed.cpu.architecture": {
+    "type": "text"
+  },
+  "uaParsed.device.model": {
+    "type": "text"
+  },
+  "uaParsed.device.type": {
+    "type": "text"
+  },
+  "uaParsed.device.vendor": {
+    "type": "text"
+  },
+  "uaParsed.engine.name": {
+    "type": "text"
+  },
+  "uaParsed.engine.version": {
+    "type": "text"
+  },
+  "uaParsed.os.name": {
+    "type": "text"
+  },
+  "uaParsed.os.version": {
+    "type": "text"
+  },
+  "uaParsed.ua": {
+    "type": "text"
+  },
+  "perf.cls": {
+    "type": "long"
+  },
+  "perf.fcp": {
+    "type": "float"
+  },
+  "perf.fid": {
+    "type": "float"
+  },
+  "perf.fp": {
+    "type": "float"
+  },
+  "perf.lcp": {
+    "type": "float"
+  },
+  "perf.ttfb": {
+    "type": "float"
+  }
+}

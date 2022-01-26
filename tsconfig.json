@@ -17,19 +17,12 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    "resolveJsonModule": true,
     "paths": {
-      "libs/shared": [
-        "libs/shared/src"
-      ],
-      "libs/shared/*": [
-        "libs/shared/src/*"
-      ],
-      "libs/datasource": [
-        "libs/datasource/src"
-      ],
-      "libs/datasource/*": [
-        "libs/datasource/src/*"
-      ]
+      "libs/shared": ["libs/shared/src"],
+      "libs/shared/*": ["libs/shared/src/*"],
+      "libs/datasource": ["libs/datasource/src"],
+      "libs/datasource/*": ["libs/datasource/src/*"]
     }
   }
 }
