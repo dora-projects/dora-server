@@ -8,17 +8,18 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { UserService } from './user.service';
-import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { CreateUserDto, UpdateUserDto, UserConfigDto } from './user.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { RolesGuard } from '../common/roles.guard';
 import { Roles } from '../common/roles.decorator';
 import { PaginationRes, SuccessRes } from '../common/responseDto';
-import { User, USER_ROLE } from '@prisma/client';
+import { User, UserConfig, USER_ROLE } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -38,6 +39,22 @@ export class UserController {
   async updateUser(@Body() user: UpdateUserDto): Promise<SuccessRes> {
     await this.userService.update(user);
     return { success: true };
+  }
+
+  @Get('manager/user/config')
+  async queryUserConfig(@Req() req): Promise<UserConfig> {
+    const userId = req.user?.id;
+    return this.userService.getUserConfig(userId);
+  }
+
+  @Post('manager/user/config')
+  async updateUserConfig(
+    @Req() req,
+    @Body() userConfig: UserConfigDto,
+  ): Promise<UserConfig> {
+    const userId = req.user?.id;
+    const projectId = userConfig?.projectId;
+    return this.userService.updateUserConfig(userId, projectId);
   }
 
   @Get('manager/search/users')

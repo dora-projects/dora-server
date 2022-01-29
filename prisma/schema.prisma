@@ -21,6 +21,7 @@ model User {
   alert_contact AlertContact?
   user_projects UserProjects[]
 
+  UserConfig UserConfig[]
   @@map("user")
 }
 
@@ -38,6 +39,7 @@ model Project {
   user_projects UserProjects[]
   Sourcemap     Sourcemap[]
 
+  UserConfig UserConfig[]
   @@map("project")
 }
 
@@ -50,6 +52,20 @@ model UserProjects {
 
   @@id([userId, projectId])
   @@map("user_projects")
+}
+
+model UserConfig {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId Int?
+
+  createdAt DateTime  @default(now()) @db.DateTime(6)
+  updatedAt DateTime  @default(now()) @db.DateTime(6)
+  deletedAt DateTime? @db.DateTime(6)
+
+  @@id([userId])
+  @@map("user_config")
 }
 
 model Sourcemap {

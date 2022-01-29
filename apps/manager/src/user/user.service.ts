@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { hashPassword } from 'libs/shared/auth';
-import { User, USER_ROLE } from '@prisma/client';
+import { User, UserConfig, USER_ROLE } from '@prisma/client';
 import { PrismaService } from 'libs/datasource/prisma.service';
 import { PaginationRes } from '../common/responseDto';
 import { BadRequestException } from '../common/error';
@@ -125,48 +125,37 @@ export class UserService {
     });
   }
 
-  // async getSettingOrDefault(userId: number) {
-  //   const setting = await this.getSetting(userId);
-  //   if (setting?.project) return setting;
-  //
-  //   return {
-  //     id: null,
-  //     user: null,
-  //   } as Setting;
-  // }
-  //
-  // async getSetting(userId: number) {
-  //   return await this.settingRepository
-  //     .createQueryBuilder('setting')
-  //     .leftJoinAndSelect('setting.user', 'user')
-  //     .leftJoinAndSelect('setting.project', 'project')
-  //     .where('user.id = :id', { id: userId })
-  //     .getOne();
-  // }
-  //
-  // async updateSetting(userId: number, projectId: number) {
-  //   const setting = await this.getSetting(userId);
-  //   const user = await this.userRepository.findOne(userId);
-  //   const project = await this.projectRepository.findOne(projectId);
-  //
-  //   if (setting && user && project) {
-  //     // update
-  //     return await this.settingRepository
-  //       .createQueryBuilder()
-  //       .update(setting)
-  //       .set({ user, project })
-  //       .execute();
-  //   }
-  //
-  //   // create
-  //   return await this.settingRepository
-  //     .createQueryBuilder()
-  //     .insert()
-  //     .into(Setting)
-  //     .values({
-  //       user,
-  //       project,
-  //     })
-  //     .execute();
-  // }
+  async getUserConfig(uid: number): Promise<UserConfig> {
+    return this.prismaService.userConfig.findUnique({
+      where: {
+        userId: uid,
+      },
+      include: {
+        project: true,
+      },
+    });
+  }
+
+  async updateUserConfig(uid: number, projectId: number): Promise<UserConfig> {
+    await this.createIfNotExist(uid);
+    return this.prismaService.userConfig.update({
+      where: {
+        userId: uid,
+      },
+      data: {
+        projectId: projectId,
+      },
+    });
+  }
+
+  async createIfNotExist(uid: number): Promise<UserConfig> {
+    const cof = await this.getUserConfig(uid);
+    if (cof) return cof;
+
+    return this.prismaService.userConfig.create({
+      data: {
+        userId: uid,
+      },
+    });
+  }
 }

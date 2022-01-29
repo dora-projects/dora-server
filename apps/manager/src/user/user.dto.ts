@@ -42,3 +42,9 @@ export class UpdateUserDto {
   @IsOptional()
   password: string;
 }
+
+export class UserConfigDto {
+  @ApiProperty({ description: '项目 id' })
+  @IsNumber()
+  projectId: number;
+}

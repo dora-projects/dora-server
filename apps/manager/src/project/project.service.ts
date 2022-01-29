@@ -3,7 +3,7 @@ import * as assert from 'assert';
 import { v4 as uuid } from 'uuid';
 import { CreateProjectDto, UpdateProjectDto } from './project.dto';
 import { PrismaService } from 'libs/datasource/prisma.service';
-import { Project, User, PROJECT_ROLE } from '@prisma/client';
+import { Project, PROJECT_ROLE } from '@prisma/client';
 import { BadRequestException } from '../common/error';
 
 @Injectable()
