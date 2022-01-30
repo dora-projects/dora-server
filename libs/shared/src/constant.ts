@@ -13,3 +13,4 @@ export const Event_Perf = 'event_type_perf';
 export const Event_Api = 'event_type_api';
 export const Event_Res = 'event_type_res';
 export const Event_Visit = 'event_type_visit';
+export const Event_FeedBack = 'event_type_feedback';

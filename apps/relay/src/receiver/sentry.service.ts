@@ -31,24 +31,24 @@ export class SentryService {
     const values = this.formatErrorValues(data?.exception?.values);
 
     const pickErrorData: ErrorEvent = {
-      type: 'error',
       appKey: data?.sentry_key,
-      event_id: data?.event_id,
-      timestamp: data?.timestamp * 1000,
+      release: data?.release,
+      environment: data?.environment,
+      timestamp: Math.floor(data?.timestamp * 1000),
       sdk: {
         name: data?.sdk?.name,
         version: data?.sdk?.version,
       },
+      type: 'error',
       ip: data?.ip,
-      release: data?.release,
-      environment: data?.environment,
+      event_id: data?.event_id,
+      breadcrumbs: data?.breadcrumbs,
+      error: { values },
       request: {
         url: data?.request?.url,
         referer: data?.request?.headers?.Referer,
         ua: data?.request?.headers?.['User-Agent'],
       },
-      breadcrumbs: data?.breadcrumbs,
-      error: { values },
     };
     return pickErrorData;
   }
@@ -58,15 +58,14 @@ export class SentryService {
     if (!data.sentry_key) return null;
 
     const pickData: PerfEvent = {
-      type: 'perf',
       appKey: data?.sentry_key,
-      event_id: data?.event_id,
-      timestamp: data?.timestamp * 1000,
+      release: data?.release,
+      environment: data?.environment,
       sdk: {
         name: data?.sdk?.name,
         version: data?.sdk?.version,
       },
-      ip: data?.ip,
+      type: 'perf',
       perf: {
         lcp: data?.measurements?.lcp?.value,
         fp: data?.measurements?.fp?.value,
@@ -74,8 +73,9 @@ export class SentryService {
         fid: data?.measurements?.fid?.value,
         ttfb: data?.measurements?.ttfb?.value,
       },
-      release: data?.release,
-      environment: data?.environment,
+      event_id: data?.event_id,
+      ip: data?.ip,
+      timestamp: Math.floor(data?.timestamp * 1000),
       request: {
         url: data?.request?.url,
         referer: data?.request?.headers?.Referer,

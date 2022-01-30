@@ -37,7 +37,6 @@ export class ReceiverController implements OnModuleInit {
       join(process.cwd(), 'static/error_page/error.js'),
       'utf8',
     );
-
     const minifyHtml = await terser.minify(errorPagesHtml, {
       minifyCSS: true,
       collapseWhitespace: true,
@@ -53,13 +52,15 @@ export class ReceiverController implements OnModuleInit {
   ): Promise<any> {
     const events = await this.receiverService.formatData(req.body, ip);
     if (!events) {
-      return res.send({ success: 'invalid data' });
+      return res.status(400).send({ success: 'invalid data' });
     }
 
     const errResult = await this.receiverService.verifyAndPushEvent(events);
-    if (errResult && errResult.length > 0) return errResult;
+    if (errResult && errResult.length > 0) {
+      return res.status(400).json({ errors: errResult });
+    }
 
-    return res.json({ success: true });
+    return res.status(200).json({ success: true });
   }
 
   @Get('/api/embed/error-page')
@@ -75,26 +76,30 @@ export class ReceiverController implements OnModuleInit {
 
   @Post('/api/embed/error-page')
   async errorPageSubmit(@Req() req: any, @Res() res: Response) {
-    // todo
-    console.log(req.body);
-    return res.status(200).json({});
+    try {
+      const data = {
+        name: req.body.name,
+        email: req.body.email,
+        comments: req.body.comments,
+        relEventId: req.query.eventId,
+      };
+      await this.receiverService.pushFeedBackEvent(data);
+      return res.status(200).json({ success: true });
+    } catch (e) {
+      return res.status(500).json(e);
+    }
   }
 
   @Post('api/:id/store')
-  async sentryStore(@Ip() ip: string, @Req() req: any): Promise<any> {
+  async sentryStore(
+    @Ip() ip: string,
+    @Req() req: any,
+    @Res() res: Response,
+  ): Promise<any> {
     try {
-      // query
       const { sentry_key, sentry_version } = req.query;
-
-      // body
       const body = JSON.parse(req.body);
-
-      const storeData = {
-        sentry_key,
-        sentry_version,
-        ip,
-        ...body,
-      };
+      const storeData = { sentry_key, sentry_version, ip, ...body };
 
       //debug
       // if (__DEV__) {
@@ -105,20 +110,21 @@ export class ReceiverController implements OnModuleInit {
       if (data) {
         await this.receiverService.pushErrorEvent(data);
       }
-      return { success: true };
+      return res.status(200).json({ success: true });
     } catch (e) {
       this.logger.error(e, e?.stack);
-      return e;
+      return res.status(500).json({ error: e?.message });
     }
   }
 
   @Post('api/:id/envelope')
-  async sentryEnvelope(@Ip() ip: string, @Req() req: any): Promise<any> {
+  async sentryEnvelope(
+    @Ip() ip: string,
+    @Req() req: any,
+    @Res() res: Response,
+  ): Promise<any> {
     try {
-      // query
       const { sentry_key, sentry_version } = req.query;
-
-      // body
       const textBody = req.body;
       const result = {};
       if (textBody) {
@@ -129,12 +135,7 @@ export class ReceiverController implements OnModuleInit {
         }
       }
 
-      const envelopeData: any = {
-        sentry_key,
-        sentry_version,
-        ip,
-        ...result,
-      };
+      const envelopeData: any = { sentry_key, sentry_version, ip, ...result };
 
       //debug
       // if (__DEV__) {
@@ -144,13 +145,14 @@ export class ReceiverController implements OnModuleInit {
       const pickData = await this.sentryService.envelopeDataAdapter(
         envelopeData,
       );
+
       if (pickData) {
         await this.receiverService.pushPerfEvent(pickData);
       }
-      return { success: true };
+      return res.status(200).json({ success: true });
     } catch (e) {
       this.logger.error(e, e?.stack);
-      return e;
+      return res.status(500).json({ error: e?.message });
     }
   }
 }

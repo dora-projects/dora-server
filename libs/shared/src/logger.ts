@@ -49,7 +49,7 @@ export const getLogConfig = (appName: string) => {
           fileJsonFormat(appName),
         ),
         filename: 'logs/combined.log',
-        level: 'debug',
+        level: 'info',
       }),
       new winston.transports.File({
         format: winston.format.combine(

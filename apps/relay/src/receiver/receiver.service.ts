@@ -3,7 +3,12 @@ import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { EventLike } from './receiver.dto';
 import { errorValidate, perfValidate } from './schema';
-import { Queue_Event, Event_Error, Event_Perf } from 'libs/shared/constant';
+import {
+  Queue_Event,
+  Event_Error,
+  Event_Perf,
+  Event_FeedBack,
+} from 'libs/shared/constant';
 
 @Injectable()
 export class ReceiverService {
@@ -13,32 +18,46 @@ export class ReceiverService {
 
   async pushPerfEvent(data: EventLike): Promise<void> {
     this.logger.debug(Event_Perf);
+
+    const valid = perfValidate(data);
+    if (!valid) {
+      console.log(perfValidate.errors);
+      const msg = this.getErrorMessage(perfValidate.errors);
+      throw new Error(msg);
+    }
     await this.queue.add(Event_Perf, data);
   }
 
   async pushErrorEvent(data: EventLike): Promise<void> {
     this.logger.debug(Event_Error);
+    const valid = errorValidate(data);
+    if (!valid) {
+      const msg = this.getErrorMessage(errorValidate.errors);
+      throw new Error(msg);
+    }
     await this.queue.add(Event_Error, data);
   }
 
+  async pushFeedBackEvent(data: any): Promise<void> {
+    this.logger.debug(Event_FeedBack);
+    console.log(data);
+
+    // await this.queue.add(Event_FeedBack, data);
+  }
+
   async verifyAndPushEvent(events: EventLike[]): Promise<any> {
-    try {
-      let errors: any = [];
-      for await (const event of events) {
+    let errors: string[] = [];
+    for await (const event of events) {
+      try {
         switch (event?.type) {
           case 'perf':
-            if (perfValidate(event)) {
-              await this.pushPerfEvent(event);
-            } else {
-              errors = errors.concat(perfValidate.errors);
-            }
+            await this.pushPerfEvent(event);
             break;
           case 'error':
-            if (errorValidate(event)) {
-              await this.pushErrorEvent(event);
-            } else {
-              errors = errors.concat(errorValidate.errors);
-            }
+            await this.pushErrorEvent(event);
+            break;
+          case 'feedback':
+            await this.pushFeedBackEvent(event);
             break;
           case 'api':
             break;
@@ -48,12 +67,12 @@ export class ReceiverService {
             break;
           default:
         }
+      } catch (e) {
+        errors = [...errors, e.message];
       }
-
-      return errors;
-    } catch (e) {
-      return [e];
     }
+
+    return errors;
   }
 
   async formatData(data, ip) {
@@ -84,5 +103,15 @@ export class ReceiverService {
       this.logger.debug(e, e?.stack);
       return null;
     }
+  }
+
+  getErrorMessage(errors: any[]): string {
+    if (Array.isArray(errors)) {
+      return errors.reduce((acc, cur) => {
+        acc += `${cur.schemaPath} ${cur.message}`;
+        return acc;
+      }, '');
+    }
+    return '';
   }
 }
