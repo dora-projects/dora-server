@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { LoggerMiddleware } from './common/logger.middleware';
 
 import { AnalysisModule } from './analysis/analysis.module';
+import { ArtifactModule } from './artifact/artifact.module';
 import { IssuesModule } from './issues/issues.module';
 import { ProjectModule } from './project/project.module';
 import { FileModule } from './file/file.module';
@@ -23,6 +24,7 @@ import { AppController } from './app.controller';
     MyElasticModule,
     QueueModule,
     AuthModule,
+    ArtifactModule,
     UserModule,
     ProjectModule,
     FileModule,

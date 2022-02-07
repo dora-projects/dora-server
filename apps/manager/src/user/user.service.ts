@@ -18,7 +18,7 @@ export class UserService {
     try {
       return await this.prismaService.user.create({
         data: {
-          username: createUserDto.username,
+          username: createUserDto.email.split('@')[0],
           email: createUserDto.email,
           password: hashPwd,
           role: count > 0 ? USER_ROLE.user : USER_ROLE.admin,
