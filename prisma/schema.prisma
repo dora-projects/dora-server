@@ -38,6 +38,7 @@ model Project {
   alert_rule    AlertRule[]
   user_projects UserProjects[]
   Sourcemap     Sourcemap[]
+  Artifact      Artifact[]
 
   UserConfig UserConfig[]
   @@map("project")
@@ -78,6 +79,18 @@ model Sourcemap {
   updatedAt DateTime @default(now()) @db.DateTime(6)
 
   @@map("sourcemap")
+}
+
+model Artifact {
+  id        Int      @id @default(autoincrement())
+  path      String?  @db.VarChar(255)
+  release   String?  @db.VarChar(255)
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId Int
+  createdAt DateTime @default(now()) @db.DateTime(6)
+  updatedAt DateTime @default(now()) @db.DateTime(6)
+
+  @@map("artifact")
 }
 
 model Issue {

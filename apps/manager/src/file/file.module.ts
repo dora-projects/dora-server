@@ -4,9 +4,16 @@ import { FileService } from './file.service';
 import { SourcemapService } from '../sourcemap/sourcemap.service';
 import { ProjectService } from '../project/project.service';
 import { PrismaService } from 'libs/datasource';
+import { ArtifactService } from '../artifact/artifact.service';
 
 @Module({
   controllers: [FileController],
-  providers: [FileService, PrismaService, SourcemapService, ProjectService],
+  providers: [
+    FileService,
+    ArtifactService,
+    PrismaService,
+    SourcemapService,
+    ProjectService,
+  ],
 })
 export class FileModule {}
