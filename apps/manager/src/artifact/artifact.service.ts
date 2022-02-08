@@ -7,11 +7,18 @@ import { Artifact } from '@prisma/client';
 export class ArtifactService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(release: string, path: string, projectId: number) {
+  async create(data: {
+    release: string;
+    path: string;
+    compressedPath: string;
+    projectId: number;
+  }) {
+    const { release, compressedPath, path, projectId } = data;
     return await this.prismaService.artifact.create({
       data: {
         release: release,
         path: path,
+        compressedPath: compressedPath,
         project: {
           connect: { id: projectId },
         },

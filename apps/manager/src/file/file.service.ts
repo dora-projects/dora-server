@@ -26,26 +26,29 @@ export class FileService {
       throw new Error(`can\`t find project info by appKey: ${body?.appKey}`);
     }
 
+    const unzipDist = `uploads/unzip/${uuid.v4()}`;
+    const absDistDir = resolve(cwd, unzipDist);
+    fsx.ensureDir(absDistDir);
+
+    await this.unArchiverFile(absSourceDir, absDistDir);
+
     switch (body?.type) {
       case 'sourcemap':
-        const unzipDist = `uploads/unzip/${uuid.v4()}`;
-        const absDistDir = resolve(cwd, unzipDist);
-        fsx.ensureDir(absDistDir);
-
-        await this.unArchiverFile(absSourceDir, absDistDir);
-        await this.sourcemapService.create(
-          body?.release,
-          unzipDist,
-          project?.id,
-        );
+        await this.sourcemapService.create({
+          projectId: project?.id,
+          path: unzipDist,
+          compressedPath: sourceDir,
+          release: body.release,
+        });
         break;
 
       case 'artifact':
-        await this.artifactService.create(
-          body?.release,
-          sourceDir,
-          project?.id,
-        );
+        await this.artifactService.create({
+          projectId: project?.id,
+          path: unzipDist,
+          compressedPath: sourceDir,
+          release: body.release,
+        });
         break;
 
       default:
