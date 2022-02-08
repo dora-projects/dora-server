@@ -83,14 +83,22 @@ model Sourcemap {
 }
 
 model Artifact {
-  id             Int      @id @default(autoincrement())
-  path           String?  @db.VarChar(255)
-  compressedPath String?  @db.VarChar(255)
-  release        String?  @db.VarChar(255)
-  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id             Int     @id @default(autoincrement())
+  path           String? @db.VarChar(255)
+  compressedPath String? @db.VarChar(255)
+  release        String? @db.VarChar(255)
+  project        Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId      Int
-  createdAt      DateTime @default(now()) @db.DateTime(6)
-  updatedAt      DateTime @default(now()) @db.DateTime(6)
+
+  author     String? @db.VarChar(255)
+  authorMail String? @db.VarChar(255)
+  gitBranch  String? @db.VarChar(255)
+  commit     String? @db.VarChar(255)
+  commitHash String? @db.VarChar(255)
+  commitAt   String? @db.VarChar(255)
+
+  createdAt DateTime @default(now()) @db.DateTime(6)
+  updatedAt DateTime @default(now()) @db.DateTime(6)
 
   @@map("artifact")
 }

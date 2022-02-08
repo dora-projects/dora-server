@@ -1,24 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'libs/datasource';
 import { PaginationRes } from '../common/responseDto';
 import { Artifact } from '@prisma/client';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class ArtifactService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   async create(data: {
-    release: string;
     path: string;
     compressedPath: string;
+    release: string;
+    author: string;
+    authorMail: string;
+    gitBranch: string;
+    commit: string;
+    commitHash: string;
+    commitAt: string;
     projectId: number;
   }) {
-    const { release, compressedPath, path, projectId } = data;
+    const {
+      path,
+      compressedPath,
+      projectId,
+      release,
+      author,
+      authorMail,
+      gitBranch,
+      commit,
+      commitHash,
+      commitAt,
+    } = data;
+
     return await this.prismaService.artifact.create({
       data: {
-        release: release,
-        path: path,
-        compressedPath: compressedPath,
+        path,
+        compressedPath,
+        release,
+        author,
+        authorMail,
+        gitBranch,
+        commit,
+        commitHash,
+        commitAt,
         project: {
           connect: { id: projectId },
         },
@@ -55,5 +83,37 @@ export class ArtifactService {
       limit: limit,
       total,
     };
+  }
+
+  async find(artifactId: number): Promise<Artifact> {
+    return await this.prismaService.artifact.findUnique({
+      where: {
+        id: artifactId,
+      },
+    });
+  }
+
+  async createPreview(data: {
+    subHost: string;
+    release: string;
+    hash: string;
+    path: string;
+  }) {
+    const key = data.hash.toLocaleLowerCase();
+
+    // todo
+    await this.cacheManager.set(
+      `agent:${key}`,
+      {
+        release: data.release,
+        filepath: data.path,
+        index: 'index.html',
+        proxy: {
+          '/manager': 'https://dora.nancode.cn',
+        },
+      },
+      { ttl: 3 * 24 * 60 * 60 },
+    );
+    return { link: `https://${key}.${data.subHost}` };
   }
 }

@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE `artifact` ADD COLUMN `author` VARCHAR(255) NULL,
+    ADD COLUMN `authorMail` VARCHAR(255) NULL,
+    ADD COLUMN `commit` VARCHAR(255) NULL,
+    ADD COLUMN `commitAt` VARCHAR(255) NULL,
+    ADD COLUMN `commitHash` VARCHAR(255) NULL,
+    ADD COLUMN `gitBranch` VARCHAR(255) NULL;

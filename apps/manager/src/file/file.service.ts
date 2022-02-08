@@ -19,6 +19,8 @@ export class FileService {
   ) {}
 
   async handleUploadType(body: any, file: Express.Multer.File): Promise<void> {
+    console.log(body);
+
     const sourceDir = `uploads/${file.filename}`;
     const absSourceDir = resolve(cwd, sourceDir);
     const project = await this.projectService.findByAppKey(body?.appKey);
@@ -44,10 +46,18 @@ export class FileService {
 
       case 'artifact':
         await this.artifactService.create({
-          projectId: project?.id,
           path: unzipDist,
           compressedPath: sourceDir,
+
           release: body.release,
+          author: body.author,
+          authorMail: body.author_mail,
+          gitBranch: body.git_branch,
+          commit: body.commit,
+          commitHash: body.commit_hash,
+          commitAt: body.commit_at,
+
+          projectId: project?.id,
         });
         break;
 

@@ -42,4 +42,20 @@ export class ArtifactController {
   deleteArtifact(@Query() query: DeleteDto): any {
     return query;
   }
+
+  @Get('manager/artifact/preview')
+  async preview(@Query('artifactId') artifactId) {
+    const item = await this.artifactService.find(Number(artifactId));
+    if (item) {
+      const result = await this.artifactService.createPreview({
+        subHost: 'web.nancode.cn',
+        release: item.release,
+        path: item.path,
+        hash: item.commitHash,
+      });
+      return { success: true, data: result };
+    } else {
+      return { success: false };
+    }
+  }
 }
