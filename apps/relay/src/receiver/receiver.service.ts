@@ -21,7 +21,6 @@ export class ReceiverService {
 
     const valid = perfValidate(data);
     if (!valid) {
-      console.log(perfValidate.errors);
       const msg = this.getErrorMessage(perfValidate.errors);
       throw new Error(msg);
     }
@@ -30,6 +29,7 @@ export class ReceiverService {
 
   async pushErrorEvent(data: EventLike): Promise<void> {
     this.logger.debug(Event_Error);
+
     const valid = errorValidate(data);
     if (!valid) {
       const msg = this.getErrorMessage(errorValidate.errors);

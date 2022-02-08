@@ -69,7 +69,7 @@ const errorEventSchema = {
           type: 'string',
         },
       },
-      required: ['referer', 'url', 'ua'],
+      required: ['url', 'ua'],
     },
   },
   required: [

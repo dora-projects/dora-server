@@ -86,7 +86,7 @@ const perfEventSchema = {
           type: 'string',
         },
       },
-      required: ['referer', 'url', 'ua'],
+      required: ['url', 'ua'],
     },
   },
   required: [
