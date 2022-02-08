@@ -46,9 +46,9 @@ model Project {
 
 model UserProjects {
   prole     PROJECT_ROLE @default(developer)
-  user      User         @relation(fields: [userId], references: [id])
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  project   Project      @relation(fields: [projectId], references: [id])
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId Int
 
   @@id([userId, projectId])
@@ -56,9 +56,9 @@ model UserProjects {
 }
 
 model UserConfig {
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  project   Project? @relation(fields: [projectId], references: [id])
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId Int?
 
   createdAt DateTime  @default(now()) @db.DateTime(6)
@@ -73,7 +73,7 @@ model Sourcemap {
   id        Int      @id @default(autoincrement())
   path      String?  @db.VarChar(255)
   release   String?  @db.VarChar(255)
-  project   Project  @relation(fields: [projectId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId Int
   createdAt DateTime @default(now()) @db.DateTime(6)
   updatedAt DateTime @default(now()) @db.DateTime(6)
@@ -85,7 +85,7 @@ model Artifact {
   id        Int      @id @default(autoincrement())
   path      String?  @db.VarChar(255)
   release   String?  @db.VarChar(255)
-  project   Project  @relation(fields: [projectId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId Int
   createdAt DateTime @default(now()) @db.DateTime(6)
   updatedAt DateTime @default(now()) @db.DateTime(6)
@@ -127,8 +127,8 @@ model AlertContact {
   updatedAt  DateTime           @default(now()) @db.DateTime(6)
   ruleId     Int?
   userId     Int?               @unique
-  alert_rule AlertRule?         @relation(fields: [ruleId], references: [id])
-  user       User?              @relation(fields: [userId], references: [id])
+  alert_rule AlertRule?         @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  user       User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([ruleId])
   @@map("alert_contact")
@@ -139,9 +139,9 @@ model AlertLog {
   content    String     @db.VarChar(255)
   createdAt  DateTime   @default(now()) @db.DateTime(6)
   updatedAt  DateTime   @default(now()) @db.DateTime(6)
-  project    Project?   @relation(fields: [projectId], references: [id])
+  project    Project?   @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId  Int?
-  alert_rule AlertRule? @relation(fields: [ruleId], references: [id])
+  alert_rule AlertRule? @relation(fields: [ruleId], references: [id], onDelete: Cascade)
   ruleId     Int?
 
   @@index([ruleId])
@@ -161,7 +161,7 @@ model AlertRule {
   createdAt          DateTime       @default(now()) @db.DateTime(6)
   updatedAt          DateTime       @default(now()) @db.DateTime(6)
   projectId          Int?
-  project            Project?       @relation(fields: [projectId], references: [id])
+  project            Project?       @relation(fields: [projectId], references: [id], onDelete: Cascade)
   alert_contact      AlertContact[]
   alert_log          AlertLog[]
 
